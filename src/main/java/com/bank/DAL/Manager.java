@@ -1,5 +1,7 @@
 package com.bank.DAL;
 
+import javafx.util.Pair;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public class Manager extends MySQL {
+public class Manager extends SQLServer {
     private final String tableName;
     private final List<String> columnNames;
 
