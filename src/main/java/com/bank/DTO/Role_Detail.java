@@ -1,18 +1,19 @@
 package com.bank.DTO;
 
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Role_Detail {
     private int role_id;
     private int staff_id;
     private Date entry_date;
-    private double salary;
+    private BigDecimal salary;
 
     public Role_Detail() {
     }
 
-    public Role_Detail(int role_id, int staff_id, Date entry_date, double salary) {
+    public Role_Detail(int role_id, int staff_id, Date entry_date, BigDecimal salary) {
         this.role_id = role_id;
         this.staff_id = staff_id;
         this.entry_date = entry_date;
@@ -43,11 +44,11 @@ public class Role_Detail {
         this.entry_date = entry_date;
     }
 
-    public double getSalary() {
+    public BigDecimal getSalary() {
         return salary;
     }
 
-    public void setSalary(double salary) {
+    public void setSalary(BigDecimal salary) {
         this.salary = salary;
     }
 

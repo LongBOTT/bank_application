@@ -3,6 +3,7 @@ package com.bank.GUI.DialogGUI.FormEditGUI;
 import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Branch;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -26,7 +27,7 @@ public class EditBranchGUI extends DialogForm {
     public EditBranchGUI(Branch branch) {
         super();
         super.setTitle("Cập Nhập Thông Tin Chi Nhánh");
-        super.setSize(new Dimension(600, 450));
+        super.setSize(new Dimension(1000, 300));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         this.branch = branch;
         init(branch);
@@ -39,9 +40,6 @@ public class EditBranchGUI extends DialogForm {
         jTextFieldBranch = new ArrayList<>();
         buttonCancel = new JButton("Huỷ");
         buttonEdit = new JButton("Cập nhật");
-        content.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "20[]20[]20"));
 
         titleName.setText("Cập Nhập Thông Tin Chi Nhánh");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -51,37 +49,41 @@ public class EditBranchGUI extends DialogForm {
 
         for (String string : new String[]{"Mã Chi Nhánh", "Tên Chi Nhánh", "Điện Thoại", "Địa Chỉ"}) {
             JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
+            label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeBranch.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
+            MyTextFieldUnderLine textField = new MyTextFieldUnderLine();
+            textField.setPreferredSize(new Dimension(280, 35));
+            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            textField.setBackground(new Color(245, 246, 250));
+
 
             if (string.equals("Tên Chi Nhánh")) {
                 textField.setText(branch.getName());
+                jTextFieldBranch.add(textField);
+                content.add(textField, "wrap");
+                continue;
             }
             if (string.equals("Điện Thoại")) {
                 textField.setText(branch.getPhone());
+                jTextFieldBranch.add(textField);
+                content.add(textField);
+                continue;
             }
             if (string.equals("Địa Chỉ")) {
                 textField.setText(branch.getAddress());
-            }
-            if (string.equals("Mã Chi Nhánh")) {
-                JLabel jLabel = new JLabel();
-                jLabel.setText(String.valueOf(branch.getId()));
-                jLabel.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                content.add(jLabel, "wrap");
+                jTextFieldBranch.add(textField);
+                content.add(textField, "wrap");
                 continue;
             }
-
-            textField.setPreferredSize(new Dimension(1000, 30));
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            jTextFieldBranch.add(textField);
-            content.add(textField, "wrap");
-
+            if (string.equals("Mã Chi Nhánh")) {
+                textField.setText(String.valueOf(branch.getId()));
+                textField.setEditable(false);
+                content.add(textField);
+            }
         }
         buttonCancel.setPreferredSize(new Dimension(100, 30));
         buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));

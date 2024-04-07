@@ -3,6 +3,7 @@ package com.bank.GUI.DialogGUI.FormAddGUI;
 import com.bank.BLL.RoleBLL;
 import com.bank.DTO.Role;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -25,7 +26,7 @@ public class AddRoleGUI extends DialogForm {
     public AddRoleGUI() {
         super();
         super.setTitle("Thêm chức vụ");
-        super.setSize(new Dimension(500, 300));
+        super.setSize(new Dimension(1000, 250));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init();
         setVisible(true);
@@ -37,9 +38,6 @@ public class AddRoleGUI extends DialogForm {
         jTextFieldRole = new ArrayList<>();
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
-        content.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "20[]20[]20"));
 
         titleName.setText("Thêm chức vụ");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -49,14 +47,14 @@ public class AddRoleGUI extends DialogForm {
 
         for (String string : new String[]{"Tên chức vụ"}) {
             JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
+            label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
             attributeRole.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
-            textField.setPreferredSize(new Dimension(1000, 30));
+            MyTextFieldUnderLine textField = new MyTextFieldUnderLine();
+            textField.setPreferredSize(new Dimension(280, 35));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             jTextFieldRole.add(textField);

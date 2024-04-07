@@ -14,7 +14,7 @@ public class Layout1 extends RoundedPanel {
     }
 
     private void initComponents() {
-        setBackground(new Color(228,231,235));
+        setBackground(new Color(191, 198, 208));
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(1165, 733));
 
@@ -25,7 +25,7 @@ public class Layout1 extends RoundedPanel {
 
         top.setLayout(new BorderLayout());
         top.setPreferredSize(new Dimension(1165, 50));
-        top.setBackground(new Color(228,231,235));
+        top.setBackground(new Color(191, 198, 208));
         add(top, BorderLayout.NORTH);
 
         bottom.setLayout(new BorderLayout());
@@ -34,12 +34,12 @@ public class Layout1 extends RoundedPanel {
         add(bottom, BorderLayout.SOUTH);
 
         SearchPanel.setLayout(new GridBagLayout());
-        SearchPanel.setBackground(new Color(228,231,235));
+        SearchPanel.setBackground(new Color(191, 198, 208));
         SearchPanel.setPreferredSize(new Dimension(530, 50));
         top.add(SearchPanel, BorderLayout.WEST);
 
         FunctionPanel.setLayout(new FlowLayout());
-        FunctionPanel.setBackground(new Color(228,231,235));
+        FunctionPanel.setBackground(new Color(191, 198, 208));
         FunctionPanel.setPreferredSize(new Dimension(620, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 

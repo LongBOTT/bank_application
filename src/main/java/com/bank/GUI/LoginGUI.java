@@ -104,7 +104,7 @@ public class LoginGUI extends JFrame {
         RoundedPanel panelUsername = new RoundedPanel();
         panelUsername.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 5));
         panelUsername.setPreferredSize(new Dimension(350, 50));
-        panelUsername.setBackground(new Color(243, 246, 254));
+        panelUsername.setBackground(new Color(221, 229, 250));
         formInput.add(panelUsername, "span, wrap");
 
         JLabel iconUser = new JLabel(new FlatSVGIcon("icon/user.svg"));
@@ -113,7 +113,7 @@ public class LoginGUI extends JFrame {
         // sửa
         jTextFieldUserName = new JTextField();
         jTextFieldUserName.setText("longbott");
-        jTextFieldUserName.setBackground(new Color(243, 246, 254));
+        jTextFieldUserName.setBackground(new Color(221, 229, 250));
         jTextFieldUserName.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldUserName.setPreferredSize(new Dimension(270, 40));
         jTextFieldUserName.setFont(new Font("Inter", Font.BOLD, 15));
@@ -135,7 +135,7 @@ public class LoginGUI extends JFrame {
         RoundedPanel panelPasswd = new RoundedPanel();
         panelPasswd.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 5));
         panelPasswd.setPreferredSize(new Dimension(350, 50));
-        panelPasswd.setBackground(new Color(243, 246, 254));
+        panelPasswd.setBackground(new Color(221, 229, 250));
         formInput.add(panelPasswd, "span, wrap");
 
         JLabel iconLock = new JLabel(new FlatSVGIcon("icon/lock.svg"));
@@ -143,7 +143,7 @@ public class LoginGUI extends JFrame {
 
         jTextFieldPassword = new JPasswordField();
         jTextFieldPassword.setText("Long123.");
-        jTextFieldPassword.setBackground(new Color(243, 246, 254));
+        jTextFieldPassword.setBackground(new Color(221, 229, 250));
         jTextFieldPassword.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldPassword.setPreferredSize(new Dimension(270, 40));
         jTextFieldPassword.setFont(new Font("Inter", Font.BOLD, 15));
@@ -171,8 +171,8 @@ public class LoginGUI extends JFrame {
         jButtonLogin = new JButton("Login");
         jButtonLogin.setBackground(new Color(1, 120, 220));
         jButtonLogin.setForeground(Color.WHITE);
-        jButtonLogin.setFont(new Font("Inter", Font.BOLD, 20));
-        jButtonLogin.setPreferredSize(new Dimension(120, 50));
+        jButtonLogin.setFont(new Font("Inter", Font.BOLD, 18));
+        jButtonLogin.setPreferredSize(new Dimension(100, 40));
         jButtonLogin.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

@@ -113,16 +113,11 @@ public class Staff {
 
     @Override
     public String toString() {
-        String gender1 = gender? "Nữ" : "Nam";
+        String gender1 = gender? "nam" : "Nữ";
         return id + " | " + // stt nv
                 staffNo + " | " +  // mã nv
                 name + " | " + // tên
-                gender1 + " | " + // giới tính
-                birthdate + " | " + // ngày sinh
-                phone + " | " +// số điện thoại
-                address + " | " + // địa chỉ
-                email + " | " + // email
-                branch_id; // ma chi nhanh
+                phone;// số điện thoại
     }
 
 

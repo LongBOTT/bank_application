@@ -86,4 +86,13 @@ public class BranchDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<Branch> getAllBranches() {
+        try {
+            return convertToBranches(executeProcedure("GetAllBranches"));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in BranchDAL.getAllBranches(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

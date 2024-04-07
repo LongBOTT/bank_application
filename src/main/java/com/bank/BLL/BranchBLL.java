@@ -188,6 +188,10 @@ public class BranchBLL extends Manager<Branch> {
         return new Pair<>(false, "");
     }
 
+    public List<Branch> getALLBranches() {
+        return branchDAL.getAllBranches();
+    }
+
     @Override
     public Object getValueByKey(Branch branch, String key) {
         return switch (key) {

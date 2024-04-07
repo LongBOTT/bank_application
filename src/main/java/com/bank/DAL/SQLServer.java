@@ -109,7 +109,9 @@ public class SQLServer {
             String[] strings = new String[0];
             for (Pair condition: conditions) {
                 strings = Arrays.copyOf(strings, strings.length + 1);
-                strings[strings.length - 1] = "@" + condition.getKey() + " = " + condition.getValue();
+                if (condition.getValue() instanceof String || condition.getValue() instanceof Character) {
+                    strings[strings.length - 1] = "@" + condition.getKey() + " = '" + condition.getValue() + "'";
+                }
             }
             query += " " + String.join(", ", strings);
         }

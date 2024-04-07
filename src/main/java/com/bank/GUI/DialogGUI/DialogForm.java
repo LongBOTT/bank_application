@@ -21,7 +21,7 @@ public class DialogForm extends JDialog {
 
         setLayout(new MigLayout("", "50[]50", "10[]10"));
         setIconImage(new FlatSVGIcon("icon/Vietcombank.svg").getImage());
-        setSize(new Dimension(1000, 700));
+        setSize(new Dimension(1000, 400));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(Bank_Application.homeGUI);

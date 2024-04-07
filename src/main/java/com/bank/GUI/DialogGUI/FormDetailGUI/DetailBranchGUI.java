@@ -3,6 +3,7 @@ package com.bank.GUI.DialogGUI.FormDetailGUI;
 import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Branch;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import net.miginfocom.swing.MigLayout;
 
@@ -14,13 +15,11 @@ import java.util.List;
 public class DetailBranchGUI extends DialogForm {
     private JLabel titleName;
     private List<JLabel> attributeBranch;
-    private List<JLabel> jTextFieldBranch;
-    private BranchBLL branchBLL = new BranchBLL();
 
     public DetailBranchGUI(Branch branch) {
         super();
         super.setTitle("Thông Tin Chi Nhánh");
-        super.setSize(new Dimension(600, 450));
+        super.setSize(new Dimension(1000, 300));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init(branch);
         setVisible(true);
@@ -29,16 +28,13 @@ public class DetailBranchGUI extends DialogForm {
     private void init(Branch branch) {
         titleName = new JLabel();
         attributeBranch = new ArrayList<>();
-        jTextFieldBranch = new ArrayList<>();
-        content.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "20[]20[]20"));
 
         titleName.setText("Thông Tin Chi Nhánh");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
+
 
         for (String string : new String[]{"Mã Chi Nhánh", "Tên Chi Nhánh", "Điện Thoại", "Địa Chỉ"}) {
             JLabel label = new JLabel();
@@ -48,26 +44,32 @@ public class DetailBranchGUI extends DialogForm {
             attributeBranch.add(label);
             content.add(label);
 
-            JLabel textField = new JLabel();
-
+            MyTextFieldUnderLine textField = new MyTextFieldUnderLine();
+            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
+            textField.setBackground(new Color(245, 246, 250));
+            textField.setEditable(false);
             if (string.equals("Tên Chi Nhánh")) {
                 textField.setText(branch.getName());
+
+                content.add(textField, "wrap");
+                continue;
             }
             if (string.equals("Điện Thoại")) {
                 textField.setText(branch.getPhone());
+
+                content.add(textField);
+                continue;
             }
             if (string.equals("Địa Chỉ")) {
-                textField.setText("<html>" + branch.getAddress() + "</html>");
+                textField.setText(branch.getAddress());
+
+                content.add(textField, "wrap");
+                continue;
             }
             if (string.equals("Mã Chi Nhánh")) {
                 textField.setText(String.valueOf(branch.getId()));
+                content.add(textField);
             }
-
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            jTextFieldBranch.add(textField);
-            content.add(textField, "wrap");
-
         }
     }
 }

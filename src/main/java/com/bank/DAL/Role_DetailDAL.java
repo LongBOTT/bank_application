@@ -3,6 +3,7 @@ package com.bank.DAL;
 import com.bank.DTO.Role_Detail;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class Role_DetailDAL extends Manager {
                         Integer.parseInt(row.get(0)), // role_id
                         Integer.parseInt(row.get(1)), // staff_id
                         Date.valueOf(row.get(2)), // entry_date
-                        Double.parseDouble(row.get(3)) // salary
+                        BigDecimal.valueOf(Double.parseDouble(row.get(3))) // salary
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RoleDAL.convertToRole_detail(): " + e.getMessage());

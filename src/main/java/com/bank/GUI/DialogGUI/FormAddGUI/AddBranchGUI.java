@@ -4,6 +4,7 @@ import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Branch;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -26,7 +27,7 @@ public class AddBranchGUI extends DialogForm {
     public AddBranchGUI() {
         super();
         super.setTitle("Thêm Chi Nhánh");
-        super.setSize(new Dimension(600, 450));
+        super.setSize(new Dimension(1000, 250));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init();
         setVisible(true);
@@ -38,9 +39,6 @@ public class AddBranchGUI extends DialogForm {
         jTextFieldBranch = new ArrayList<>();
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
-        content.setLayout(new MigLayout("",
-                "50[]20[]50",
-                "20[]20[]20"));
 
         titleName.setText("Thêm Chi Nhánh");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -51,18 +49,26 @@ public class AddBranchGUI extends DialogForm {
 
         for (String string : new String[]{"Tên Chi Nhánh", "Điện Thoại", "Địa Chỉ"}) {
             JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(170, 30));
+            label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
             label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeBranch.add(label);
             content.add(label);
 
-            JTextField textField = new JTextField();
-            textField.setPreferredSize(new Dimension(1000, 30));
+            MyTextFieldUnderLine textField = new MyTextFieldUnderLine();
+            textField.setPreferredSize(new Dimension(280, 35));
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             jTextFieldBranch.add(textField);
-            content.add(textField, "wrap");
+            if (string.equals("Tên Chi Nhánh")) {
+                content.add(textField);
+                continue;
+            }
+            if (string.equals("Điện Thoại")) {
+                content.add(textField, "wrap");
+            } else {
+                content.add(textField);
+            }
 
         }
 

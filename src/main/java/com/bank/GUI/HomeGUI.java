@@ -117,16 +117,16 @@ public class HomeGUI extends JFrame {
         colorOver = new Color(185, 184, 184);
 
         contentPanel.setLayout(new BorderLayout());
-        contentPanel.setBackground(new Color(228,231,235));
+        contentPanel.setBackground(new Color(191, 198, 208));
         setContentPane(contentPanel);
 
         left.setLayout(new MigLayout("", "10[]10", "10[]10[]"));
-        left.setBackground(new Color(228,231,235));
+        left.setBackground(new Color(191, 198, 208));
         left.setPreferredSize(new Dimension(250, 800));
         contentPanel.add(left, BorderLayout.WEST);
 
         right.setLayout(new BorderLayout());
-        right.setBackground(new Color(228,231,235));
+        right.setBackground(new Color(191, 198, 208));
         contentPanel.add(right, BorderLayout.CENTER);
 
         infor.setLayout(new MigLayout());
@@ -137,29 +137,29 @@ public class HomeGUI extends JFrame {
         JPanel Panel1 = new JPanel();
         Panel1.setBackground(new Color(255, 255, 255));
         Panel1.setPreferredSize(new Dimension(30, 120));
-        infor.add(Panel1);
+        infor.add(Panel1, "center");
 
-        Panel1.add(new JLabel(new FlatSVGIcon("icon/bank-building.svg")));
+        Panel1.add(new JLabel(new FlatSVGIcon("icon/Vietcombank.svg")));
 
         jLabelBranch.setFont(new Font("Inter", Font.BOLD, 13));
         infor.add(jLabelBranch, "wrap");
 
         jPanelLogo.setBackground(new Color(255, 255, 255));
         jPanelLogo.setPreferredSize(new Dimension(30, 120));
-        infor.add(jPanelLogo);
+        infor.add(jPanelLogo, "span 1 2");
 
         roleName.setFont(new Font("Inter", Font.PLAIN, 15));
         infor.add(roleName, "wrap");
 
-        staffInfo.setBackground(new Color(255, 255, 255));
-        staffInfo.setPreferredSize(new Dimension(30, 80));
-        infor.add(staffInfo);
+//        staffInfo.setBackground(new Color(255, 255, 255));
+//        staffInfo.setPreferredSize(new Dimension(30, 80));
+//        infor.add(staffInfo);
 
         iconLogo.setIcon(new FlatSVGIcon("icon/avatar.svg"));
         jPanelLogo.add(iconLogo);
 
-        iconInfo.setIcon(new FlatSVGIcon("icon/profile.svg"));
-        staffInfo.add(iconInfo);
+//        iconInfo.setIcon(new FlatSVGIcon("icon/profile.svg"));
+//        staffInfo.add(iconInfo);
 
         name.setFont(new Font("Inter", Font.BOLD, 15));
         infor.add(name, "wrap");
@@ -170,11 +170,11 @@ public class HomeGUI extends JFrame {
         menu.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         scrollPane.setPreferredSize(new Dimension(250, 550));
-        scrollPane.getViewport().setBackground(new Color(228,231,235));
+        scrollPane.getViewport().setBackground(new Color(191, 198, 208));
         left.add(scrollPane, "span, wrap");
 
         logout.setLayout(new FlowLayout(FlowLayout.CENTER));
-        logout.setBackground(new Color(183, 183, 183));
+        logout.setBackground(new Color(255,255,255));
         logout.setPreferredSize(new Dimension(160, 40));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logout.addMouseListener(new MouseAdapter() {
@@ -200,12 +200,12 @@ public class HomeGUI extends JFrame {
         logout.add(iconLogout);
 
         center.setLayout(new BorderLayout());
-        center.setBackground(new Color(228,231,235));
-        center.setBorder(BorderFactory.createMatteBorder(10, 0, 15, 10, new Color(228,231,235)));
+        center.setBackground(new Color(191, 198, 208));
+        center.setBorder(BorderFactory.createMatteBorder(10, 0, 15, 10, new Color(191, 198, 208)));
         right.add(center, BorderLayout.CENTER);
 
         content.setLayout(new BorderLayout());
-        content.setBackground(new Color(228,231,235));
+        content.setBackground(new Color(191, 198, 208));
         center.add(content, BorderLayout.CENTER);
     }
 
@@ -267,7 +267,7 @@ public class HomeGUI extends JFrame {
             moduleNames[i].setPreferredSize(new Dimension(190, 35));
             moduleNames[i].setHorizontalAlignment(SwingConstants.LEFT);
             moduleNames[i].setVerticalAlignment(SwingConstants.CENTER);
-            moduleNames[i].setFont((new Font("Inter", Font.PLAIN, 14)));
+            moduleNames[i].setFont((new Font("Inter", Font.BOLD, 13)));
             moduleNames[i].setIconTextGap(10);
             moduleNames[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             modules[i].add(moduleNames[i]);
@@ -311,7 +311,7 @@ public class HomeGUI extends JFrame {
     public JPanel getPanelModule(int id, List<Function> functions) {
         return switch (id) {
             case 1 -> new BranchGUI(functions);
-//            case 2 -> new MaterialGUI(functions);
+            case 2 -> new StaffGUI(functions, this);
 //            case 3 -> new StatisticSalesGUI();
 //            case 4 -> new StatisticSalaryGUI();
 //            case 5 -> new StatisticStaffGUI();
@@ -319,7 +319,7 @@ public class HomeGUI extends JFrame {
             case 7 -> new AccountGUI(functions);
 //            case 8 -> new ExportGUI(functions);
 //            case 9 -> new ImportGUI(functions);
-//            case 10 -> new ProductGUI(functions);
+            case 10 -> new InfoGUI(account, staff);
             case 11 -> new DecentralizationGUI(functions);
 //            case 12 -> new StaffGUI(functions, this);
 //            case 13 -> new Leave_Of_Absence_FormGUI(functions);

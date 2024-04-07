@@ -82,7 +82,7 @@ public class Role_DetailBLL extends Manager<Role_Detail> {
         List<Role_Detail> role_details = searchRole_details(
                 "[role_id] = " + role_detail.getRole_id(),
                 "[staff_id] = " + role_detail.getStaff_id(),
-                "[entry_date] = " + role_detail.getEntry_date()
+                "[entry_date] = '" + role_detail.getEntry_date() + "'"
         );
 
         if (!role_details.isEmpty()) {
