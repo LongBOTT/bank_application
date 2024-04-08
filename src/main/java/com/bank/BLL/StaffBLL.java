@@ -266,4 +266,8 @@ public class StaffBLL extends Manager<Staff> {
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return staffDAL.getAutoID();
+    }
 }

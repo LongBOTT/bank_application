@@ -101,4 +101,8 @@ public class DecentralizationBLL extends Manager<Decentralization>{
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return decentralizationDAL.getAutoID();
+    }
 }

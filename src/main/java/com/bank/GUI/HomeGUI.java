@@ -18,7 +18,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class HomeGUI extends JFrame {
     private final StaffBLL staffBLL = new StaffBLL();
@@ -83,7 +82,7 @@ public class HomeGUI extends JFrame {
     }
 
     public void initComponents() {
-        setIconImage(new FlatSVGIcon("icon/Vietcombank.svg").getImage());
+        setIconImage(new FlatSVGIcon("icon/ACB.svg").getImage());
         setTitle("Hệ Thống Quản Lý Ngân Hàng");
         setResizable(false);
         setPreferredSize(new Dimension(1440, 800));
@@ -139,7 +138,7 @@ public class HomeGUI extends JFrame {
         Panel1.setPreferredSize(new Dimension(30, 120));
         infor.add(Panel1, "center");
 
-        Panel1.add(new JLabel(new FlatSVGIcon("icon/Vietcombank.svg")));
+        Panel1.add(new JLabel(new FlatSVGIcon("icon/ACB.svg")));
 
         jLabelBranch.setFont(new Font("Inter", Font.BOLD, 13));
         infor.add(jLabelBranch, "wrap");
@@ -173,9 +172,9 @@ public class HomeGUI extends JFrame {
         scrollPane.getViewport().setBackground(new Color(191, 198, 208));
         left.add(scrollPane, "span, wrap");
 
-        logout.setLayout(new FlowLayout(FlowLayout.CENTER));
+        logout.setLayout(new GridBagLayout());
         logout.setBackground(new Color(255,255,255));
-        logout.setPreferredSize(new Dimension(160, 40));
+        logout.setPreferredSize(new Dimension(230, 40));
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logout.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -190,7 +189,7 @@ public class HomeGUI extends JFrame {
         iconLogout.setHorizontalAlignment(SwingConstants.LEFT);
         iconLogout.setVerticalAlignment(SwingConstants.CENTER);
         iconLogout.setFont((new Font("Inter", Font.PLAIN, 15)));
-        iconLogout.setIconTextGap(20);
+        iconLogout.setIconTextGap(10);
         iconLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         iconLogout.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -312,8 +311,8 @@ public class HomeGUI extends JFrame {
         return switch (id) {
             case 1 -> new BranchGUI(functions);
             case 2 -> new StaffGUI(functions, this);
-//            case 3 -> new StatisticSalesGUI();
-//            case 4 -> new StatisticSalaryGUI();
+            case 3 -> new CustomerGUI(functions);
+            case 4 -> new Bank_AccountGUI(functions);
 //            case 5 -> new StatisticStaffGUI();
 //            case 6 -> new DiscountGUI(functions);
             case 7 -> new AccountGUI(functions);

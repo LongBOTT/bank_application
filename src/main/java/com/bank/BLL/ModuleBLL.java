@@ -137,4 +137,8 @@ public class ModuleBLL extends Manager<Module>{
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return moduleDAL.getAutoID();
+    }
 }

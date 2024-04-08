@@ -38,12 +38,12 @@ public class Layout2 extends RoundedPanel {
         add(bottom, BorderLayout.SOUTH);
 
         containerSearchPanel.setLayout(new FlowLayout());
-        containerSearchPanel.setBackground(Color.white);
+        containerSearchPanel.setBackground(new Color(191, 198, 208));
         containerSearchPanel.setPreferredSize(new Dimension(800, 100));
         top.add(containerSearchPanel, BorderLayout.WEST);
 
         FunctionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        FunctionPanel.setBackground(Color.white);
+        FunctionPanel.setBackground(new Color(191, 198, 208));
         FunctionPanel.setPreferredSize(new Dimension(300, 50));
         top.add(FunctionPanel, BorderLayout.EAST);
 

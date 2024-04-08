@@ -95,10 +95,7 @@ public class Customer {
         String gender1 = gender? "Nữ" : "Nam";
         return no + " | " +  // can cuoc cong dan
                 name + " | " + // tên
-                gender1 + " | " + // giới tính
-                birthdate + " | " + // ngày sinh
                 phone + " | " +// số điện thoại
-                address + " | " + // địa chỉ
                 email; // email
     }
 

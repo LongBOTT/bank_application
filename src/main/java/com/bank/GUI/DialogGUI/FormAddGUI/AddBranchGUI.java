@@ -109,7 +109,7 @@ public class AddBranchGUI extends DialogForm {
         int id;
         String name, phone, address;
 
-        id = branchBLL.getAutoID(branchBLL.searchBranches("[deleted] = 0")); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        id = branchBLL.getAutoID(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         name = jTextFieldBranch.get(0).getText();
         phone = jTextFieldBranch.get(1).getText();
         address = jTextFieldBranch.get(2).getText();

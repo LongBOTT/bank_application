@@ -40,6 +40,7 @@ public class AddStaffGUI extends DialogForm {
     private PanelSearch search;
     private JPopupMenu menu;
     private StaffBLL staffBLL = new StaffBLL();
+    private BranchBLL branchBLL = new BranchBLL();
     private JRadioButton radioMale = new JRadioButton();
     private JRadioButton radioFemale = new JRadioButton();
     private ButtonGroup Gender;
@@ -60,7 +61,7 @@ public class AddStaffGUI extends DialogForm {
             public void itemClick(DataSearch data) {
                 menu.setVisible(false);
                 txtSearch.setText(data.getText());
-                Branch branch = new BranchBLL().searchBranches("[name] = '" + data.getText() + "'").get(0);
+                Branch branch = branchBLL.searchBranches("[name] = '" + data.getText() + "'").get(0);
                 branch_id = branch.getId();
             }
 
@@ -95,7 +96,7 @@ public class AddStaffGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 15)));
             attributeStaff.add(label);
             content.add(label);
             MyTextFieldUnderLine textField = new MyTextFieldUnderLine();
@@ -202,7 +203,7 @@ public class AddStaffGUI extends DialogForm {
         String staffNo, name, phone, address, email;
         boolean gender;
         Date birthdate;
-        id = staffBLL.getAutoID(staffBLL.searchStaffs());
+        id = staffBLL.getAutoID();
         name = jTextFieldsStaff.get(0).getText().trim();
         staffNo = jTextFieldsStaff.get(1).getText().trim();
         gender = !radioMale.isSelected();
@@ -240,7 +241,7 @@ public class AddStaffGUI extends DialogForm {
     private List<DataSearch> search(String text) {
         branch_id = 0;
         List<DataSearch> list = new ArrayList<>();
-        List<Branch> branches = new BranchBLL().findBranchs("name", text);
+        List<Branch> branches = branchBLL.findBranchs("name", text);
         for (Branch m : branches) {
             if (list.size() == 7)
                 break;

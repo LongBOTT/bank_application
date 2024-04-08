@@ -64,6 +64,7 @@ public class AccountGUI extends Layout1 {
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
+        jTextFieldSearch.setFont(new Font("Public Sans", Font.PLAIN, 14));
         jTextFieldSearch.setBackground(new Color(245, 246, 250));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");

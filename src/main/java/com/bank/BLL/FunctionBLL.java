@@ -142,4 +142,7 @@ public class FunctionBLL extends Manager<Function>{
         };
     }
 
+    public int getAutoID() {
+        return functionDAL.getAutoID();
+    }
 }

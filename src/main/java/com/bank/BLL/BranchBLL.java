@@ -13,10 +13,19 @@ import java.util.*;
 public class BranchBLL extends Manager<Branch> {
     private BranchDAL branchDAL;
 
-    private Branch branch ;
+    private List<Branch> branchListAll ;
 
     public BranchBLL() {
         branchDAL = new BranchDAL();
+        branchListAll = branchDAL.getAllBranches();
+    }
+
+    public List<Branch> getBranchListAll() {
+        return branchListAll;
+    }
+
+    public void setBranchListAll(List<Branch> branchListAll) {
+        this.branchListAll = branchListAll;
     }
 
     public BranchDAL getBranchDAL() {
@@ -95,6 +104,17 @@ public class BranchBLL extends Manager<Branch> {
     public List<Branch> findBranchs(String key, String value) {
         List<Branch> list = new ArrayList<>();
         List<Branch> branchList = branchDAL.searchBranches("[deleted] = 0");
+        for (Branch branch : branchList) {
+            if (getValueByKey(branch, key).toString().toLowerCase().contains(value.toLowerCase())) {
+                list.add(branch);
+            }
+        }
+        return list;
+    }
+
+    public List<Branch> findAllBranchs(String key, String value) {
+        List<Branch> list = new ArrayList<>();
+        List<Branch> branchList = branchListAll;
         for (Branch branch : branchList) {
             if (getValueByKey(branch, key).toString().toLowerCase().contains(value.toLowerCase())) {
                 list.add(branch);
@@ -202,5 +222,9 @@ public class BranchBLL extends Manager<Branch> {
             case "headquarter_id" -> branch.getHeadquarter_id();
             default -> null;
         };
+    }
+
+    public int getAutoID() {
+        return branchDAL.getAutoID();
     }
 }

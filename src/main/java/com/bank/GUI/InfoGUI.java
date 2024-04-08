@@ -6,6 +6,7 @@ import com.bank.DTO.Account;
 import com.bank.DTO.Branch;
 import com.bank.DTO.Staff;
 import com.bank.GUI.components.InfoPanel;
+import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -55,7 +56,7 @@ public class InfoGUI extends InfoPanel {
         jLabelUsername.setFont(new Font("Lexend", Font.BOLD, 16));
         InfoAccountPanel.add(jLabelUsername);
 
-        JTextField textFieldUsername = new JTextField();
+        JTextField textFieldUsername = new MyTextFieldUnderLine();
         textFieldUsername.setText(account.getUsername());
         textFieldUsername.setPreferredSize(new Dimension(300, 45));
         textFieldUsername.setFont(new Font("Lexend", Font.PLAIN, 14));
@@ -67,7 +68,8 @@ public class InfoGUI extends InfoPanel {
         jLabelPassword.setFont(new Font("Lexend", Font.BOLD, 16));
         InfoAccountPanel.add(jLabelPassword);
 
-        JTextField jPasswordField = new JTextField("⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫");
+        JTextField jPasswordField = new MyTextFieldUnderLine();
+        jPasswordField.setText("⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫");
         jPasswordField.setPreferredSize(new Dimension(300, 45));
         jPasswordField.setFont(new Font("Lexend", Font.BOLD, 14));
         jPasswordField.setEditable(false);
@@ -89,7 +91,7 @@ public class InfoGUI extends InfoPanel {
             label.setFont(new Font("Lexend", Font.BOLD, 16));
             InfoStaffPanel.add(label);
 
-            JTextField textField = new JTextField();
+            JTextField textField = new MyTextFieldUnderLine();
             if (string.equals("Tên Nhân Viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));

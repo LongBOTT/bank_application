@@ -127,4 +127,7 @@ public class HeadquarterBLL extends Manager<Headquarter>{
         };
     }
 
+    public int getAutoID() {
+        return headquarterDAL.getAutoID();
+    }
 }

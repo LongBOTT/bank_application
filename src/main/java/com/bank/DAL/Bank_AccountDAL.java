@@ -1,6 +1,7 @@
 package com.bank.DAL;
 
 import com.bank.DTO.Bank_Account;
+import com.bank.DTO.Customer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -85,6 +86,16 @@ public class Bank_AccountDAL extends Manager{
             return convertToBank_Accounts(read(conditions));
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Bank_AccountDAL.searchBank_Accounts(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Bank_Account> getAllBank_Accounts() {
+        try {
+            return convertToBank_Accounts(
+                    executeProcedure("sp_GetAllBank_Accounts"));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Bank_AccountDAL.getAllBank_Accounts(): " + e.getMessage());
         }
         return new ArrayList<>();
     }

@@ -11,7 +11,7 @@ import java.util.Properties;
 
 
 public class Database {
-    public static int headquarter_id = 0;
+    public static int headquarter_id = 1;
     public static Connection getConnection() throws IOException {
         do {
             try {
@@ -39,7 +39,7 @@ public class Database {
                 fileInputStream.close();
                 if (dbDatabase == null)
                     throw new RuntimeException();
-                String dbUrl = String.format("jdbc:sqlserver://localhost\\\\%s:%s;user=%s;password=%s;database=%s;encrypt=true;trustServerCertificate=true;", dbInstance, dbPort, dbUsername, dbPassword, dbDatabase);
+                String dbUrl = String.format("jdbc:sqlserver://%s:%s;user=%s;password=%s;database=%s;encrypt=true;trustServerCertificate=true;", dbInstance, dbPort, dbUsername, dbPassword, dbDatabase);
                 return DriverManager.getConnection(dbUrl);
             } catch (RuntimeException | SQLException e) {
                 System.out.println(e.getMessage());

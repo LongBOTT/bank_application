@@ -26,7 +26,7 @@ public class AddRoleGUI extends DialogForm {
     public AddRoleGUI() {
         super();
         super.setTitle("Thêm chức vụ");
-        super.setSize(new Dimension(1000, 250));
+        super.setSize(new Dimension(700, 250));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init();
         setVisible(true);
@@ -45,11 +45,13 @@ public class AddRoleGUI extends DialogForm {
         titleName.setVerticalAlignment(JLabel.CENTER);
         title.add(titleName, BorderLayout.CENTER);
 
+        content.setLayout(new FlowLayout(FlowLayout.CENTER));
+
         for (String string : new String[]{"Tên chức vụ"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeRole.add(label);
             content.add(label);
 
@@ -58,7 +60,7 @@ public class AddRoleGUI extends DialogForm {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setBackground(new Color(245, 246, 250));
             jTextFieldRole.add(textField);
-            content.add(textField, "wrap");
+            content.add(textField);
 
         }
 
@@ -99,7 +101,7 @@ public class AddRoleGUI extends DialogForm {
         int id;
         String name;
 
-        id = roleBLL.getAutoID(roleBLL.searchRoles()); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        id = roleBLL.getAutoID(); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         name = jTextFieldRole.get(0).getText();
 
         Role role = new Role(id, name); // false là tồn tại, true là đã xoá

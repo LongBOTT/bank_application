@@ -6,6 +6,8 @@ import com.bank.utils.Password;
 import com.bank.utils.VNString;
 import javafx.util.Pair;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -148,5 +150,9 @@ public class AccountBLL extends Manager<Account>{
             default -> null;
         };
 
+    }
+
+    public int getAutoID() {
+        return accountDAL.getAutoID();
     }
 }

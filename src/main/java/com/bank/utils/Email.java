@@ -5,6 +5,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 import javax.swing.*;
+import java.time.LocalDate;
 import java.util.Properties;
 
 public class Email {
@@ -37,7 +38,8 @@ public class Email {
             message.setFrom(new InternetAddress(email));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(emailSubject, "utf-8");
-            message.setText(emailBody, "utf-8");
+//            message.setText(emailBody, "utf-8");
+            message.setContent(emailBody, "text/html; charset=utf-8");
             Transport.send(message);
             System.out.println("Email sent successfully.");
         } catch (MessagingException e) {

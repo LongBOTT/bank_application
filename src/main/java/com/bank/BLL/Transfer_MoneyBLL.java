@@ -82,4 +82,8 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return transfer_MoneyDAL.getAutoID();
+    }
 }

@@ -1,20 +1,28 @@
 package com.bank.BLL;
 
 import com.bank.DAL.Bank_AccountDAL;
-import com.bank.DTO.Decentralization;
 import com.bank.DTO.Bank_Account;
-import com.bank.utils.VNString;
+
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Bank_AccountBLL extends Manager<Bank_Account>{
     private Bank_AccountDAL Bank_AccountDAL;
+    public List<Bank_Account> bank_accountListAll;
 
     public Bank_AccountBLL() {
         Bank_AccountDAL = new Bank_AccountDAL();
+        bank_accountListAll = Bank_AccountDAL.getAllBank_Accounts();
+    }
+
+    public List<Bank_Account> getBank_accountListAll() {
+        return bank_accountListAll;
+    }
+
+    public void setBank_accountListAll(List<Bank_Account> bank_accountListAll) {
+        this.bank_accountListAll = bank_accountListAll;
     }
 
     public Bank_AccountDAL getBank_AccountDAL() {
@@ -43,11 +51,6 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
     }
 
     public Pair<Boolean, String> updateBank_Account(Bank_Account Bank_Account) {
-        Pair<Boolean, String> result = checkBank_AccountAll(Bank_Account);
-
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
         if (Bank_AccountDAL.updateBank_Account(Bank_Account) == 0)
             return new Pair<>(false, "Cập nhật tài khoản ngân hàng không thành công.");
 
@@ -61,6 +64,17 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
     public List<Bank_Account> findBank_Accounts(String key, String value) {
         List<Bank_Account> list = new ArrayList<>();
         List<Bank_Account> Bank_AccountList = Bank_AccountDAL.searchBank_Accounts();
+        for (Bank_Account Bank_Account : Bank_AccountList) {
+            if (getValueByKey(Bank_Account, key).toString().toLowerCase().contains(value.toLowerCase())) {
+                list.add(Bank_Account);
+            }
+        }
+        return list;
+    }
+
+    public List<Bank_Account> findAllBank_Accounts(String key, String value) {
+        List<Bank_Account> list = new ArrayList<>();
+        List<Bank_Account> Bank_AccountList = bank_accountListAll;
         for (Bank_Account Bank_Account : Bank_AccountList) {
             if (getValueByKey(Bank_Account, key).toString().toLowerCase().contains(value.toLowerCase())) {
                 list.add(Bank_Account);
@@ -96,6 +110,10 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
         return new Pair<>(false, "");
     }
 
+    public List<Bank_Account> getALLBank_Accounts() {
+        return Bank_AccountDAL.getAllBank_Accounts();
+    }
+
     @Override
     public Object getValueByKey(Bank_Account Bank_Account, String key) {
         return switch (key) {
@@ -109,4 +127,20 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
         };
     }
 
+    public int getAutoID() {
+        return Bank_AccountDAL.getAutoID();
+    }
+
+    public String getAutoNumber() {
+        boolean flag = true;
+        String number = "";
+        while (flag) {
+            int min = 100000000;
+            int max = 999999999;
+            number =  Integer.toString((int) ((Math.random() * (max - min)) + min));
+            if (findAllBank_Accounts("number", number).isEmpty())
+                flag = false;
+        }
+        return number;
+    }
 }

@@ -3,9 +3,6 @@ package com.bank.GUI;
 import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Function;
 import com.bank.DTO.Branch;
-//import com.bank.GUI.DialogGUI.FormAddGUI.AddBranchGUI;
-//import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBranchGUI;
-//import com.bank.GUI.DialogGUI.FromEditGUI.EditBranchGUI;
 import com.bank.GUI.DialogGUI.FormAddGUI.AddBranchGUI;
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBranchGUI;
 import com.bank.GUI.DialogGUI.FormEditGUI.EditBranchGUI;
@@ -89,6 +86,8 @@ public class BranchGUI extends Layout1 {
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
+        jTextFieldSearch.setFont(new Font("Public Sans", Font.PLAIN, 14));
+        jTextFieldSearch.setFont(new Font("Public Sans", Font.PLAIN, 14));
         jTextFieldSearch.setBackground(new Color(255, 255, 255));
         jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
         jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập tên chi nhánh cần tìm kiếm");
@@ -251,8 +250,10 @@ public class BranchGUI extends Layout1 {
             refresh();
         }
 
-        if (remove && indexColumn == indexColumnRemove)
+        if (remove && indexColumn == indexColumnRemove) {
             deleteBranch(branchBLL.searchBranches("[id] = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "[deleted] = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            refresh();
+        }
 
     }
 

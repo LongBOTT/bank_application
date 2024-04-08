@@ -38,7 +38,7 @@ public class ChangeRoleGUI extends JDialog {
         getContentPane().setBackground(new Color(228,231,235));
         setTitle("Thiết Lập Lương");
         setLayout(new FlowLayout(FlowLayout.CENTER));
-        setIconImage(new FlatSVGIcon("icon/Vietcombank.svg").getImage());
+        setIconImage(new FlatSVGIcon("icon/ACB.svg").getImage());
         setSize(new Dimension(500, 350));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);

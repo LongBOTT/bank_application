@@ -20,7 +20,7 @@ public class DialogForm extends JDialog {
         getContentPane().setBackground(new Color(228,231,235));
 
         setLayout(new MigLayout("", "50[]50", "10[]10"));
-        setIconImage(new FlatSVGIcon("icon/Vietcombank.svg").getImage());
+        setIconImage(new FlatSVGIcon("icon/ACB.svg").getImage());
         setSize(new Dimension(1000, 400));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);

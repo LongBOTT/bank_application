@@ -1,6 +1,7 @@
 package com.bank.DAL;
 
 import com.bank.DTO.Customer;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -76,7 +77,24 @@ public class CustomerDAL extends Manager{
         return 0;
     }
 
-
+    public int updateAllCustomer (Customer customer) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(executeProcedure("sp_UpdateCustomer",
+                    new Pair<>("no", customer.getCustomerNo()),
+                    new Pair<>("name", customer.getName()),
+                    new Pair<>("gender", customer.isGender()),
+                    new Pair<>("birthdate", customer.getBirthdate()),
+                    new Pair<>("phone", customer.getPhone()),
+                    new Pair<>("address", customer.getAddress()),
+                    new Pair<>("email", customer.getEmail()),
+                    new Pair<>("deleted", customer.isDeleted())).get(0).get(0));
+            return result;
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
+        }
+        return result;
+    }
 
     public int deleteCustomer(String... conditions) {
         try {
@@ -89,11 +107,40 @@ public class CustomerDAL extends Manager{
         return 0;
     }
 
+    public int deleteAllCustomer(String no) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(executeProcedure("sp_DeleteCustomer", new Pair<>("no", no)).get(0).get(0));
+            return result;
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
+        }
+        return result;
+    }
+
     public List<Customer> searchCustomers(String... conditions) {
         try {
             return convertToCustomers(read(conditions));
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in CustomerDAL.searchCustomers(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Customer> searchCustomerByBranch(int branch_id) {
+        try {
+            return convertToCustomers(executeProcedure("sp_SearchCustomerByBranch", new Pair<>("branch_id", branch_id)));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Customer> getAllCustomers() {
+        try {
+            return convertToCustomers(executeProcedure("sp_GetAllCustomers"));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
         }
         return new ArrayList<>();
     }

@@ -94,6 +94,14 @@ public class Manager extends SQLServer {
         return executeUpdate(query, values);
     }
 
+    public int getAutoID() {
+        try {
+            return Integer.parseInt(executeProcedure("sp_GetAutoID", new Pair<>("tablename", tableName)).get(0).get(0));
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public <T> List<T> convert(List<List<String>> data, Function<List<String>, T> converter) {
         List<T> list = new ArrayList<>();
         for (List<String> row : data) {

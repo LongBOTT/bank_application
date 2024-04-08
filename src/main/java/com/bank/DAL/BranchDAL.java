@@ -89,7 +89,7 @@ public class BranchDAL extends Manager{
 
     public List<Branch> getAllBranches() {
         try {
-            return convertToBranches(executeProcedure("GetAllBranches"));
+            return convertToBranches(executeProcedure("sp_GetAllBranches"));
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in BranchDAL.getAllBranches(): " + e.getMessage());
         }

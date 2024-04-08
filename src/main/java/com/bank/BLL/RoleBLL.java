@@ -130,4 +130,8 @@ public class RoleBLL extends Manager<Role> {
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return roleDAL.getAutoID();
+    }
 }

@@ -110,6 +110,16 @@ public class SQLServer {
             for (Pair condition: conditions) {
                 strings = Arrays.copyOf(strings, strings.length + 1);
                 if (condition.getValue() instanceof String || condition.getValue() instanceof Character) {
+                    strings[strings.length - 1] = "@" + condition.getKey() + " = N'" + condition.getValue() + "'";
+                }
+                if (condition.getValue() instanceof Integer) {
+                    strings[strings.length - 1] = "@" + condition.getKey() + " = " + condition.getValue();
+                }
+                if (condition.getValue() instanceof Boolean) {
+                    String value =  Boolean.parseBoolean(condition.getValue().toString()) ? "1" : "0";
+                    strings[strings.length - 1] = "@" + condition.getKey() + " = " + value;
+                }
+                if (condition.getValue() instanceof java.util.Date) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = '" + condition.getValue() + "'";
                 }
             }

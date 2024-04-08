@@ -101,4 +101,8 @@ public class Role_DetailBLL extends Manager<Role_Detail> {
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return 0;
+    }
 }

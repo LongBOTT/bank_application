@@ -1,21 +1,28 @@
 package com.bank.GUI;
 
-import com.bank.BLL.*;
+import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.*;
-import com.bank.GUI.DialogGUI.FormAddGUI.AddStaffGUI;
-import com.bank.GUI.DialogGUI.FormDetailGUI.*;
-import com.bank.GUI.DialogGUI.FormEditGUI.EditStaffGUI;
-import com.bank.GUI.components.*;
-import com.bank.utils.Database;
+
+import com.bank.GUI.DialogGUI.FormAddGUI.AddCustomerGUI;
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI;
+import com.bank.GUI.DialogGUI.FormEditGUI.EditCustomerGUI;
+import com.bank.GUI.components.DataTable;
+import com.bank.GUI.components.Layout1;
+import com.bank.GUI.components.RoundedPanel;
+import com.bank.GUI.components.RoundedScrollPane;
+import com.bank.GUI.components.swing.DataSearch;
+import com.bank.GUI.components.swing.EventClick;
+import com.bank.GUI.components.swing.MyTextField;
+import com.bank.GUI.components.swing.PanelSearch;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -23,14 +30,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class StaffGUI extends Layout1 {
+public class CustomerGUI extends Layout1 {
     private RoundedPanel containerSearch;
     private JLabel iconSearch;
-    private JTextField jTextFieldSearch;
+    private MyTextField txtSearch;
+    private PanelSearch search;
+    private JPopupMenu menu;
     private JButton jButtonSearch;
     private JComboBox<String> jComboBoxSearch;
     private List<Function> functions;
-    private StaffBLL staffBLL = new StaffBLL();
+    private CustomerBLL customerBLL = new CustomerBLL();
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
     private int indexColumnDetail = -1;
@@ -40,30 +49,51 @@ public class StaffGUI extends Layout1 {
     private boolean edit = false;
     private boolean remove = false;
     private String[] columnNames;
-    private final HomeGUI homeGUI;
     private Object[][] data = new Object[0][0];
 
-    public StaffGUI(List<Function> functions, HomeGUI homeGUI) {
+    public CustomerGUI(List<Function> functions) {
         super();
         this.functions = functions;
-        this.homeGUI = homeGUI;
         if (functions.stream().anyMatch(f -> f.getName().equals("view")))
             detail = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
             edit = true;
         if (functions.stream().anyMatch(f -> f.getName().equals("remove")))
             remove = true;
+
+        menu = new JPopupMenu();
+        search = new PanelSearch();
+        menu.setBorder(BorderFactory.createLineBorder(new Color(164, 164, 164)));
+        menu.add(search);
+        menu.setFocusable(false);
+        search.addEventClick(new EventClick() {
+            @Override
+            public void itemClick(DataSearch data) {
+                menu.setVisible(false);
+                txtSearch.setText(data.getText());
+                searchCustomers();
+            }
+
+            @Override
+            public void itemRemove(Component com, DataSearch data) {
+                search.remove(com);
+                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                if (search.getItemSize() == 0) {
+                    menu.setVisible(false);
+                }
+            }
+        });
         init(functions);
     }
 
     private void init(List<Function> functions) {
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
-        jTextFieldSearch = new JTextField();
+        txtSearch = new MyTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Tên nhân viên", "Chức Vụ"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Tên khách hàng", "CCCD"});
 
-        columnNames = new String[]{"Mã Nhân Viên", "CCCD", "Họ Tên", "Số Điện Thoại", "Chức Vụ"};
+        columnNames = new String[]{"Căn Cước Công Dân", "Họ Tên", "Số Điện Thoại", "Email"};
         if (detail) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnDetail = columnNames.length - 1;
@@ -84,7 +114,7 @@ public class StaffGUI extends Layout1 {
 
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                detail, edit, remove, 5); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+                detail, edit, remove, 4); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -97,44 +127,36 @@ public class StaffGUI extends Layout1 {
         iconSearch.setIcon(new FlatSVGIcon("icon/search.svg"));
         containerSearch.add(iconSearch);
 
-        jTextFieldSearch.setFont(new Font("Public Sans", Font.PLAIN, 14));
-        jTextFieldSearch.setBackground(new Color(255, 255, 255));
-        jTextFieldSearch.setBorder(BorderFactory.createEmptyBorder());
-        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
-        jTextFieldSearch.setPreferredSize(new Dimension(300, 30));
-        containerSearch.add(jTextFieldSearch);
-        jTextFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                searchStaffs();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                searchStaffs();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                searchStaffs();
+        txtSearch.setBackground(new Color(255, 255, 255));
+        txtSearch.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm");
+        txtSearch.setPreferredSize(new Dimension(300, 30));
+        txtSearch.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                txtSearchMouseClicked(evt);
             }
         });
+        txtSearch.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                txtSearchKeyPressed(evt);
+            }
+            public void keyReleased(KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
+        containerSearch.add(txtSearch);
         jButtonSearch.setBackground(new Color(1, 120, 220));
         jButtonSearch.setForeground(Color.white);
         jButtonSearch.setPreferredSize(new Dimension(100, 30));
-        jButtonSearch.addActionListener(e -> searchStaffs());
+        jButtonSearch.addActionListener(e -> searchCustomers());
         SearchPanel.add(jButtonSearch);
 
         jComboBoxSearch.setBackground(new Color(1, 120, 220));
         jComboBoxSearch.setForeground(Color.white);
         jComboBoxSearch.setPreferredSize(new Dimension(120, 30));
-        jComboBoxSearch.addActionListener(e -> searchStaffs());
+        jComboBoxSearch.addActionListener(e -> searchCustomers());
         SearchPanel.add(jComboBoxSearch);
 
-        if (Database.headquarter_id == 0)
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[deleted] = 0")));
-        else
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0")));
+        loadDataTable(customerBLL.getData(customerBLL.getCustomerListAll()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -164,7 +186,7 @@ public class StaffGUI extends Layout1 {
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new AddStaffGUI();
+                    new AddCustomerGUI();
                     refresh();
                 }
             });
@@ -208,33 +230,24 @@ public class StaffGUI extends Layout1 {
     }
 
     public void refresh() {
-        jTextFieldSearch.setText("");
+        customerBLL = new CustomerBLL();
+        txtSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
-        if (Database.headquarter_id == 0)
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[deleted] = 0")));
-        else
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0")));
+        loadDataTable(customerBLL.getData(customerBLL.getCustomerListAll()));
     }
 
-    private void searchStaffs() {
-        List<Staff> staffList;
-        if (Database.headquarter_id == 0)
-            staffList = staffBLL.searchStaffs( "[deleted] = 0");
-        else
-            staffList = staffBLL.searchStaffs("[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0");
+    private void searchCustomers() {
+        List<Customer> customerList = new ArrayList<>(customerBLL.getCustomerListAll());
 
-        if (!jTextFieldSearch.getText().isEmpty()) {
+        if (!txtSearch.getText().isEmpty()) {
             if (jComboBoxSearch.getSelectedIndex() == 0) {
-                staffList.removeIf(staff -> !staff.getName().toLowerCase().contains(jTextFieldSearch.getText().toLowerCase()));
+                customerList.removeIf(customer -> !customer.getName().toLowerCase().contains(txtSearch.getText().toLowerCase()));
             }
             if (jComboBoxSearch.getSelectedIndex() == 1) {
-                List<Integer> list = new ArrayList<>();
-                for (Role role : new RoleBLL().findRoles("name", jTextFieldSearch.getText()))
-                    list.add(role.getId());
-                staffList.removeIf(staff  -> !list.contains(new Role_DetailBLL().searchRole_detailsByStaff(staff.getId()).get(0).getRole_id()));
+                customerList.removeIf(customer -> !customer.getCustomerNo().contains(txtSearch.getText()));
             }
         }
-        loadDataTable(staffBLL.getData(staffList));
+        loadDataTable(customerBLL.getData(customerList));
     }
 
     public void loadDataTable(Object[][] objects) {
@@ -249,20 +262,6 @@ public class StaffGUI extends Layout1 {
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
-
-            int staffId = Integer.parseInt((String) data[i][0]);
-            List<Role_Detail> role_detailList = new Role_DetailBLL().searchRole_detailsByStaff(staffId);
-            if (!role_detailList.isEmpty()) {
-                Role_Detail roleDetail = role_detailList.get(0);
-                Role role = new RoleBLL().searchRoles("[id] = " + roleDetail.getRole_id()).get(0);
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = role.getName();
-            } else {
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = "Chưa có chức vụ";
-            }
-
-
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
@@ -290,32 +289,39 @@ public class StaffGUI extends Layout1 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        if (detail && indexColumn == indexColumnDetail)
-            new DetailStaffGUI(staffBLL.searchStaffs("[id] = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        Customer selectedCustomer = new Customer();
+        for (Customer customer : customerBLL.getCustomerListAll())
+            if (Objects.equals(customer.getCustomerNo(), data[indexRow][0].toString())) {
+                selectedCustomer = customer;
+                break;
+            }
+        if (detail && indexColumn == indexColumnDetail){
+            new DetailCustomerGUI(selectedCustomer); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        }
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditStaffGUI(staffBLL.searchStaffs("[id] = " + data[indexRow][0]).get(0), homeGUI);
+            new EditCustomerGUI(selectedCustomer);
             refresh();
         }
 
         if (remove && indexColumn == indexColumnRemove) {
-            deleteStaff(staffBLL.searchStaffs("[id] = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            deleteCustomer(selectedCustomer); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 
     }
 
-    private void deleteStaff(Staff staff) {
+    private void deleteCustomer(Customer customer) {
         if (dataTable.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xoá.",
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng cần xoá.",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
-        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà nhân viên?",
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà khách hàng?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
-            Pair<Boolean, String> result = staffBLL.deleteStaff(staff);
+            Pair<Boolean, String> result = customerBLL.deleteAllCustomer(customer);
             if (result.getKey()) {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -325,6 +331,64 @@ public class StaffGUI extends Layout1 {
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void txtSearchMouseClicked(MouseEvent evt) {
+        if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
+            menu.show(txtSearch, 0, txtSearch.getHeight());
+            search.clearSelected();
+        }
+    }
+
+    private List<DataSearch> search(String text) {
+        List<DataSearch> list = new ArrayList<>();
+
+        List<Customer> customers;
+        if (jComboBoxSearch.getSelectedIndex() == 0) {
+            customers = customerBLL.findAllCustomers("name", text);
+            for (Customer m : customers) {
+                if (list.size() == 7)
+                    break;
+                list.add(new DataSearch(m.getName()));
+            }
+            return list;
+        }
+        else  {
+            customers = customerBLL.findAllCustomers("no", text);
+            for (Customer m : customers) {
+                if (list.size() == 7)
+                    break;
+                list.add(new DataSearch(m.getCustomerNo()));
+            }
+            return list;
+        }
+    }
+
+    private void txtSearchKeyReleased(KeyEvent evt) {
+        if (evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN && evt.getKeyCode() != KeyEvent.VK_ENTER) {
+            String text = txtSearch.getText().trim().toLowerCase();
+            search.setData(search(text));
+            if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
+                menu.show(txtSearch, 0, txtSearch.getHeight());
+                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+            } else {
+                menu.setVisible(false);
+            }
+        }
+    }
+
+    private void txtSearchKeyPressed(KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_UP) {
+            search.keyUp();
+        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            search.keyDown();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            String text = search.getSelectedText();
+            txtSearch.setText(text);
+
+        }
+        menu.setVisible(false);
+
     }
 }
 

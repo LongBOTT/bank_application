@@ -73,7 +73,7 @@ public class Bank_Account {
 
     @Override
     public String toString() {
-        String status1 = status? "Đang mở" : "Đã khoá";
+        String status1 = status? "Đang mở" : "Đã đóng";
         return number + " | " +
                 customer_no + " | " +
                 balance + " | " +

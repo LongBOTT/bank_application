@@ -78,7 +78,7 @@ public class EditStaffGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 15)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 15)));
             attributeStaff.add(label);
             content.add(label);
 
@@ -232,7 +232,7 @@ public class EditStaffGUI extends DialogForm {
         buttonChangeBranch.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                editStaff();
+//                editStaff();
             }
         });
         containerButton.add(buttonChangeBranch);

@@ -178,21 +178,25 @@ public class DataTable extends JTable {
         jTableHeader.setBackground(new Color(183, 183, 183));
     }
 
-    public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, boolean detail, boolean edit, boolean remove, int numberOfColumns, int checkbox) {
+    public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, ActionListener actionListenerChange, boolean detail, boolean edit, boolean remove, int numberOfColumns, int status) {
         super(new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == checkbox) {
-                    return Boolean.class;
-                }
-                return String.class;
+                return column == status;
             }
         });
+        for (int i = 0; i < getColumnCount(); i++) {
+            setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
+        }
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.addItem("Đang mở");
+        comboBox.addItem("Đã đóng");
+        ((JLabel)comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+        DefaultTableCellRenderer renderer =
+                new CustomTableCellRenderer();
+        getColumnModel().getColumn(status).setCellRenderer(renderer);
+        getColumnModel().getColumn(status).setCellEditor(new DefaultCellEditor(comboBox));
 
         for (int i = numberOfColumns; i < getColumnCount(); i++) {
             getColumnModel().getColumn(i).setCellRenderer(new CustomPanelRenderer(false));
@@ -210,13 +214,28 @@ public class DataTable extends JTable {
         setSelectionForeground(Color.BLACK);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE) {
+                    int row = e.getFirstRow();
+                    int col = e.getColumn();
+                    if (col == status && row != -1) {
+                        if (actionListenerChange != null) {
+                            actionListenerChange.actionPerformed(null);
+                        }
+                    }
+                }
+            }
+        });
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int row = rowAtPoint(e.getPoint());
                 int col = columnAtPoint(e.getPoint());
 
-                if ((col == numberOfColumns && row != -1) || (col == numberOfColumns + 1 && row != -1) || (col == numberOfColumns + 2 && row != -1) || (col == checkbox && row != -1)) {
+                if ((col == numberOfColumns && row != -1) || (col == numberOfColumns + 1 && row != -1) || (col == numberOfColumns + 2 && row != -1) || (col == status && row != -1)) {
                     if (actionListener != null) {
                         actionListener.actionPerformed(null);
                     }

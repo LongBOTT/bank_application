@@ -83,4 +83,8 @@ public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Depos
             default -> null;
         };
     }
+
+    public int getAutoID() {
+        return transaction_deposit_withdrawalDAL.getAutoID();
+    }
 }

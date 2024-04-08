@@ -87,7 +87,7 @@ public class AddAccountGUI extends DialogForm {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(150, 35));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeAccount.add(label);
             content.add(label);
 
@@ -174,7 +174,7 @@ public class AddAccountGUI extends DialogForm {
 //            return;
 //        }
 
-        id = accountBLL.getAutoID(accountBLL.searchAccounts());
+        id = accountBLL.getAutoID();
         username = jTextFieldAccount.get(0).getText();
 
         Account account = new Account(id, username, staff_id);

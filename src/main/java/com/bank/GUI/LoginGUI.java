@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
@@ -45,9 +44,9 @@ public class LoginGUI extends JFrame {
     }
 
     private void initComponents() {
-        setIconImage(new FlatSVGIcon("icon/Vietcombank.svg").getImage());
+        setIconImage(new FlatSVGIcon("icon/ACB.svg").getImage());
         setTitle("Hệ Thống Quản Lý Ngân Hàng");
-        setSize(700, 500);
+        setSize(780, 500);
         setResizable(false);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -69,7 +68,7 @@ public class LoginGUI extends JFrame {
 
         jPanelLogo = new JPanel(new BorderLayout());
         jPanelLogo.setBackground(new Color(232, 26, 180));
-        jPanelLogo.setPreferredSize(new Dimension(300, 500));
+        jPanelLogo.setPreferredSize(new Dimension(380, 500));
         contentPane.add(jPanelLogo, BorderLayout.WEST);
 
         labelLogo = new JLabel(new FlatSVGIcon("icon/logoBank.svg"));
@@ -169,6 +168,7 @@ public class LoginGUI extends JFrame {
         formInput.add(labelForgetPasswd, "span, right, wrap");
 
         jButtonLogin = new JButton("Login");
+        jButtonLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jButtonLogin.setBackground(new Color(1, 120, 220));
         jButtonLogin.setForeground(Color.WHITE);
         jButtonLogin.setFont(new Font("Inter", Font.BOLD, 18));
@@ -210,6 +210,7 @@ public class LoginGUI extends JFrame {
             }
         }
         JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        setEnabled(true);
         dispose();
         System.gc();
         Bank_Application.homeGUI.setVisible(true);
@@ -272,6 +273,7 @@ public class LoginGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Mật khẩu không chính xác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        setEnabled(false);
         Account account = accountList.get(0);
         try {
             Thread thread = new Thread(() -> Bank_Application.homeGUI.setAccount(account));

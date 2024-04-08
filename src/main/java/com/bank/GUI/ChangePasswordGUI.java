@@ -26,7 +26,6 @@ import java.awt.event.WindowEvent;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Map;
 
 public class ChangePasswordGUI extends JDialog {
     private String activeOtp;
@@ -101,7 +100,7 @@ public class ChangePasswordGUI extends JDialog {
         setSize(700, 500);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
-        setIconImage(new FlatSVGIcon("icon/Vietcombank.svg").getImage());
+        setIconImage(new FlatSVGIcon("icon/ACB.svg").getImage());
         setLocationRelativeTo(Bank_Application.loginGUI);
         addWindowListener(new WindowAdapter() {
             @Override
