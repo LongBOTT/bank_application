@@ -57,6 +57,13 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
         return new Pair<>(true, "Cập nhật tài khoản ngân hàng thành công.");
     }
 
+    public Pair<Boolean, String> updateAllBank_Account(Bank_Account Bank_Account) {
+        if (Bank_AccountDAL.updateAllBank_Account(Bank_Account) == 0)
+            return new Pair<>(false, "Cập nhật tài khoản ngân hàng không thành công.");
+
+        return new Pair<>(true, "Cập nhật tài khoản ngân hàng thành công.");
+    }
+
     public List<Bank_Account> searchBank_Accounts(String... conditions) {
         return Bank_AccountDAL.searchBank_Accounts(conditions);
     }

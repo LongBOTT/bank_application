@@ -13,6 +13,7 @@ import com.bank.DTO.Staff;
 import com.bank.GUI.ChangeRoleGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.GUI.components.swing.DataSearch;
 import com.bank.GUI.components.swing.EventClick;
@@ -26,6 +27,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,13 +48,12 @@ public class EditStaffGUI extends DialogForm {
     public static boolean changeRole = false;
     private JDateChooser jDateChooser = new JDateChooser();
     private Staff staff;
-    private HomeGUI homeGUI;
-
-    public EditStaffGUI(Staff staff, HomeGUI homeGUI) {
+    private ActionListener refresh;
+    public EditStaffGUI(ActionListener refresh, Staff staff) {
         super();
         super.setTitle("Cập Nhật Thông Tin Nhân Viên");
+        this.refresh = refresh;
         this.staff = staff;
-        this.homeGUI = homeGUI;
         super.setSize(new Dimension(1000, 450));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init(staff);
@@ -175,7 +176,7 @@ public class EditStaffGUI extends DialogForm {
                             if (changeRole && staff.getId() == HomeGUI.staff.getId()) {
                                 JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập lại.",
                                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                                homeGUI.dispose();
+                                Bank_Application.homeGUI.dispose();
                                 System.gc();
                                 Bank_Application.loginGUI.setVisible(true);
                                 return;
@@ -262,9 +263,16 @@ public class EditStaffGUI extends DialogForm {
         result = staffBLL.updateStaff(staff, newStaff);
 
         if (result.getKey()) {
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            refresh.actionPerformed(null);
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.ERROR_MESSAGE);

@@ -5,6 +5,7 @@ import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Customer;
+import com.bank.GUI.Bank_AccountGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.Circle_ProgressBar;
@@ -18,6 +19,7 @@ import javafx.util.Pair;
 import javax.swing.*;
 import java.awt.*;
 
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
@@ -42,10 +44,12 @@ public class AddCustomerGUI extends DialogForm {
     private JRadioButton radioFemale = new JRadioButton();
     private ButtonGroup Gender;
     private Thread currentCountDownThread;
-    public AddCustomerGUI() {
+    private ActionListener refresh;
+    public AddCustomerGUI(ActionListener refresh) {
         super();
         super.setTitle("Thêm Khách Hàng");
         super.setLocationRelativeTo(Bank_Application.homeGUI);
+        this.refresh = refresh;
         init();
         setVisible(true);
     }
@@ -169,24 +173,26 @@ public class AddCustomerGUI extends DialogForm {
         result = customerBLL.addCustomer(customer);
 
         if (result.getKey()) {
-            String number = bankAccountBLL.getAutoNumber();
-            Bank_Account bank_account = new Bank_Account();
-            bank_account.setNumber(number);
-            bank_account.setCustomer_no(customer.getCustomerNo());
-            bank_account.setBalance(BigDecimal.valueOf(0));
-            bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
-            bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
-            bank_account.setStatus(false);
+            if (!result.getValue().equals("Khôi phục khách hàng thành công.")) {
+                String number = bankAccountBLL.getAutoNumber();
+                Bank_Account bank_account = new Bank_Account();
+                bank_account.setNumber(number);
+                bank_account.setCustomer_no(customer.getCustomerNo());
+                bank_account.setBalance(BigDecimal.valueOf(0));
+                bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
+                bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
+                bank_account.setStatus(false);
 
-            if (!bankAccountBLL.addBank_Account(bank_account).getKey()) {
-                JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try {
-                Thread thread = new Thread(() -> sendOTP(email, number));
-                thread.start();
-            } catch (Exception ignored) {
+                if (!bankAccountBLL.addBank_Account(bank_account).getKey()) {
+                    JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                try {
+                    Thread thread = new Thread(() -> sendOTP(email, number));
+                    thread.start();
+                } catch (Exception ignored) {
 
+                }
             }
             Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
             circleProgressBar.getRootPane ().setOpaque (false);
@@ -194,9 +200,11 @@ public class AddCustomerGUI extends DialogForm {
             circleProgressBar.setBackground (new Color (0, 0, 0, 0));
             circleProgressBar.progress();
             circleProgressBar.setVisible(true);
-
             JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            refresh.actionPerformed(null);
+            Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+            bankAccountGUI.refresh();
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }

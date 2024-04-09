@@ -45,13 +45,13 @@ public class HomeGUI extends JFrame {
     private JLabel iconInfo;
     private JLabel iconLogout;
     private JLabel[] moduleNames;
-    private JPanel[] allPanelModules;
+    public JPanel[] allPanelModules;
     private Color color;
     private Color colorOver;
     private int currentPanel = 0;
     private boolean pressover;
     private boolean over = false;
-
+    public int indexModuleBank_AccountGUI = -1;
     public HomeGUI() {
         initComponents();
     }
@@ -227,6 +227,8 @@ public class HomeGUI extends JFrame {
             List<Function> functions = function2D.get(i);
             allPanelModules[i] = getPanelModule(module.getId(), functions);
             int index = i;
+            if (module.getId() == 4)
+                indexModuleBank_AccountGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -310,7 +312,7 @@ public class HomeGUI extends JFrame {
     public JPanel getPanelModule(int id, List<Function> functions) {
         return switch (id) {
             case 1 -> new BranchGUI(functions);
-            case 2 -> new StaffGUI(functions, this);
+            case 2 -> new StaffGUI(functions);
             case 3 -> new CustomerGUI(functions);
             case 4 -> new Bank_AccountGUI(functions);
 //            case 5 -> new StatisticStaffGUI();

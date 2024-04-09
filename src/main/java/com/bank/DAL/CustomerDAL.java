@@ -118,6 +118,28 @@ public class CustomerDAL extends Manager{
         return result;
     }
 
+    public int rollBackAllCustomer(String no) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(executeProcedure("sp_RollBackCustomer", new Pair<>("no", no)).get(0).get(0));
+            return result;
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
+        }
+        return result;
+    }
+
+    public boolean checkExistCustomerNo(String no) {
+        int result;
+        try {
+            result = Integer.parseInt(executeProcedure("sp_CheckExistCustomerNo", new Pair<>("no", no)).get(0).get(0));
+            return result == 1;
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
+        }
+        return false;
+    }
+
     public List<Customer> searchCustomers(String... conditions) {
         try {
             return convertToCustomers(read(conditions));

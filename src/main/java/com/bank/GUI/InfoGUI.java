@@ -92,10 +92,13 @@ public class InfoGUI extends InfoPanel {
             InfoStaffPanel.add(label);
 
             JTextField textField = new MyTextFieldUnderLine();
+            textField.setPreferredSize(new Dimension(300, 45));
+            textField.setFont(new Font("Lexend", Font.PLAIN, 14));
+            textField.setBackground(new Color(245, 246, 250));
             if (string.equals("Tên Nhân Viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
-                InfoStaffPanel.add(jLabel, "wrap");
+                InfoStaffPanel.add(jLabel);
                 continue;
             }
             if (string.equals("CCCD")) {
@@ -109,7 +112,7 @@ public class InfoGUI extends InfoPanel {
                 String gender1 = gender ? "Nam" : "Nữ";
                 JLabel jLabel = new JLabel(gender1);
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
-                InfoStaffPanel.add(jLabel, "wrap");
+                InfoStaffPanel.add(jLabel);
                 continue;
             }
 
@@ -122,25 +125,25 @@ public class InfoGUI extends InfoPanel {
             }
             if (string.equals("Số Điện Thoại")) {
                 textField.setText(staff.getPhone());
+                jTextFieldsStaff.add(textField);
+                InfoStaffPanel.add(textField);
             }
             if (string.equals("Địa Chỉ")) {
                 textField.setText(staff.getAddress());
+                jTextFieldsStaff.add(textField);
+                InfoStaffPanel.add(textField, "wrap");
             }
             if (string.equals("Email")) {
                 textField.setText(staff.getEmail());
+                jTextFieldsStaff.add(textField);
+                InfoStaffPanel.add(textField);
             }
             if (string.equals("Chi Nhánh")) {
                 Branch branch = new BranchBLL().searchBranches("[id] = " + staff.getBranch_id()).get(0);
                 JLabel jLabel = new JLabel(branch.getName());
                 jLabel.setFont(new Font("Lexend", Font.PLAIN, 14));
                 InfoStaffPanel.add(jLabel, "wrap");
-                continue;
             }
-            textField.setPreferredSize(new Dimension(300, 45));
-            textField.setFont(new Font("Lexend", Font.PLAIN, 14));
-            textField.setBackground(new Color(245, 246, 250));
-            jTextFieldsStaff.add(textField);
-            InfoStaffPanel.add(textField, "wrap");
         }
 
         buttonCancel.setPreferredSize(new Dimension(150, 30));

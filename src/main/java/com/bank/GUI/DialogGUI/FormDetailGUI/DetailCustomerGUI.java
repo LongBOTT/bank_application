@@ -2,22 +2,24 @@ package com.bank.GUI.DialogGUI.FormDetailGUI;
 ;
 import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.BranchBLL;
+import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Branch;
 import com.bank.DTO.Customer;
+import com.bank.GUI.Bank_AccountGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
-import com.bank.GUI.components.DataTable;
-import com.bank.GUI.components.MyTextFieldUnderLine;
-import com.bank.GUI.components.RoundedPanel;
-import com.bank.GUI.components.RoundedScrollPane;
+import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.*;
 import com.bank.main.Bank_Application;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.bank.utils.Email;
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -30,12 +32,14 @@ public class DetailCustomerGUI extends DialogForm {
     private JDateChooser jDateChooser = new JDateChooser();
     private DataTable dataTable;
     private Object[][] data = new Object[0][0];
-
+    private Thread currentCountDownThread;
+    private Customer customer;
     public DetailCustomerGUI(Customer customer) {
         super();
         super.setTitle("Thông Tin Khách Hàng ");
         super.setSize(new Dimension(1000, 600));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
+        this.customer = customer;
         init(customer);
         setVisible(true);
     }
@@ -110,7 +114,7 @@ public class DetailCustomerGUI extends DialogForm {
         }
 
         String[] columnNames = new String[]{"Số Thẻ", "CCCD", "Số Dư", "Chi Nhánh", "Ngày Mở", "Trạng Thái"};
-        dataTable = new DataTable(new Object[0][0], columnNames);
+        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction());
 
         super.remove(containerButton);
         RoundedScrollPane scrollPanel = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -129,7 +133,7 @@ public class DetailCustomerGUI extends DialogForm {
             return;
         }
 
-        data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length + 1][objects[0].length];
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
@@ -138,6 +142,7 @@ public class DetailCustomerGUI extends DialogForm {
             data[i][3] = branch.getName();
         }
 
+        data[data.length - 1][0] = "+";
 
         for (Object[] object : data) {
             model.addRow(object);
@@ -147,9 +152,59 @@ public class DetailCustomerGUI extends DialogForm {
     private void selectFunction() {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
+        Pair<Boolean, String> result = new Pair<>(true, "");
+        if (indexColumn == 0 && indexRow == dataTable.getRowCount() - 1) {
+            String[] options = new String[]{"Huỷ", "Xác nhận"};
+            int choice = JOptionPane.showOptionDialog(null, "Xác nhận mở tài khoản ngân hàng cho khách hàng?",
+                    "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            if (choice == 1) {
+                String number = bankAccountBLL.getAutoNumber();
+                Bank_Account bank_account = new Bank_Account();
+                bank_account.setNumber(number);
+                bank_account.setCustomer_no(customer.getCustomerNo());
+                bank_account.setBalance(BigDecimal.valueOf(0));
+                bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
+                bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
+                bank_account.setStatus(false);
 
-        if (indexColumn == 6)
-            new DetailBank_AccountGUI(bankAccountBLL.findAllBank_Accounts("number", data[indexRow][0].toString()).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+                result = bankAccountBLL.addBank_Account(bank_account);
+
+                if (!result.getKey()) {
+                    JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                try {
+                    Thread thread = new Thread(() -> sendOTP(customer.getEmail(), number));
+                    thread.start();
+                } catch (Exception ignored) {
+
+                }
+                Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+                circleProgressBar.getRootPane ().setOpaque (false);
+                circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.progress();
+                circleProgressBar.setVisible(true);
+                JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                bankAccountBLL = new Bank_AccountBLL();
+                loadDataTable(bankAccountBLL.getData(bankAccountBLL.findAllBank_Accounts("customer_no", customer.getCustomerNo())));
+                Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                bankAccountGUI.refresh();
+            }
+        }
+    }
+
+    private void sendOTP(String email, String number)    {
+        if (currentCountDownThread != null)
+            currentCountDownThread.interrupt();
+        currentCountDownThread = new Thread(() -> {
+            Email.sendOTP(email, "Mở thẻ Ngân Hàng ACB",
+                    "<html><p>Ngân Hàng ACB xin thông báo quý khách đã mở thẻ thành công vào ngày <strong> "+ LocalDate.now() + " </strong>.</p>" +
+                            "    <p>Số thẻ của quý khách là: <strong>" + number +"</strong></p>" +
+                            "    <p>Mật khẩu mặc định là: <strong>" + Email.getOTP() + "</strong></p>" +
+                            "    <p>Vui lòng thực hiện thay đổi mật khẩu.</p></html>");
+        });
+        currentCountDownThread.start();
     }
 }
 

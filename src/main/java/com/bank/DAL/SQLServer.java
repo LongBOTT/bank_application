@@ -4,6 +4,7 @@ import com.bank.utils.Database;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -112,7 +113,7 @@ public class SQLServer {
                 if (condition.getValue() instanceof String || condition.getValue() instanceof Character) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = N'" + condition.getValue() + "'";
                 }
-                if (condition.getValue() instanceof Integer) {
+                if (condition.getValue() instanceof Integer || condition.getValue() instanceof Double || condition.getValue() instanceof BigDecimal) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = " + condition.getValue();
                 }
                 if (condition.getValue() instanceof Boolean) {

@@ -11,6 +11,7 @@ import com.bank.GUI.components.swing.DataSearch;
 import com.bank.GUI.components.swing.EventClick;
 import com.bank.GUI.components.swing.MyTextField;
 import com.bank.GUI.components.swing.PanelSearch;
+import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -182,9 +183,8 @@ public class CustomerGUI extends Layout1 {
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             roundedPanel.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mousePressed(MouseEvent e) {
-                    new AddCustomerGUI();
-                    refresh();
+                public void mousePressed(MouseEvent mouseEvent) {
+                    new AddCustomerGUI(e -> refresh());
                 }
             });
 
@@ -286,19 +286,13 @@ public class CustomerGUI extends Layout1 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        Customer selectedCustomer = new Customer();
-        for (Customer customer : customerBLL.getCustomerListAll())
-            if (Objects.equals(customer.getCustomerNo(), data[indexRow][0].toString())) {
-                selectedCustomer = customer;
-                break;
-            }
+        Customer selectedCustomer = customerBLL.findAllCustomers("no", data[indexRow][0].toString()).get(0);
         if (detail && indexColumn == indexColumnDetail){
             new DetailCustomerGUI(selectedCustomer); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         }
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditCustomerGUI(selectedCustomer);
-            refresh();
+            new EditCustomerGUI(e -> refresh(), selectedCustomer);
         }
 
         if (remove && indexColumn == indexColumnRemove) {
@@ -328,6 +322,8 @@ public class CustomerGUI extends Layout1 {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 refresh();
+                Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                bankAccountGUI.refresh();
             } else {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Lỗi", JOptionPane.ERROR_MESSAGE);

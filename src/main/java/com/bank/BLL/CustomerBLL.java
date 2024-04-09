@@ -40,8 +40,14 @@ public class CustomerBLL extends Manager<Customer> {
 
     public Pair<Boolean, String> addCustomer(Customer customer) {
         Pair<Boolean, String> result = validateCustomerAll(customer);
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+        if (!result.getKey()) {
+            if (result.getValue().equals("Số căn cước công dân của khách hàng đã tồn tại.")) {
+                result = rollBackAllCustomer(customer);
+                return  result;
+            }
+            else
+                return new Pair<>(false, result.getValue());
+        }
 
         if (customerDAL.addCustomer(customer) == 0)
             return new Pair<>(false, "Thêm khách hàng không thành công.");
@@ -154,6 +160,14 @@ public class CustomerBLL extends Manager<Customer> {
         return new Pair<>(true, "Xoá khách hàng thành công.");
     }
 
+    public Pair<Boolean, String> rollBackAllCustomer(Customer customer) {
+
+        if (customerDAL.rollBackAllCustomer(customer.getCustomerNo()) == 0)
+            return new Pair<>(false, "Khôi phục khách hàng không thành công.");
+
+        return new Pair<>(true, "Khôi phục khách hàng thành công.");
+    }
+
     public List<Customer> searchCustomers(String... conditions) {
         return customerDAL.searchCustomers(conditions);
     }
@@ -195,14 +209,8 @@ public class CustomerBLL extends Manager<Customer> {
         Pair<Boolean, String> result;
 
         result = validateCustomerNo(customer.getCustomerNo());
-        if (!result.getKey()) {
-            if (result.getValue().equals("Số căn cước công dân của khách hàng đã tồn tại.")) {
-                mơ lại khách hàng
-            }
-            else
-                return new Pair<>(false, result.getValue());
-
-        }
+        if (!result.getKey())
+            return new Pair<>(false, result.getValue());
 
         result = validateName(customer.getName());
         if (!result.getKey())
@@ -231,12 +239,11 @@ public class CustomerBLL extends Manager<Customer> {
     }
 
     public Pair<Boolean, String> exists(Customer newCustomer) {
-        List<Customer> customers = customerDAL.searchCustomers("[no] = '" + newCustomer.getCustomerNo() + "'", "[deleted] = 0");
-        if (!customers.isEmpty()) {
-            return new Pair<>(true, "Số căn cước công dân của khách hàng đã tồn tại.");
+        if (customerDAL.checkExistCustomerNo(newCustomer.getCustomerNo())) {
+            return new Pair<>(false, "Số căn cước công dân của khách hàng đã tồn tại.");
         }
 
-        customers = customerDAL.searchCustomers("[phone] = '" + newCustomer.getPhone() + "'", "[deleted] = 0");
+        List<Customer> customers = customerDAL.searchCustomers("[phone] = '" + newCustomer.getPhone() + "'", "[deleted] = 0");
         if (!customers.isEmpty()) {
             return new Pair<>(true, "Số điện thoại khách hàng đã tồn tại.");
         }
@@ -259,8 +266,7 @@ public class CustomerBLL extends Manager<Customer> {
         if (!VNString.checkNo(no))
             return new Pair<>(false, "Số căn cước công dân của khách hàng phải bao gồm 12 số.");
 
-        List<Customer> customers = customerDAL.searchCustomers("[no] = '" + no + "'", "[deleted] = 0");
-        if (!customers.isEmpty()) {
+        if (customerDAL.checkExistCustomerNo(no)) {
             return new Pair<>(false, "Số căn cước công dân của khách hàng đã tồn tại.");
         }
 

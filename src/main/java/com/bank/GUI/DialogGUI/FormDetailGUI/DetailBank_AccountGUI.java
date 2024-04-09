@@ -1,11 +1,9 @@
 package com.bank.GUI.DialogGUI.FormDetailGUI;
 
 import com.bank.BLL.BranchBLL;
-import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.Branch;
 import com.bank.DTO.Bank_Account;
-import com.bank.GUI.ChangeRoleGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.MyTextFieldUnderLine;
@@ -25,8 +23,6 @@ public class DetailBank_AccountGUI extends DialogForm {
     private JLabel titleName;
     private List<JLabel> attributeBank_Account;
     private List<JTextField> jTextFieldsBank_Account;
-    private Bank_AccountBLL Bank_AccountBLL = new Bank_AccountBLL();
-    private Bank_Account Bank_Account = new Bank_Account();
     private JDateChooser jDateChooser = new JDateChooser();
     private JButton buttonTransfer;
     private JButton buttonTransaction;
@@ -98,7 +94,7 @@ public class DetailBank_AccountGUI extends DialogForm {
                         @Override
                         public void mousePressed(MouseEvent e) {
                             dispose();
-                            new DetailCustomerGUI(new CustomerBLL().searchCustomers("[no] = '" + Bank_Account.getCustomer_no() + "'").get(0));
+                            new DetailCustomerGUI(new CustomerBLL().findAllCustomers("no", Bank_Account.getCustomer_no()).get(0));
                             setVisible(true);
                         }
                     });
@@ -111,7 +107,7 @@ public class DetailBank_AccountGUI extends DialogForm {
                     continue;
                 }
                 if (string.trim().equals("Chi Nhánh")) {
-                    Branch branch = new BranchBLL().searchBranches("[id] = " + Bank_Account.getBranch_id()).get(0);
+                    Branch branch = new BranchBLL().findAllBranchs("id", String.valueOf(Bank_Account.getBranch_id())).get(0);
                     textField.setText(branch.getName());
                     content.add(textField, "wrap");
                     continue;

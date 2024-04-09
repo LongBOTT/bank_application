@@ -41,7 +41,7 @@ public class InfoPanel extends RoundedPanel {
         TitleInfoStaff.setBackground(new Color(255, 255,255));
         add(TitleInfoStaff);
 
-        InfoStaffPanel.setLayout(new MigLayout("", "150[]50[]10[]150", "20[]20"));
+        InfoStaffPanel.setLayout(new MigLayout("", "150[]50[]50[]50[]150", "20[]20"));
         InfoStaffPanel.setPreferredSize(new Dimension(1160, 493));
         InfoStaffPanel.setBackground(new Color(255, 255, 255));
         add(InfoStaffPanel);

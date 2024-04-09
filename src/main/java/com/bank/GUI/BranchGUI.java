@@ -246,7 +246,7 @@ public class BranchGUI extends Layout1 {
             new DetailBranchGUI(branchBLL.searchBranches("[id] = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "[deleted] = 0" để lấy các đối tượng còn tồn tại, chưa xoá
 
         if (edit && indexColumn == indexColumnEdit) {
-            new EditBranchGUI(branchBLL.searchBranches("[id] = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "[deleted] = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            new EditBranchGUI(e -> refresh(), branchBLL.searchBranches("[id] = " + data[indexRow][0]).get(0)); // Đối tượng nào có thuộc tính deleted thì thêm "[deleted] = 0" để lấy các đối tượng còn tồn tại, chưa xoá
             refresh();
         }
 

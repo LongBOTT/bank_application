@@ -61,6 +61,52 @@ public class DataTable extends JTable {
         jTableHeader.setBackground(new Color(183, 183, 183));
     }
 
+    public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener) {
+        super(new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+
+        for (int i = 0; i < getColumnCount(); i++) {
+            setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
+        }
+
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setReorderingAllowed(false);
+        getTableHeader().setResizingAllowed(false);
+
+        setFont(new Font("Public Sans", Font.PLAIN, 15));
+        setAutoCreateRowSorter(false);
+        setRowHeight(40);
+        setSelectionBackground(new Color(220, 221, 225, 221));
+        setSelectionForeground(Color.BLACK);
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (getSelectedRow() == -1) {
+                    lastSelectedRow = -1;
+                }
+            }
+
+            public void mousePressed(MouseEvent e) {
+                int row = rowAtPoint(e.getPoint());
+                int col = columnAtPoint(e.getPoint());
+                if (col == 0 && row != -1) {
+                    if (actionListener != null) {
+                        actionListener.actionPerformed(null);
+                    }
+                }
+            }
+        });
+
+        JTableHeader jTableHeader = getTableHeader();
+        jTableHeader.setBackground(new Color(183, 183, 183));
+    }
+
     public DataTable(Object[][] data, Object[] columnNames, int checkbox) {
         super(new DefaultTableModel(data, columnNames) {
             @Override

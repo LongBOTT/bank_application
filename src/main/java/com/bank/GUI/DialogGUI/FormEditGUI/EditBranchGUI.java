@@ -3,6 +3,7 @@ package com.bank.GUI.DialogGUI.FormEditGUI;
 import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Branch;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import javafx.util.Pair;
@@ -10,6 +11,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -23,12 +25,13 @@ public class EditBranchGUI extends DialogForm {
     private JButton buttonEdit;
     private BranchBLL branchBLL = new BranchBLL();
     private Branch branch;
-
-    public EditBranchGUI(Branch branch) {
+    private ActionListener refresh;
+    public EditBranchGUI(ActionListener refresh, Branch branch) {
         super();
         super.setTitle("Cập Nhập Thông Tin Chi Nhánh");
         super.setSize(new Dimension(1000, 300));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
+        this.refresh = refresh;
         this.branch = branch;
         init(branch);
         setVisible(true);
@@ -133,9 +136,16 @@ public class EditBranchGUI extends DialogForm {
         result = branchBLL.updateBranch(branch, newsBranch);
 
         if (result.getKey()) {
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            refresh.actionPerformed(null);
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.ERROR_MESSAGE);

@@ -11,6 +11,7 @@ import com.bank.DTO.Customer;
 import com.bank.GUI.ChangeRoleGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -19,6 +20,7 @@ import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -36,10 +38,12 @@ public class EditCustomerGUI extends DialogForm {
     public static boolean changeRole = false;
     private JDateChooser jDateChooser = new JDateChooser();
     private Customer customer;
+    private ActionListener refresh;
 
-    public EditCustomerGUI(Customer customer) {
+    public EditCustomerGUI(ActionListener refresh, Customer customer) {
         super();
         super.setTitle("Cập Nhật Thông Tin Khách Hàng");
+        this.refresh = refresh;
         this.customer = customer;
         super.setSize(new Dimension(1000, 450));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
@@ -177,9 +181,16 @@ public class EditCustomerGUI extends DialogForm {
         result = customerBLL.updateAllCustomer(customer, newCustomer);
 
         if (result.getKey()) {
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            refresh.actionPerformed(null);
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.ERROR_MESSAGE);

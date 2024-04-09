@@ -7,17 +7,16 @@ import com.bank.DTO.Branch;
 import com.bank.DTO.Function;
 
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBank_AccountGUI;
-import com.bank.GUI.components.DataTable;
-import com.bank.GUI.components.Layout2;
-import com.bank.GUI.components.RoundedPanel;
-import com.bank.GUI.components.RoundedScrollPane;
+import com.bank.GUI.components.*;
 import com.bank.GUI.components.swing.DataSearch;
 import com.bank.GUI.components.swing.EventClick;
 import com.bank.GUI.components.swing.MyTextField;
 import com.bank.GUI.components.swing.PanelSearch;
+import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -183,15 +182,15 @@ public class Bank_AccountGUI extends Layout2 {
         SearchPanel.add(jComboBoxSearch);
 
 
-        RoundedPanel roundedPanel1 = new RoundedPanel();
+        JPanel roundedPanel1 = new JPanel();
         roundedPanel1.setLayout(new GridBagLayout());
         roundedPanel1.setBackground(new Color(255, 255, 255));
-        roundedPanel1.setPreferredSize(new Dimension(250, 40));
-        SearchPanel.add(roundedPanel1);
+        roundedPanel1.setPreferredSize(new Dimension(250, 30));
+        FilterDatePanel.add(roundedPanel1);
 
         txtSearch.setBackground(new Color(255, 255, 255));
         txtSearch.putClientProperty("JTextField.placeholderText", "Nhập chi nhánh tìm kiếm");
-        txtSearch.setPreferredSize(new Dimension(230, 30));
+        txtSearch.setPreferredSize(new Dimension(230, 28));
         txtSearch.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 txtSearchMouseClicked(evt);
@@ -207,7 +206,7 @@ public class Bank_AccountGUI extends Layout2 {
         });
         roundedPanel1.add(txtSearch);
 
-        loadDataTable(bank_accountBLL.getData(bank_accountBLL.getALLBank_Accounts()));
+        loadDataTable(bank_accountBLL.getData(bank_accountBLL.getBank_accountListAll()));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -238,6 +237,7 @@ public class Bank_AccountGUI extends Layout2 {
                 @Override
                 public void mousePressed(MouseEvent e) {
 //                    new AddBank_AccountGUI();
+
                     refresh();
                 }
             });
@@ -281,16 +281,18 @@ public class Bank_AccountGUI extends Layout2 {
     }
 
     public void refresh() {
+        bank_accountBLL = new Bank_AccountBLL();
         jTextFieldSearch.setText("");
+        txtSearch.setText("");
+        branch_id = 0;
         jDateChooser[0].getDateEditor().setDate(null);
         jDateChooser[1].getDateEditor().setDate(null);
         jComboBoxSearch.setSelectedIndex(0);
-        loadDataTable(bank_accountBLL.getData(bank_accountBLL.getALLBank_Accounts()));
+        loadDataTable(bank_accountBLL.getData(bank_accountBLL.getBank_accountListAll()));
     }
 
     private void searchBank_Accounts() {
-        List<Bank_Account> bank_accountList;
-        bank_accountList = bank_accountBLL.getALLBank_Accounts();
+        List<Bank_Account> bank_accountList = new ArrayList<>(bank_accountBLL.getBank_accountListAll());
 
         if (!txtSearch.getText().isEmpty()) {
             if (branch_id == 0) {
@@ -385,15 +387,11 @@ public class Bank_AccountGUI extends Layout2 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        Bank_Account selectedBank_Account = new Bank_Account();
+        Bank_Account selectedBank_Account = bank_accountBLL.findAllBank_Accounts("number",  data[indexRow][0].toString()).get(0);
         if (detail && indexColumn == indexColumnDetail) {
-            for (Bank_Account bank_account : bank_accountBLL.getALLBank_Accounts())
-                if (Objects.equals(bank_account.getNumber(), data[indexRow][0].toString())) {
-                    selectedBank_Account = bank_account;
-                    break;
-                }
-        }
             new DetailBank_AccountGUI(selectedBank_Account); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        }
+
     }
 
     private void changedQuantity() {
@@ -404,12 +402,27 @@ public class Bank_AccountGUI extends Layout2 {
             DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
             Object[] rowData = model.getDataVector().elementAt(indexRow).toArray();
 
-            Bank_Account bank_account = bank_accountBLL.searchBank_Accounts("[number] = '"  + rowData[0] + "'").get(0);
+            Bank_Account bank_account = bank_accountBLL.findAllBank_Accounts("number", String.valueOf(rowData[0])).get(0);
 
-            bank_account.setStatus(rowData[5].equals("Đang mở"));
-
-            bank_accountBLL.updateBank_Account(bank_account);
-            refresh();
+            boolean status = String.valueOf(rowData[5]).equals("Đang mở");
+            if (status != bank_account.isStatus()) {
+                bank_account.setStatus(rowData[5].equals("Đang mở"));
+                Pair<Boolean, String> result = bank_accountBLL.updateAllBank_Account(bank_account);
+                if (result.getKey()) {
+                    Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+                    circleProgressBar.getRootPane ().setOpaque (false);
+                    circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+                    circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+                    circleProgressBar.progress();
+                    circleProgressBar.setVisible(true);
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    refresh();
+                } else {
+                    JOptionPane.showMessageDialog(null, result.getValue(),
+                            "Thông báo", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
 

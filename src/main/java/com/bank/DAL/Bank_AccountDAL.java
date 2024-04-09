@@ -2,6 +2,7 @@ package com.bank.DAL;
 
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Customer;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -68,6 +69,23 @@ public class Bank_AccountDAL extends Manager{
             System.out.println("Error occurred in Bank_AccountDAL.updateBank_Account(): " + e.getMessage());
         }
         return 0;
+    }
+
+    public int updateAllBank_Account(Bank_Account bank_account) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(executeProcedure("sp_UpdateBank_Account",
+                    new Pair<>("number", bank_account.getNumber()),
+                    new Pair<>("customer_no", bank_account.getCustomer_no()),
+                    new Pair<>("balance", bank_account.getBalance()),
+                    new Pair<>("branch_id", bank_account.getBranch_id()),
+                    new Pair<>("creation_date", bank_account.getCreation_date()),
+                    new Pair<>("status", bank_account.isStatus())).get(0).get(0));
+            return result;
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
+        }
+        return result;
     }
 
 //    public int deleteBank_Account(String... conditions) {
