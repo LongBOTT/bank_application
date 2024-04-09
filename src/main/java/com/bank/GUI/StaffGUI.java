@@ -317,6 +317,12 @@ public class StaffGUI extends Layout1 {
         if (choice == 1) {
             Pair<Boolean, String> result = staffBLL.deleteStaff(staff);
             if (result.getKey()) {
+                Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+                circleProgressBar.getRootPane ().setOpaque (false);
+                circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.progress();
+                circleProgressBar.setVisible(true);
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 refresh();

@@ -6,10 +6,7 @@ import com.bank.DTO.*;
 import com.bank.GUI.DialogGUI.FormAddGUI.AddCustomerGUI;
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI;
 import com.bank.GUI.DialogGUI.FormEditGUI.EditCustomerGUI;
-import com.bank.GUI.components.DataTable;
-import com.bank.GUI.components.Layout1;
-import com.bank.GUI.components.RoundedPanel;
-import com.bank.GUI.components.RoundedScrollPane;
+import com.bank.GUI.components.*;
 import com.bank.GUI.components.swing.DataSearch;
 import com.bank.GUI.components.swing.EventClick;
 import com.bank.GUI.components.swing.MyTextField;
@@ -306,7 +303,6 @@ public class CustomerGUI extends Layout1 {
 
         if (remove && indexColumn == indexColumnRemove) {
             deleteCustomer(selectedCustomer); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-            refresh();
         }
 
     }
@@ -318,11 +314,17 @@ public class CustomerGUI extends Layout1 {
             return;
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
-        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá nhà khách hàng?",
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá và đóng các tài khoản ngân hàng của khách hàng?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
             Pair<Boolean, String> result = customerBLL.deleteAllCustomer(customer);
             if (result.getKey()) {
+                Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+                circleProgressBar.getRootPane ().setOpaque (false);
+                circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.progress();
+                circleProgressBar.setVisible(true);
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 refresh();

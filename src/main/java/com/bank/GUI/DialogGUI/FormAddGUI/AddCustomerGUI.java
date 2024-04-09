@@ -7,6 +7,7 @@ import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Customer;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 
 import com.bank.main.Bank_Application;
@@ -181,7 +182,19 @@ public class AddCustomerGUI extends DialogForm {
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            sendOTP(email, number);
+            try {
+                Thread thread = new Thread(() -> sendOTP(email, number));
+                thread.start();
+            } catch (Exception ignored) {
+
+            }
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
+
             JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {

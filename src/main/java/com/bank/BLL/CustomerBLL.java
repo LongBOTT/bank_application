@@ -195,8 +195,14 @@ public class CustomerBLL extends Manager<Customer> {
         Pair<Boolean, String> result;
 
         result = validateCustomerNo(customer.getCustomerNo());
-        if (!result.getKey())
-            return new Pair<>(false, result.getValue());
+        if (!result.getKey()) {
+            if (result.getValue().equals("Số căn cước công dân của khách hàng đã tồn tại.")) {
+                mơ lại khách hàng
+            }
+            else
+                return new Pair<>(false, result.getValue());
+
+        }
 
         result = validateName(customer.getName());
         if (!result.getKey())

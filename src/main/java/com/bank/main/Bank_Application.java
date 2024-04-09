@@ -15,7 +15,6 @@ public class Bank_Application {
     public static void main(String[] args) {
         FlatIntelliJLaf.registerCustomDefaultsSource("style");
         FlatIntelliJLaf.setup();
-
         UIManager.put("ProgressBar.selectionForeground", Color.black);
         UIManager.put("ProgressBar.selectionBackground", Color.black);
         UIManager.put("ScrollBar.trackArc", 999);

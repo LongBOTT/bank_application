@@ -4,6 +4,7 @@ import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Branch;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import javafx.util.Pair;
@@ -121,6 +122,12 @@ public class AddBranchGUI extends DialogForm {
         result = branchBLL.addBranch(branch);
 
         if (result.getKey()) {
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();

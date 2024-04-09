@@ -5,6 +5,7 @@ import com.bank.BLL.StaffBLL;
 import com.bank.DTO.Account;
 import com.bank.DTO.Staff;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.GUI.components.swing.DataSearch;
 import com.bank.GUI.components.swing.EventClick;
@@ -182,6 +183,12 @@ public class AddAccountGUI extends DialogForm {
         result = accountBLL.addAccount(account);
 
         if (result.getKey()) {
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
