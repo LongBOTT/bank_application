@@ -39,7 +39,7 @@ public class AddAccountGUI extends DialogForm {
 
     public AddAccountGUI() {
         super();
-        super.setTitle("Thêm tài khoản");
+        super.setTitle("Thêm Tài Khoản");
         super.setSize(new Dimension(1000, 250));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init();
@@ -78,7 +78,7 @@ public class AddAccountGUI extends DialogForm {
         buttonAdd = new JButton("Thêm");
         staffList = new ArrayList<String>();
 
-        titleName.setText("Thêm tài khoản");
+        titleName.setText("Thêm Tài Khoản");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);

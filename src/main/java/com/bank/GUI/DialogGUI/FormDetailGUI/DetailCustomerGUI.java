@@ -165,7 +165,7 @@ public class DetailCustomerGUI extends DialogForm {
                 bank_account.setBalance(BigDecimal.valueOf(0));
                 bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
                 bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
-                bank_account.setStatus(false);
+                bank_account.setStatus(true);
 
                 result = bankAccountBLL.addBank_Account(bank_account);
 

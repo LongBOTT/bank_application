@@ -33,7 +33,7 @@ public class ChangeRoleGUI extends JDialog {
     private Role_Detail roleDetail;
     private RoundedPanel content = new RoundedPanel();
 
-    public ChangeRoleGUI(Staff staff) {
+    public ChangeRoleGUI(Staff staff, JTextField textFieldRole) {
         super((Frame) null, "", true);
         getContentPane().setBackground(new Color(228,231,235));
         setTitle("Thiết Lập Lương");
@@ -56,11 +56,11 @@ public class ChangeRoleGUI extends JDialog {
         } else {
             roleDetail = null;
         }
-        init();
+        init(textFieldRole);
         setVisible(true);
     }
 
-    private void init() {
+    private void init(JTextField textFieldRole) {
         role_detail_panel = new RoundedPanel();
         titleName = new JLabel();
         attributeRole_detail = new ArrayList<>();
@@ -88,7 +88,7 @@ public class ChangeRoleGUI extends JDialog {
         containerButton.setPreferredSize(new Dimension(500, 50));
         add(containerButton);
 
-        titleName.setText("Thiết lập lương");
+        titleName.setText("Thiết Lập Lương");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
@@ -101,23 +101,23 @@ public class ChangeRoleGUI extends JDialog {
         content.add(role_detail_panel);
 
 
-        for (String string : new String[]{"Nhân viên", "Chức vụ","Tiền lương"}) {
+        for (String string : new String[]{"Nhân Viên", "Chức Vụ","Tiền Lương"}) {
             JLabel label = new JLabel();
             label.setPreferredSize(new Dimension(170, 30));
             label.setText(string);
-            label.setFont((new Font("Public Sans", Font.PLAIN, 16)));
+            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
             attributeRole_detail.add(label);
             role_detail_panel.add(label);
 
 
-            if (string.equals("Nhân viên")) {
+            if (string.equals("Nhân Viên")) {
                 JLabel jLabel = new JLabel(staff.getName());
                 jLabel.setFont((new Font("Public Sans", Font.BOLD, 16)));
                 role_detail_panel.add(jLabel, "wrap");
             }
 
-            if (string.equals("Chức vụ")) {
-                for (Role role : new RoleBLL().searchRoles("[id] > 1"))
+            if (string.equals("Chức Vụ")) {
+                for (Role role : new RoleBLL().searchRoles("[id] >= 1"))
                     jComboBoxRole.addItem(role.getName());
 
                 if (roleDetail != null) {
@@ -126,7 +126,7 @@ public class ChangeRoleGUI extends JDialog {
                     jComboBoxRole.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            checkDate();
+//                            checkDate();
                         }
                     });
                 }
@@ -138,7 +138,7 @@ public class ChangeRoleGUI extends JDialog {
                 role_detail_panel.add(jComboBoxRole, "wrap");
             }
 
-            if (string.equals("Tiền lương")) {
+            if (string.equals("Tiền Lương")) {
                 textFieldSalary.setPreferredSize(new Dimension(150, 30));
                 textFieldSalary.setFont((new Font("Public Sans", Font.PLAIN, 14)));
                 if (roleDetail != null) {
@@ -183,7 +183,7 @@ public class ChangeRoleGUI extends JDialog {
         buttonSet.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                updateRole_detail();
+                updateRole_detail(textFieldRole);
             }
         });
         containerButton.add(buttonSet);
@@ -201,13 +201,13 @@ public class ChangeRoleGUI extends JDialog {
         }
     }
 
-    private void updateRole_detail() {
+    private void updateRole_detail(JTextField textFieldRole) {
         Pair<Boolean, String> result;
         int role_id, staff_id;
         java.util.Date entry_date;
         BigDecimal salary;
 
-        role_id = jComboBoxRole.getSelectedIndex() + 2;
+        role_id = jComboBoxRole.getSelectedIndex() + 1;
         staff_id = staff.getId();
         entry_date = Date.valueOf(LocalDate.now());
         salary = BigDecimal.valueOf(Double.parseDouble(textFieldSalary.getText()));
@@ -219,7 +219,7 @@ public class ChangeRoleGUI extends JDialog {
 
             JOptionPane.showMessageDialog(null, result.getValue(),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            EditStaffGUI.textFieldRole.setText(Objects.requireNonNull(jComboBoxRole.getSelectedItem()).toString());
+            textFieldRole.setText(Objects.requireNonNull(jComboBoxRole.getSelectedItem()).toString());
             EditStaffGUI.changeRole = true;
             dispose();
         } else {

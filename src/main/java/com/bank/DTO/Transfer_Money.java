@@ -2,6 +2,7 @@ package com.bank.DTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transfer_Money {
     private int id;
@@ -73,11 +74,11 @@ public class Transfer_Money {
 
     @Override
     public String toString() {
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
         return id + " | " +
                 sender_bank_account_number + " | " +
                 receiver_bank_account_number + " | " +
                 money_amount + " | " +
-                staff_id + " | " +
-                send_date;
+                send_date.format(myFormatObj);
     }
 }

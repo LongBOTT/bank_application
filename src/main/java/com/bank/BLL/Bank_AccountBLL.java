@@ -38,12 +38,6 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
     }
 
     public Pair<Boolean, String> addBank_Account(Bank_Account Bank_Account) {
-        Pair<Boolean, String> result = checkBank_AccountAll(Bank_Account);
-
-        if(!result.getKey()){
-            return new Pair<>(false,result.getValue());
-        }
-
         if (Bank_AccountDAL.addBank_Account(Bank_Account) == 0)
             return new Pair<>(false, "Thêm tài khoản ngân hàng không thành công.");
 
@@ -62,6 +56,10 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
             return new Pair<>(false, "Cập nhật tài khoản ngân hàng không thành công.");
 
         return new Pair<>(true, "Cập nhật tài khoản ngân hàng thành công.");
+    }
+
+    public void closeBank_Accounts(String no) {
+        Bank_AccountDAL.closeBank_Accounts(no);
     }
 
     public List<Bank_Account> searchBank_Accounts(String... conditions) {
@@ -96,26 +94,6 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
 //            Bank_Accounts = findObjectsBy(entry.getKey(), entry.getValue(), Bank_Accounts);
 //        return Bank_Accounts;
 //    }
-    public  Pair<Boolean, String> checkBank_AccountAll(Bank_Account Bank_Account) {
-        Pair<Boolean, String> result;
-
-        result = exists(Bank_Account);
-        if (result.getKey()) {
-            return new Pair<>(false, result.getValue());
-        }
-
-        return new Pair<>(true,"");
-
-    }
-
-    public Pair<Boolean, String> exists(Bank_Account Bank_Account) {
-        List<Bank_Account> Bank_Accounts = searchBank_Accounts("[number] = '" + Bank_Account.getNumber() + "'");
-
-        if(!Bank_Accounts.isEmpty()){
-            return new Pair<>(true, "Tài khoản ngân hàng đã tồn tại.");
-        }
-        return new Pair<>(false, "");
-    }
 
     public List<Bank_Account> getALLBank_Accounts() {
         return Bank_AccountDAL.getAllBank_Accounts();

@@ -2,6 +2,7 @@ package com.bank.BLL;
 
 import com.bank.DAL.Transaction_Deposit_WithdrawalDAL;
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
+
 import com.bank.utils.VNString;
 import javafx.util.Pair;
 
@@ -12,9 +13,18 @@ import java.util.Map;
 
 public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Deposit_Withdrawal>{
     private Transaction_Deposit_WithdrawalDAL transaction_deposit_withdrawalDAL;
-
+    private List<Transaction_Deposit_Withdrawal> transaction_deposit_withdrawalListAll;
     public Transaction_Deposit_WithdrawalBLL() {
         transaction_deposit_withdrawalDAL = new Transaction_Deposit_WithdrawalDAL();
+        transaction_deposit_withdrawalListAll = transaction_deposit_withdrawalDAL.getAllTransaction_Deposit_Withdrawal();
+    }
+
+    public List<Transaction_Deposit_Withdrawal> getTransaction_deposit_withdrawalListAll() {
+        return transaction_deposit_withdrawalListAll;
+    }
+
+    public void setTransaction_deposit_withdrawalListAll(List<Transaction_Deposit_Withdrawal> transaction_deposit_withdrawalListAll) {
+        this.transaction_deposit_withdrawalListAll = transaction_deposit_withdrawalListAll;
     }
 
     public Transaction_Deposit_WithdrawalDAL getTransaction_Deposit_WithdrawalDAL() {
@@ -56,6 +66,17 @@ public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Depos
         return list;
     }
 
+    public List<Transaction_Deposit_Withdrawal> findAllTransaction_Deposit_Withdrawals(String key, String value) {
+        List<Transaction_Deposit_Withdrawal> list = new ArrayList<>();
+        List<Transaction_Deposit_Withdrawal> Transaction_Deposit_WithdrawalList = transaction_deposit_withdrawalListAll;
+        for (Transaction_Deposit_Withdrawal Transaction_Deposit_Withdrawal : Transaction_Deposit_WithdrawalList) {
+            if (getValueByKey(Transaction_Deposit_Withdrawal, key).toString().toLowerCase().contains(value.toLowerCase())) {
+                list.add(Transaction_Deposit_Withdrawal);
+            }
+        }
+        return list;
+    }
+
 //    public List<Transaction_Deposit_Withdrawal> findTransaction_Deposit_WithdrawalsBy(Map<String, Object> conditions) {
 //        List<Transaction_Deposit_Withdrawal> transaction_deposit_withdrawals = transaction_deposit_withdrawalDAL.searchTransaction_Deposit_Withdrawals();
 //        for (Map.Entry<String, Object> entry : conditions.entrySet())
@@ -69,6 +90,10 @@ public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Depos
         if (!VNString.checkUnsignedNumber(money_amount))
             return new Pair<>(false, "Tiền giao dịch phải là số lơn hơn 0");
         return new Pair<>(true, money_amount);
+    }
+
+    public List<Transaction_Deposit_Withdrawal> getALLTransaction_Deposit_Withdrawals() {
+        return transaction_deposit_withdrawalDAL.getAllTransaction_Deposit_Withdrawal();
     }
 
     @Override

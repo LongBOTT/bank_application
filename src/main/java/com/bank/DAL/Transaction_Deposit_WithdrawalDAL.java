@@ -1,11 +1,13 @@
 package com.bank.DAL;
 
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
+import com.bank.DTO.Transaction_Deposit_Withdrawal;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +23,15 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
     }
 
     public List<Transaction_Deposit_Withdrawal> convertToTransaction_Deposit_Withdrawals(List<List<String>> data) {
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
         return convert(data, row -> {
             try {
                 return new Transaction_Deposit_Withdrawal(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // bank_account_number
-                        row.get(2), // transaction_type
-                        LocalDateTime.parse(row.get(3)), // transaction_date
-                        BigDecimal.valueOf(Double.parseDouble(row.get(4))), // money_amount
+                        Boolean.parseBoolean(row.get(2)), // transaction_type
+                        LocalDateTime.parse(row.get(3), myFormatObj), // transaction_date
+                        new BigDecimal(row.get(4)), // money_amount
                         Integer.parseInt(row.get(5)) //staff_id
                 );
             } catch (Exception e) {
@@ -74,6 +77,16 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
             return convertToTransaction_Deposit_Withdrawals(read(conditions));
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Transaction_Deposit_WithdrawalDAL.searchTransaction_Deposit_Withdrawals(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Transaction_Deposit_Withdrawal> getAllTransaction_Deposit_Withdrawal() {
+        try {
+            return convertToTransaction_Deposit_Withdrawals(
+                    executeProcedure("sp_GetAllTransaction_Deposit_Withdrawal"));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Transaction_Deposit_WithdrawalDAL.getAllTransaction_Deposit_Withdrawal(): " + e.getMessage());
         }
         return new ArrayList<>();
     }

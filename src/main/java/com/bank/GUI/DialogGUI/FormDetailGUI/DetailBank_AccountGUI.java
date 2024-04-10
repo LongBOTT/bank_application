@@ -5,6 +5,7 @@ import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.Branch;
 import com.bank.DTO.Bank_Account;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.DialogGUI.TransactionGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
@@ -94,8 +95,7 @@ public class DetailBank_AccountGUI extends DialogForm {
                         @Override
                         public void mousePressed(MouseEvent e) {
                             dispose();
-                            new DetailCustomerGUI(new CustomerBLL().findAllCustomers("no", Bank_Account.getCustomer_no()).get(0));
-                            setVisible(true);
+                            new DetailCustomerGUI(new CustomerBLL().searchCustomers("[no] = '" + Bank_Account.getCustomer_no() + "'").get(0));
                         }
                     });
                     jPanel.add(iconChangeRole);
@@ -123,12 +123,13 @@ public class DetailBank_AccountGUI extends DialogForm {
         buttonTransfer.setPreferredSize(new Dimension(150, 30));
         buttonTransfer.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonTransfer.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        buttonTransfer.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                editStaff();
-//            }
-//        });
+        buttonTransfer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                dispose();
+                new TransactionGUI(Bank_Account);
+            }
+        });
         containerButton.add(buttonTransfer);
 
         buttonTransaction.setPreferredSize(new Dimension(150, 30));

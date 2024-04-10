@@ -47,9 +47,7 @@ public class Bank_AccountGUI extends Layout2 {
     private DataTable dataTable;
     private RoundedScrollPane scrollPane;
     private int indexColumnDetail = -1;
-    private int indexColumnEdit = -1;
     private boolean detail = false;
-    private boolean edit = false;
     private String[] columnNames;
     private Object[][] data = new Object[0][0];
     private int branch_id  = 0;
@@ -59,8 +57,6 @@ public class Bank_AccountGUI extends Layout2 {
         this.functions = functions;
         if (functions.stream().anyMatch(f -> f.getName().equals("view")))
             detail = true;
-        if (functions.stream().anyMatch(f -> f.getName().equals("edit")))
-            edit = true;
 
         menu = new JPopupMenu();
         search = new PanelSearch();
@@ -81,7 +77,7 @@ public class Bank_AccountGUI extends Layout2 {
             @Override
             public void itemRemove(Component com, DataSearch data) {
                 search.remove(com);
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                menu.setPopupSize(230, (search.getItemSize() * 35) + 2);
                 if (search.getItemSize() == 0) {
                     menu.setVisible(false);
                 }
@@ -106,15 +102,9 @@ public class Bank_AccountGUI extends Layout2 {
             columnNames[indexColumnDetail] = "Xem";
         }
 
-        if (edit) {
-            columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
-            indexColumnEdit = columnNames.length - 1;
-            columnNames[indexColumnEdit] = "Sửa";
-        }
-
         dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(), e -> changedQuantity(),
-                detail, edit, false, 6, 5); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
+                detail, false, false, 6, 5); // table hiển thị các thuộc tính "Mã NCC", "Tên NCC", "SĐT", "Email" nên điền 4
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
@@ -181,13 +171,6 @@ public class Bank_AccountGUI extends Layout2 {
         jComboBoxSearch.addActionListener(e -> searchBank_Accounts());
         SearchPanel.add(jComboBoxSearch);
 
-
-        JPanel roundedPanel1 = new JPanel();
-        roundedPanel1.setLayout(new GridBagLayout());
-        roundedPanel1.setBackground(new Color(255, 255, 255));
-        roundedPanel1.setPreferredSize(new Dimension(250, 30));
-        FilterDatePanel.add(roundedPanel1);
-
         txtSearch.setBackground(new Color(255, 255, 255));
         txtSearch.putClientProperty("JTextField.placeholderText", "Nhập chi nhánh tìm kiếm");
         txtSearch.setPreferredSize(new Dimension(230, 28));
@@ -204,7 +187,7 @@ public class Bank_AccountGUI extends Layout2 {
                 txtSearchKeyReleased(evt);
             }
         });
-        roundedPanel1.add(txtSearch);
+        FilterDatePanel.add(txtSearch);
 
         loadDataTable(bank_accountBLL.getData(bank_accountBLL.getBank_accountListAll()));
 
@@ -227,29 +210,6 @@ public class Bank_AccountGUI extends Layout2 {
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
-        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(1, 120, 220));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            roundedPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-//                    new AddBank_AccountGUI();
-
-                    refresh();
-                }
-            });
-
-            FunctionPanel.add(roundedPanel);
-
-            JLabel panel = new JLabel("Thêm mới");
-            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setForeground(Color.white);
-            panel.setIcon(new FlatSVGIcon("icon/add.svg"));
-            roundedPanel.add(panel);
-        }
         if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
@@ -370,11 +330,6 @@ public class Bank_AccountGUI extends Layout2 {
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconDetail;
             }
-            if (edit) {
-                JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
-                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-                data[i][data[i].length - 1] = iconEdit;
-            }
         }
 
 
@@ -451,7 +406,7 @@ public class Bank_AccountGUI extends Layout2 {
             search.setData(search(text));
             if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
                 menu.show(txtSearch, 0, txtSearch.getHeight());
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                menu.setPopupSize(230, (search.getItemSize() * 35) + 2);
             } else {
                 menu.setVisible(false);
             }

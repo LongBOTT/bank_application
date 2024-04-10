@@ -1,6 +1,7 @@
 package com.bank.DAL;
 
 import com.bank.DTO.Staff;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -84,8 +85,6 @@ public class StaffDAL extends Manager{
         return 0;
     }
 
-
-
     public int deleteStaff(String... conditions) {
         try {
             List<Object> updateValues = new ArrayList<>();
@@ -95,6 +94,26 @@ public class StaffDAL extends Manager{
             System.out.println("Error occurred in StaffDAL.deleteStaff(): " + e.getMessage());
         }
         return 0;
+    }
+
+    public void changeStaffBranch_id(Staff staff, int newBranch_id) {
+        try {
+            executeProcedure("sp_ChangeStaffBranch_ID",
+                    new Pair<>("id", staff.getId()),
+                    new Pair<>("no", staff.getStaffNo()),
+                    new Pair<>("name", staff.getName()),
+                    new Pair<>("gender", staff.isGender()),
+                    new Pair<>("birthdate", staff.getBirthdate()),
+                    new Pair<>("phone", staff.getPhone()),
+                    new Pair<>("address", staff.getAddress()),
+                    new Pair<>("email", staff.getEmail()),
+                    new Pair<>("deleted", staff.isDeleted()),
+                    new Pair<>("currentBranch_id", staff.getBranch_id()),
+                    new Pair<>("newBranch_id", newBranch_id)
+                    );
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Bank_AccountDAL.closeBank_Accounts(): " + e.getMessage());
+        }
     }
 
     public List<Staff> searchStaffs(String... conditions) {

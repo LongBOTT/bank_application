@@ -178,7 +178,7 @@ public class EditCustomerGUI extends DialogForm {
 
         Customer newCustomer = new Customer(customerNo, name, gender, birthdate, phone, address, email, false);
 
-        result = customerBLL.updateAllCustomer(customer, newCustomer);
+        result = customerBLL.updateCustomer(customer, newCustomer);
 
         if (result.getKey()) {
             Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();

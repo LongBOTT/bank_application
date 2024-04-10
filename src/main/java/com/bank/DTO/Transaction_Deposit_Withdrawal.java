@@ -2,11 +2,12 @@ package com.bank.DTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transaction_Deposit_Withdrawal {
     private int id;
     private String bank_number_account;
-    private String transaction_type;
+    private boolean transaction_type;
     private LocalDateTime transaction_date;
     private BigDecimal money_amount;
     private int staff_id;
@@ -14,7 +15,7 @@ public class Transaction_Deposit_Withdrawal {
     public Transaction_Deposit_Withdrawal() {
     }
 
-    public Transaction_Deposit_Withdrawal(int id, String bank_number_account, String transaction_type, LocalDateTime transaction_date, BigDecimal money_amount, int staff_id) {
+    public Transaction_Deposit_Withdrawal(int id, String bank_number_account, boolean transaction_type, LocalDateTime transaction_date, BigDecimal money_amount, int staff_id) {
         this.id = id;
         this.bank_number_account = bank_number_account;
         this.transaction_type = transaction_type;
@@ -39,11 +40,11 @@ public class Transaction_Deposit_Withdrawal {
         this.bank_number_account = bank_number_account;
     }
 
-    public String getTransaction_type() {
+    public boolean getTransaction_type() {
         return transaction_type;
     }
 
-    public void setTransaction_type(String transaction_type) {
+    public void setTransaction_type(boolean transaction_type) {
         this.transaction_type = transaction_type;
     }
 
@@ -73,11 +74,12 @@ public class Transaction_Deposit_Withdrawal {
 
     @Override
     public String toString() {
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+        String type = transaction_type ? "Gửi Tiền" : "Rút Tiền";
         return id + " | " +
                 bank_number_account + " | " +
-                transaction_type + " | " +
-                transaction_date + " | " +
+                type + " | " +
                 money_amount + " | " +
-                staff_id;
+                transaction_date.format(myFormatObj);
     }
 }

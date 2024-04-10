@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Transfer_MoneyDAL extends Manager{
     public Transfer_MoneyDAL() {
-        super("transaction_deposit_withdrawal",
+        super("transfer_money",
                 List.of("id",
                         "sender_bank_account_number",
                         "receiver_bank_account_number",
@@ -21,15 +22,16 @@ public class Transfer_MoneyDAL extends Manager{
     }
 
     public List<Transfer_Money> convertToTransfer_Moneys(List<List<String>> data) {
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
         return convert(data, row -> {
             try {
                 return new Transfer_Money(
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // sender_bank_account_number
                         row.get(2), // receiver_bank_account_number
-                        BigDecimal.valueOf(Double.parseDouble(row.get(3))), // money_amount
+                        new BigDecimal(row.get(3)), // money_amount
                         Integer.parseInt(row.get(4)), //staff_id
-                        LocalDateTime.parse(row.get(5)) // send_date
+                        LocalDateTime.parse(row.get(6), myFormatObj) // send_date
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Transfer_MoneyDAL.convertToTransfer_Moneys(): " + e.getMessage());
@@ -74,6 +76,16 @@ public class Transfer_MoneyDAL extends Manager{
             return convertToTransfer_Moneys(read(conditions));
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Transfer_MoneyDAL.searchTransfer_Moneys(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Transfer_Money> getAllTransfer_Money() {
+        try {
+            return convertToTransfer_Moneys(
+                    executeProcedure("sp_GetAllTransfer_Money"));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Transfer_MoneyDAL.getAllTransfer_Money(): " + e.getMessage());
         }
         return new ArrayList<>();
     }

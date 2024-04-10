@@ -88,16 +88,13 @@ public class Bank_AccountDAL extends Manager{
         return result;
     }
 
-//    public int deleteBank_Account(String... conditions) {
-//        try {
-//            List<Object> updateValues = new ArrayList<>();
-//            updateValues.add(true);
-//            return update(updateValues, conditions);
-//        } catch (SQLException | IOException e) {
-//            System.out.println("Error occurred in Bank_AccountDAL.deleteBank_Account(): " + e.getMessage());
-//        }
-//        return 0;
-//    }
+    public void closeBank_Accounts(String customer_no) {
+        try {
+            executeProcedure("sp_CloseBank_Accounts", new Pair<>("no", customer_no));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Bank_AccountDAL.closeBank_Accounts(): " + e.getMessage());
+        }
+    }
 
     public List<Bank_Account> searchBank_Accounts(String... conditions) {
         try {

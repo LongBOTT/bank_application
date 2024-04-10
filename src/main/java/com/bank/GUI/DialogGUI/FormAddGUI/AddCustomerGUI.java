@@ -61,6 +61,7 @@ public class AddCustomerGUI extends DialogForm {
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Thêm");
 
+        titleName.setText("Thêm Khách Hàng");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
         titleName.setHorizontalAlignment(JLabel.CENTER);
         titleName.setVerticalAlignment(JLabel.CENTER);
@@ -181,7 +182,7 @@ public class AddCustomerGUI extends DialogForm {
                 bank_account.setBalance(BigDecimal.valueOf(0));
                 bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
                 bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
-                bank_account.setStatus(false);
+                bank_account.setStatus(true);
 
                 if (!bankAccountBLL.addBank_Account(bank_account).getKey()) {
                     JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);

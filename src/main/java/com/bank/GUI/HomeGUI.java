@@ -315,8 +315,8 @@ public class HomeGUI extends JFrame {
             case 2 -> new StaffGUI(functions);
             case 3 -> new CustomerGUI(functions);
             case 4 -> new Bank_AccountGUI(functions);
-//            case 5 -> new StatisticStaffGUI();
-//            case 6 -> new DiscountGUI(functions);
+            case 5 -> new Transfer_MoneyGUI(functions);
+            case 6 -> new Transaction_Deposit_WithdrawalGUI(functions);
             case 7 -> new AccountGUI(functions);
 //            case 8 -> new ExportGUI(functions);
 //            case 9 -> new ImportGUI(functions);

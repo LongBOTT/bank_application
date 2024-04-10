@@ -95,6 +95,11 @@ public class StaffBLL extends Manager<Staff> {
         return new Pair<>(true, "Xoá nhân viên thành công.");
     }
 
+    public Pair<Boolean, String> changeStaffBranch_id(Staff staff, int newBranch_id) {
+        staffDAL.changeStaffBranch_id(staff, newBranch_id);
+        return new Pair<>(true, "Chuyển chi nhánh thành công.");
+    }
+
     public List<Staff> searchStaffs(String... conditions) {
         return staffDAL.searchStaffs(conditions);
     }

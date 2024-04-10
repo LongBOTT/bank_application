@@ -1,5 +1,6 @@
 package com.bank.GUI;
 
+import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.*;
 
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.Thread.sleep;
 
 public class CustomerGUI extends Layout1 {
     private RoundedPanel containerSearch;
@@ -154,7 +157,7 @@ public class CustomerGUI extends Layout1 {
         jComboBoxSearch.addActionListener(e -> searchCustomers());
         SearchPanel.add(jComboBoxSearch);
 
-        loadDataTable(customerBLL.getData(customerBLL.getCustomerListAll()));
+        loadDataTable(customerBLL.getData(customerBLL.searchCustomers("[deleted] = 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -230,11 +233,11 @@ public class CustomerGUI extends Layout1 {
         customerBLL = new CustomerBLL();
         txtSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
-        loadDataTable(customerBLL.getData(customerBLL.getCustomerListAll()));
+        loadDataTable(customerBLL.getData(customerBLL.searchCustomers("[deleted] = 0")));
     }
 
     private void searchCustomers() {
-        List<Customer> customerList = new ArrayList<>(customerBLL.getCustomerListAll());
+        List<Customer> customerList = new ArrayList<>(customerBLL.searchCustomers("[deleted] = 0"));
 
         if (!txtSearch.getText().isEmpty()) {
             if (jComboBoxSearch.getSelectedIndex() == 0) {
@@ -286,7 +289,7 @@ public class CustomerGUI extends Layout1 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-        Customer selectedCustomer = customerBLL.findAllCustomers("no", data[indexRow][0].toString()).get(0);
+        Customer selectedCustomer = customerBLL.searchCustomers("[no] = '" + data[indexRow][0].toString() + "'").get(0);
         if (detail && indexColumn == indexColumnDetail){
             new DetailCustomerGUI(selectedCustomer); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
         }
@@ -311,8 +314,19 @@ public class CustomerGUI extends Layout1 {
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá và đóng các tài khoản ngân hàng của khách hàng?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
         if (choice == 1) {
-            Pair<Boolean, String> result = customerBLL.deleteAllCustomer(customer);
+            Pair<Boolean, String> result = customerBLL.deleteCustomer(customer);
             if (result.getKey()) {
+                try {
+                    Thread threadProgress = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new Bank_AccountBLL().closeBank_Accounts(customer.getCustomerNo());
+                        }
+                    });
+                    threadProgress.start();
+                } catch (Exception ignored) {
+
+                }
                 Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
                 circleProgressBar.getRootPane ().setOpaque (false);
                 circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
@@ -343,7 +357,7 @@ public class CustomerGUI extends Layout1 {
 
         List<Customer> customers;
         if (jComboBoxSearch.getSelectedIndex() == 0) {
-            customers = customerBLL.findAllCustomers("name", text);
+            customers = customerBLL.findCustomers("name", text);
             for (Customer m : customers) {
                 if (list.size() == 7)
                     break;
@@ -352,7 +366,7 @@ public class CustomerGUI extends Layout1 {
             return list;
         }
         else  {
-            customers = customerBLL.findAllCustomers("no", text);
+            customers = customerBLL.findCustomers("no", text);
             for (Customer m : customers) {
                 if (list.size() == 7)
                     break;

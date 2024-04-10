@@ -10,6 +10,7 @@ import com.bank.DTO.Role_Detail;
 import com.bank.DTO.Staff;
 //import com.bank.GUI.ChangeRoleGUI;
 //import com.bank.GUI.CreateWorkScheduleGUI;
+import com.bank.GUI.ChangeBranchGUI;
 import com.bank.GUI.ChangeRoleGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
@@ -44,7 +45,7 @@ public class EditStaffGUI extends DialogForm {
     private JButton buttonChangeBranch;
     private StaffBLL staffBLL = new StaffBLL();
     private List<JTextField> jTextFieldsStaff;
-    public static JTextField textFieldRole;
+    public JTextField textFieldRole;
     public static boolean changeRole = false;
     private JDateChooser jDateChooser = new JDateChooser();
     private Staff staff;
@@ -172,7 +173,7 @@ public class EditStaffGUI extends DialogForm {
                         public void mousePressed(MouseEvent e) {
                             changeRole = false;
                             dispose();
-                            new ChangeRoleGUI(staff);
+                            new ChangeRoleGUI(staff, textFieldRole);
                             if (changeRole && staff.getId() == HomeGUI.staff.getId()) {
                                 JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập lại.",
                                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -181,6 +182,8 @@ public class EditStaffGUI extends DialogForm {
                                 Bank_Application.loginGUI.setVisible(true);
                                 return;
                             }
+                            if (changeRole)
+                                refresh.actionPerformed(null);
                             setVisible(true);
                         }
                     });
@@ -232,8 +235,9 @@ public class EditStaffGUI extends DialogForm {
         buttonChangeBranch.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonChangeBranch.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
-//                editStaff();
+            public void mousePressed(MouseEvent m) {
+                dispose();
+                new ChangeBranchGUI(refresh, staff);
             }
         });
         containerButton.add(buttonChangeBranch);

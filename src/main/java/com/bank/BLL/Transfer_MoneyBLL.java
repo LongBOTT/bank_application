@@ -11,9 +11,18 @@ import java.util.Map;
 
 public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
     private Transfer_MoneyDAL transfer_MoneyDAL;
-
+    private List<Transfer_Money> transfer_moneyListAll;
     public Transfer_MoneyBLL() {
         transfer_MoneyDAL = new Transfer_MoneyDAL();
+        transfer_moneyListAll = transfer_MoneyDAL.getAllTransfer_Money();
+    }
+
+    public List<Transfer_Money> getTransfer_moneyListAll() {
+        return transfer_moneyListAll;
+    }
+
+    public void setTransfer_moneyListAll(List<Transfer_Money> transfer_moneyListAll) {
+        this.transfer_moneyListAll = transfer_moneyListAll;
     }
 
     public Transfer_MoneyDAL getTransfer_MoneyDAL() {
@@ -55,6 +64,17 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
         return list;
     }
 
+    public List<Transfer_Money> findAllTransfer_Moneys(String key, String value) {
+        List<Transfer_Money> list = new ArrayList<>();
+        List<Transfer_Money> Transfer_MoneyList = transfer_moneyListAll;
+        for (Transfer_Money Transfer_Money : Transfer_MoneyList) {
+            if (getValueByKey(Transfer_Money, key).toString().toLowerCase().contains(value.toLowerCase())) {
+                list.add(Transfer_Money);
+            }
+        }
+        return list;
+    }
+
 //    public List<Transfer_Money> findTransfer_MoneysBy(Map<String, Object> conditions) {
 //        List<Transfer_Money> transfer_Moneys = transfer_MoneyDAL.searchTransfer_Moneys();
 //        for (Map.Entry<String, Object> entry : conditions.entrySet())
@@ -68,6 +88,10 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
         if (!VNString.checkUnsignedNumber(money_amount))
             return new Pair<>(false, "Tiền giao dịch phải là số lơn hơn 0");
         return new Pair<>(true, money_amount);
+    }
+
+    public List<Transfer_Money> getALLTransfer_Moneys() {
+        return transfer_MoneyDAL.getAllTransfer_Money();
     }
 
     @Override
