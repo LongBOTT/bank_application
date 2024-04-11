@@ -26,10 +26,11 @@ public class TransactionGUI extends JDialog {
     private DataTable dataTable;
     private JLabel jLabelTitle;
     private JComboBox<String> jComboBox;
-    private List<MyTextFieldUnderLine> myTextFieldUnderLineList;
+    private MyTextFieldUnderLine myTextFieldUnderLine;
     private JButton buttonCancel;
     private JButton buttonAdd;
     private Card card;
+    private JTextArea jTextArea;
     public TransactionGUI(Bank_Account bank_account) {
         super((Frame) null, "", true);
         getContentPane().setBackground(new Color(228,231,235));
@@ -52,10 +53,11 @@ public class TransactionGUI extends JDialog {
 
     private void initComponents(Bank_Account bank_account) {
         switchButton =  new SwitchButton();
-        myTextFieldUnderLineList = new ArrayList<>();
+        myTextFieldUnderLine = new MyTextFieldUnderLine();
         jComboBox = new JComboBox<>(new String[]{"Gửi Tiền", "Rút Tiền"});
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Giao Dịch");
+        jTextArea = new JTextArea();
 
         RoundedPanel left = new RoundedPanel();
         left.setLayout(new MigLayout("", "[]", "[]5[]5[]"));
@@ -64,7 +66,7 @@ public class TransactionGUI extends JDialog {
         add(left, BorderLayout.WEST);
 
         RoundedPanel right = new RoundedPanel();
-        right.setLayout(new BorderLayout());
+        right.setLayout(new MigLayout("", "[]", "[]0[]0[]"));
         right.setBackground(new Color(228,231,235));
         right.setPreferredSize(new Dimension(640, 680));
         add(right, BorderLayout.EAST);
@@ -83,8 +85,8 @@ public class TransactionGUI extends JDialog {
         panel.setPreferredSize(new Dimension(500, 40));
         left.add(panel, "wrap");
 
-        jLabelTitle = new JLabel("<html>Lịch Sử Giao Dịch <b>Gửi Tiền</b></html>");
-        jLabelTitle.setFont(new Font("Inter", Font.PLAIN, 15));
+        jLabelTitle = new JLabel("Lịch Sử Giao Dịch Gửi Tiền");
+        jLabelTitle.setFont(new Font("Public Sans", Font.BOLD, 15));
         panel.add(jLabelTitle, BorderLayout.WEST);
 
         RoundedPanel panel1 = new RoundedPanel();
@@ -96,7 +98,7 @@ public class TransactionGUI extends JDialog {
             @Override
             public void onSelected(boolean selected) {
                 if (selected) {
-                    jLabelTitle.setText("<html>Lịch Sử Giao Dịch <b>Rút Tiền</b></html>");
+                    jLabelTitle.setText("Lịch Sử Giao Dịch Rút Tiền");
                     List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawals = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
                     transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bank_account.getNumber()));
                     transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal::getTransaction_type);
@@ -104,7 +106,7 @@ public class TransactionGUI extends JDialog {
                     loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
                 }
                 else {
-                    jLabelTitle.setText("<html>Lịch Sử Giao Dịch <b>Gửi Tiền</b></html>");
+                    jLabelTitle.setText("Lịch Sử Giao Dịch Gửi Tiền");
                     List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawals = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
                     transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bank_account.getNumber()));
                     transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getTransaction_type());
@@ -117,6 +119,9 @@ public class TransactionGUI extends JDialog {
 
         String[] columnNames = new String[]{"Thời Gian Giao Dịch", "Loại Giao Dịch", "Số Tiền"};
         dataTable = new DataTable(new Object[0][0], columnNames);
+        dataTable.getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
+        dataTable.setBackground(Color.white);
+        dataTable.setSelectionBackground(new Color(245, 243, 243, 221));
 
         RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(500, 400));
@@ -129,98 +134,117 @@ public class TransactionGUI extends JDialog {
         loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
 
         RoundedPanel top = new RoundedPanel();
-        top.setBackground(new Color(228,231,235));
-        top.setPreferredSize(new Dimension(640, 40));
-        right.add(top, BorderLayout.NORTH);
+        top.setLayout(new BorderLayout());
+        top.setBackground(new Color(112,130,236));
+        top.setPreferredSize(new Dimension(630, 150));
+        top.setBorder(BorderFactory.createMatteBorder(0,0,15,0, new Color(112,130,236)));
+        right.add(top, "wrap");
 
         JPanel content = new JPanel();
-        content.setLayout(new MigLayout("", "20[]20[]20", "40[]40[]40"));
-        content.setBackground(new Color(228,231,235));
-        content.setPreferredSize(new Dimension(640, 590));
-        right.add(content, BorderLayout.CENTER);
+        content.setLayout(new MigLayout("", "0[]10[]0", "20[]10[]20[]10[]10[]0"));
+        content.setBackground(new Color(255,255,255));
+        content.setPreferredSize(new Dimension(630, 400));
+        right.add(content,"wrap");
 
-        RoundedPanel containerButton = new RoundedPanel();
-        containerButton.setLayout(new FlowLayout());
-        containerButton.setBackground(new Color(228,231,235));
-        containerButton.setPreferredSize(new Dimension(640, 50));
-        right.add(containerButton, BorderLayout.SOUTH);
+        JPanel containerButton = new JPanel();
+        containerButton.setLayout(new FlowLayout(FlowLayout.CENTER));
+        containerButton.setBackground(new Color(255,255,255));
+        containerButton.setPreferredSize(new Dimension(630, 75));
+        right.add(containerButton, "wrap");
 
-        JLabel jLabel = new JLabel("Tạo Giao Dịch");
-        jLabel.setFont(new Font("Public Sans", Font.BOLD, 18));
+        JLabel jLabel = new JLabel("Giao Dịch Gửi/Rút Tiền");
+        jLabel.setFont(new Font("Public Sans", Font.BOLD, 30));
         jLabel.setHorizontalAlignment(JLabel.CENTER);
-        jLabel.setVerticalAlignment(JLabel.BOTTOM);
-        top.add(jLabel);
+        jLabel.setVerticalAlignment(JLabel.CENTER);
+        jLabel.setForeground(Color.white);
+        top.add(jLabel, BorderLayout.CENTER);
 
-        for (String string : new String[]{"Mã Giao Dịch", "Nhân Viên", "Khách Hàng", "Số Tài Khoản", "Loại Giao Dịch", "Số Tiền"}) {
-            JLabel label = new JLabel();
-            label.setPreferredSize(new Dimension(150, 35));
-            label.setText(string);
-            label.setFont((new Font("Public Sans", Font.BOLD, 16)));
-            content.add(label);
+        JLabel jLabel1 = new JLabel("Số Tài Khoản");
+        jLabel1.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+        jLabel1.setPreferredSize(new Dimension(310, 20));
+        jLabel1.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel1);
 
-            MyTextFieldUnderLine textField = new MyTextFieldUnderLine();
-            textField.setPreferredSize(new Dimension(280, 40));
-            textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-            textField.setBackground(new Color(245, 246, 250));
-            if (string.equals("Mã Giao Dịch")) {
-                textField.setText(String.valueOf(transactionDepositWithdrawalBLL.getAutoID()));
-                textField.setEditable(false);
-            }
-            if (string.equals("Nhân Viên")) {
-                textField.setText(HomeGUI.staff.getName());
-                textField.setEditable(false);
-            }
-            if (string.equals("Khách Hàng")) {
-                Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bank_account.getCustomer_no() + "'").get(0);
-                textField.setText(customer.getName());
-                textField.setEditable(false);
-            }
-            if (string.equals("Số Tài Khoản")) {
-                textField.setText(bank_account.getNumber());
-                textField.setEditable(false);
-            }
-            if (string.equals("Loại Giao Dịch")) {
-                jComboBox.setPreferredSize(new Dimension(280, 35));
-                jComboBox.setFont((new Font("Public Sans", Font.PLAIN, 14)));
-                content.add(jComboBox, "wrap");
-                continue;
-            }
-            if (string.equals("Số Tiền")) {
-                textField.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        if (!Character.isDigit(e.getKeyChar())) {
-                            e.consume();
-                        }
-                    }
-                });
-            }
-            content.add(textField, "wrap");
-        }
+        JLabel jLabel2 = new JLabel("Khách Hàng");
+        jLabel2.setPreferredSize(new Dimension(310, 20));
+        jLabel2.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel2, "wrap");
 
-        buttonCancel.setPreferredSize(new Dimension(100, 30));
-        buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonCancel.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                buttonCancel.setBackground(new Color(0xD54218));
-            }
+        MyTextFieldUnderLine textField1 = new MyTextFieldUnderLine();
+        textField1.setPreferredSize(new Dimension(285, 40));
+        textField1.setFont((new Font("Inter", Font.PLAIN, 14)));
+        textField1.setBackground(new Color(246, 246, 246));
+        textField1.setOpaque(true);
+        textField1.setEditable(false);
+        textField1.setText(bank_account.getNumber());
+        content.add(textField1, "right");
 
+        Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bank_account.getCustomer_no() + "'").get(0);
+
+        MyTextFieldUnderLine textField2 = new MyTextFieldUnderLine();
+        textField2.setPreferredSize(new Dimension(290, 40));
+        textField2.setFont((new Font("Inter", Font.PLAIN, 14)));
+        textField2.setBackground(new Color(246, 246, 246));
+        textField2.setOpaque(true);
+        textField2.setEditable(false);
+        textField2.setText(customer.getName());
+        content.add(textField2, "left, wrap");
+
+        JPanel jPanel  = new JPanel(new MigLayout("", "20[]10[]20", "20[]10[]0"));
+        jPanel.setBackground(new Color(237, 239, 253));
+        jPanel.setPreferredSize(new Dimension(640, 120));
+        content.add(jPanel, "span");
+
+        JLabel jLabel3 = new JLabel("Loại Giao Dịch");
+        jLabel3.setPreferredSize(new Dimension(310, 20));
+        jLabel3.setFont((new Font("Inter", Font.BOLD, 13)));
+        jPanel.add(jLabel3);
+
+        JLabel jLabel4 = new JLabel("Số Tiền");
+        jLabel4.setPreferredSize(new Dimension(310, 20));
+        jLabel4.setFont((new Font("Inter", Font.BOLD, 13)));
+        jPanel.add(jLabel4, "wrap");
+
+        jComboBox.setPreferredSize(new Dimension(310, 40));
+        jComboBox.setFont((new Font("Inter", Font.PLAIN, 14)));
+        jPanel.add(jComboBox);
+
+        myTextFieldUnderLine.setPreferredSize(new Dimension(310, 40));
+        myTextFieldUnderLine.setFont((new Font("Inter", Font.PLAIN, 14)));
+        myTextFieldUnderLine.addKeyListener(new KeyAdapter() {
             @Override
-            public void mouseExited(MouseEvent e) {
-                buttonCancel.setBackground(Color.white);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                cancel();
+            public void keyTyped(KeyEvent e) {
+                if (!Character.isDigit(e.getKeyChar())) {
+                    e.consume();
+                }
             }
         });
+        jPanel.add(myTextFieldUnderLine, "wrap");
+
+        JLabel jLabel5 = new JLabel("Nội Dung");
+        jLabel5.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+        jLabel5.setPreferredSize(new Dimension(310, 20));
+        jLabel5.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel5, "wrap");
+
+        jTextArea.setPreferredSize(new Dimension(590, 150));
+        jTextArea.setMaximumSize(new Dimension(590, 150));
+        jTextArea.setFont((new Font("Inter", Font.PLAIN, 14)));
+        jTextArea.setBackground(new Color(246, 246, 246));
+        content.add(jTextArea, "span, center");
+
+        buttonCancel.setPreferredSize(new Dimension(100, 50));
+        buttonCancel.setFont(new Font("Public Sans", Font.BOLD, 15));
+        buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonCancel.setBackground(new Color(237, 239, 253));
+        buttonCancel.setForeground(new Color(112,130,236));
         containerButton.add(buttonCancel);
 
-        buttonAdd.setPreferredSize(new Dimension(150, 30));
+        buttonAdd.setPreferredSize(new Dimension(150, 50));
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonAdd.setBackground(new Color(112,130,236));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

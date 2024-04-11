@@ -171,6 +171,7 @@ public class Bank_AccountGUI extends Layout2 {
         jComboBoxSearch.addActionListener(e -> searchBank_Accounts());
         SearchPanel.add(jComboBoxSearch);
 
+        txtSearch.setOpaque(true);
         txtSearch.setBackground(new Color(255, 255, 255));
         txtSearch.putClientProperty("JTextField.placeholderText", "Nhập chi nhánh tìm kiếm");
         txtSearch.setPreferredSize(new Dimension(230, 28));

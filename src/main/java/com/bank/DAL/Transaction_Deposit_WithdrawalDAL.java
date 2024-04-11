@@ -31,7 +31,7 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
                         row.get(1), // bank_account_number
                         Boolean.parseBoolean(row.get(2)), // transaction_type
                         LocalDateTime.parse(row.get(3), myFormatObj), // transaction_date
-                        new BigDecimal(row.get(4)), // money_amount
+                        new BigDecimal(row.get(4)).setScale(2), // money_amount
                         Integer.parseInt(row.get(5)) //staff_id
                 );
             } catch (Exception e) {

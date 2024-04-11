@@ -27,7 +27,7 @@ public class Role_DetailDAL extends Manager {
                         Integer.parseInt(row.get(0)), // role_id
                         Integer.parseInt(row.get(1)), // staff_id
                         Date.valueOf(row.get(2)), // entry_date
-                        BigDecimal.valueOf(Double.parseDouble(row.get(3))) // salary
+                        new BigDecimal(row.get(3)).setScale(2) // salary
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in RoleDAL.convertToRole_detail(): " + e.getMessage());

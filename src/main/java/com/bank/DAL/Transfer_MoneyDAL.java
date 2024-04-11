@@ -29,7 +29,7 @@ public class Transfer_MoneyDAL extends Manager{
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // sender_bank_account_number
                         row.get(2), // receiver_bank_account_number
-                        new BigDecimal(row.get(3)), // money_amount
+                        new BigDecimal(row.get(3)).setScale(2), // money_amount
                         Integer.parseInt(row.get(4)), //staff_id
                         LocalDateTime.parse(row.get(6), myFormatObj) // send_date
                 );

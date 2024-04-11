@@ -28,7 +28,7 @@ public class Bank_AccountDAL extends Manager{
                 return new Bank_Account(
                         row.get(0), // number
                         row.get(1), // customer_no
-                        BigDecimal.valueOf(Double.parseDouble(row.get(2))), // balance
+                        new BigDecimal(row.get(2)).setScale(2), // balance
                         Integer.parseInt(row.get(3)), // branch_id
                         Date.valueOf(row.get(4)), // creation_date
                         Boolean.parseBoolean(row.get(5)) // deleted

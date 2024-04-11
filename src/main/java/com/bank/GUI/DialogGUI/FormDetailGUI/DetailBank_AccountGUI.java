@@ -31,7 +31,7 @@ public class DetailBank_AccountGUI extends DialogForm {
     public DetailBank_AccountGUI(Bank_Account Bank_Account) {
         super();
         super.setTitle("Thông Tin Tài khoản Ngân Hàng ");
-        super.setSize(new Dimension(1000, 350));
+        super.setSize(new Dimension(1000, 400));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
         init(Bank_Account);
         setVisible(true);
@@ -120,29 +120,32 @@ public class DetailBank_AccountGUI extends DialogForm {
             }
 
         }
-        buttonTransfer.setPreferredSize(new Dimension(150, 30));
-        buttonTransfer.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonTransfer.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonTransfer.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                dispose();
-                new TransactionGUI(Bank_Account);
-            }
-        });
-        containerButton.add(buttonTransfer);
 
-        buttonTransaction.setPreferredSize(new Dimension(150, 30));
-        buttonTransaction.setFont(new Font("Public Sans", Font.BOLD, 15));
-        buttonTransaction.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        buttonTransaction.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                editStaff();
-//            }
-//        });
-        containerButton.add(buttonTransaction);
+        if (Bank_Account.isStatus()) {
+            buttonTransfer.setPreferredSize(new Dimension(150, 30));
+            buttonTransfer.setFont(new Font("Public Sans", Font.BOLD, 15));
+            buttonTransfer.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttonTransfer.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    dispose();
+                    new TransactionGUI(Bank_Account);
+                }
+            });
+            containerButton.add(buttonTransfer);
 
+            buttonTransaction.setPreferredSize(new Dimension(150, 30));
+            buttonTransaction.setFont(new Font("Public Sans", Font.BOLD, 15));
+            buttonTransaction.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttonTransaction.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    dispose();
+                    new TransactionGUI(Bank_Account);
+                }
+            });
+            containerButton.add(buttonTransaction);
+        }
     }
 }
 

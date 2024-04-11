@@ -58,7 +58,7 @@ public class DataTable extends JTable {
 //        });
 
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 
     public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener) {
@@ -104,7 +104,7 @@ public class DataTable extends JTable {
         });
 
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 
     public DataTable(Object[][] data, Object[] columnNames, int checkbox) {
@@ -163,7 +163,7 @@ public class DataTable extends JTable {
 //            }
 //        });
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 
     public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, boolean detail, boolean edit, boolean remove, int numberOfColumns) {
@@ -221,7 +221,7 @@ public class DataTable extends JTable {
 
 
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 
     public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, ActionListener actionListenerChange, boolean detail, boolean edit, boolean remove, int numberOfColumns, int status) {
@@ -303,7 +303,7 @@ public class DataTable extends JTable {
 
 
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 
     public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, ActionListener actionListenerChange,
@@ -379,7 +379,7 @@ public class DataTable extends JTable {
 
 
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 
     public DataTable(Object[][] data, Object[] columnNames, ActionListener actionListener, ActionListener actionListenerChange,
@@ -466,7 +466,7 @@ public class DataTable extends JTable {
 
 
         JTableHeader jTableHeader = getTableHeader();
-        jTableHeader.setBackground(new Color(183, 183, 183));
+        jTableHeader.setBackground(Color.white);
     }
 }
 

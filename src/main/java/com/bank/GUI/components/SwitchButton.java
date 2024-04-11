@@ -29,7 +29,7 @@ public class SwitchButton extends Component {
     private List<EventSwitchSelected> events;
 
     public SwitchButton() {
-        setBackground(new Color(0, 174, 255));
+        setBackground(new Color(112,130,236));
         setPreferredSize(new Dimension(50, 25));
         setForeground(Color.WHITE);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -94,7 +94,7 @@ public class SwitchButton extends Component {
         int height = getHeight();
         float alpha = getAlpha();
         if (alpha < 1) {
-            g2.setColor(Color.GRAY);
+            g2.setColor(new Color(112,130,236));
             g2.fillRoundRect(0, 0, width, height, 25, 25);
         }
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
