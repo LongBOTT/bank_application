@@ -10,18 +10,28 @@ public class Transaction_Deposit_Withdrawal {
     private boolean transaction_type;
     private LocalDateTime transaction_date;
     private BigDecimal money_amount;
+    private String description;
     private int staff_id;
 
     public Transaction_Deposit_Withdrawal() {
     }
 
-    public Transaction_Deposit_Withdrawal(int id, String bank_number_account, boolean transaction_type, LocalDateTime transaction_date, BigDecimal money_amount, int staff_id) {
+    public Transaction_Deposit_Withdrawal(int id, String bank_number_account, boolean transaction_type, LocalDateTime transaction_date, BigDecimal money_amount, String description, int staff_id) {
         this.id = id;
         this.bank_number_account = bank_number_account;
         this.transaction_type = transaction_type;
         this.transaction_date = transaction_date;
         this.money_amount = money_amount;
+        this.description = description;
         this.staff_id = staff_id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getId() {

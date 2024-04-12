@@ -16,9 +16,10 @@ public class Transfer_MoneyDAL extends Manager{
                 List.of("id",
                         "sender_bank_account_number",
                         "receiver_bank_account_number",
+                        "send_date",
                         "money_amount",
-                        "staff_id",
-                        "send_date"));
+                        "description",
+                        "staff_id"));
     }
 
     public List<Transfer_Money> convertToTransfer_Moneys(List<List<String>> data) {
@@ -29,9 +30,10 @@ public class Transfer_MoneyDAL extends Manager{
                         Integer.parseInt(row.get(0)), // id
                         row.get(1), // sender_bank_account_number
                         row.get(2), // receiver_bank_account_number
-                        new BigDecimal(row.get(3)).setScale(2), // money_amount
-                        Integer.parseInt(row.get(4)), //staff_id
-                        LocalDateTime.parse(row.get(6), myFormatObj) // send_date
+                        LocalDateTime.parse(row.get(3), myFormatObj), // send_date
+                        new BigDecimal(row.get(4)).setScale(2), // money_amount
+                        row.get(5), // description
+                        Integer.parseInt(row.get(6)) //staff_id
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Transfer_MoneyDAL.convertToTransfer_Moneys(): " + e.getMessage());
@@ -45,9 +47,10 @@ public class Transfer_MoneyDAL extends Manager{
             return create(transfer_Money.getId(),
                     transfer_Money.getSender_bank_account_number(),
                     transfer_Money.getReceiver_bank_account_number(),
+                    transfer_Money.getSend_date(),
                     transfer_Money.getMoney_amount(),
-                    transfer_Money.getStaff_id(),
-                    transfer_Money.getSend_date()
+                    transfer_Money.getDescription(),
+                    transfer_Money.getStaff_id()
             );
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Transfer_MoneyDAL.addTransfer_Money(): " + e.getMessage());
@@ -61,9 +64,10 @@ public class Transfer_MoneyDAL extends Manager{
             updateValues.add(transfer_Money.getId());
             updateValues.add(transfer_Money.getSender_bank_account_number());
             updateValues.add(transfer_Money.getReceiver_bank_account_number());
-            updateValues.add(transfer_Money.getMoney_amount());
-            updateValues.add(transfer_Money.getStaff_id());
             updateValues.add(transfer_Money.getSend_date());
+            updateValues.add(transfer_Money.getMoney_amount());
+            updateValues.add(transfer_Money.getDescription());
+            updateValues.add(transfer_Money.getStaff_id());
             return update(updateValues, "[id] = " + transfer_Money.getId());
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Transfer_MoneyDAL.updateTransfer_Money(): " + e.getMessage());

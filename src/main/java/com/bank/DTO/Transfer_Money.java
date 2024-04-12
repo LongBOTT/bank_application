@@ -8,20 +8,30 @@ public class Transfer_Money {
     private int id;
     private String sender_bank_account_number;
     private String receiver_bank_account_number;
-    private BigDecimal money_amount;
-    private int staff_id;
     private LocalDateTime send_date;
+    private BigDecimal money_amount;
+    private String description;
+    private int staff_id;
 
     public Transfer_Money() {
     }
 
-    public Transfer_Money(int id, String sender_bank_account_number, String receiver_bank_account_number, BigDecimal money_amount, int staff_id, LocalDateTime send_date) {
+    public Transfer_Money(int id, String sender_bank_account_number, String receiver_bank_account_number, LocalDateTime send_date, BigDecimal money_amount, String description, int staff_id) {
         this.id = id;
         this.sender_bank_account_number = sender_bank_account_number;
         this.receiver_bank_account_number = receiver_bank_account_number;
-        this.money_amount = money_amount;
-        this.staff_id = staff_id;
         this.send_date = send_date;
+        this.money_amount = money_amount;
+        this.description = description;
+        this.staff_id = staff_id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getId() {

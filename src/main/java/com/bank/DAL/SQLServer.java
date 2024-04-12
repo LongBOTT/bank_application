@@ -113,15 +113,19 @@ public class SQLServer {
                 if (condition.getValue() instanceof String || condition.getValue() instanceof Character) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = N'" + condition.getValue() + "'";
                 }
-                if (condition.getValue() instanceof Integer || condition.getValue() instanceof Double || condition.getValue() instanceof BigDecimal) {
+                else if (condition.getValue() instanceof Integer || condition.getValue() instanceof Double || condition.getValue() instanceof BigDecimal) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = " + condition.getValue();
                 }
-                if (condition.getValue() instanceof Boolean) {
+                 else if (condition.getValue() instanceof Boolean) {
                     String value =  Boolean.parseBoolean(condition.getValue().toString()) ? "1" : "0";
                     strings[strings.length - 1] = "@" + condition.getKey() + " = " + value;
                 }
-                if (condition.getValue() instanceof java.util.Date) {
+                else if (condition.getValue() instanceof java.util.Date) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = '" + condition.getValue() + "'";
+                }
+                else if (condition.getValue() instanceof LocalDateTime) {
+                    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    strings[strings.length - 1] =  "@" + condition.getKey() + " = '" + (LocalDateTime.parse(condition.getValue().toString())).format(myFormatObj) + "'";
                 }
             }
             query += " " + String.join(", ", strings);

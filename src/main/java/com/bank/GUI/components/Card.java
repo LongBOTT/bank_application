@@ -10,12 +10,17 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Card extends RoundedPanel {
+    public Bank_Account bankAccount;
     public JLabel balance;
     public Card(Bank_Account bank_account) {
+        this.bankAccount = bank_account;
         initComponents(bank_account);
         setVisible(true);
     }
@@ -32,20 +37,15 @@ public class Card extends RoundedPanel {
         top.setBorder(BorderFactory.createMatteBorder(0,0,20, 0, new Color(77, 76, 78)));
         add(top, BorderLayout.NORTH);
 
-//        JPanel jPanel = new JPanel();
-//        jPanel.setBackground();
-//        jPanel.setPreferredSize(new Dimension(300, 10));
-//        add(jPanel);
-//
         RoundedPanel center = new RoundedPanel();
         center.setLayout(new BorderLayout());
-        center.setPreferredSize(new Dimension(300, 50));
+        center.setPreferredSize(new Dimension(300, 30));
         center.setBackground(new Color(111, 163, 201));
         add(center, BorderLayout.CENTER);
 
         RoundedPanel bottom = new RoundedPanel();
         bottom.setLayout(new BorderLayout());
-        bottom.setPreferredSize(new Dimension(300, 60));
+        bottom.setPreferredSize(new Dimension(300, 80));
         bottom.setBackground(new Color(111, 163, 201));
         add(bottom, BorderLayout.SOUTH);
 
@@ -78,24 +78,36 @@ public class Card extends RoundedPanel {
         RoundedPanel panel1 = new RoundedPanel();
         panel1.setBackground(new Color(111, 163, 201));
         panel1.setLayout(new BorderLayout());
-        panel1.setPreferredSize(new Dimension(230, 60));
+        panel1.setPreferredSize(new Dimension(220, 80));
         bottom.add(panel1, BorderLayout.WEST);
 
         RoundedPanel panel2 = new RoundedPanel();
         panel2.setBackground(new Color(111, 163, 201));
         panel2.setLayout(new BorderLayout());
-        panel2.setPreferredSize(new Dimension(70, 60));
+        panel2.setPreferredSize(new Dimension(80, 80));
         bottom.add(panel2, BorderLayout.EAST);
 
-        JLabel iconChip = new JLabel(new FlatSVGIcon("icon/cdnlogo.com_mastercard.svg"));
+        JLabel iconChip = new JLabel(new FlatSVGIcon("icon/Napas.svg"));
         panel2.add(iconChip, BorderLayout.CENTER);
 
         JLabel number = new JLabel(bank_account.getNumber());
         number.setBorder(BorderFactory.createEmptyBorder(0,10, 0 ,0));
         number.setFont(loadFont1("Font/OCR-B/OCR-B.ttf"));
         number.setForeground(Color.white);
-        panel1.add(number, BorderLayout.CENTER);
+        panel1.add(number, BorderLayout.NORTH);
 
+        String validFrom = new SimpleDateFormat("MM/yy").format(bank_account.getCreation_date());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(bank_account.getCreation_date());
+        calendar.add(Calendar.YEAR, 5);
+        Date newDate = calendar.getTime();
+        String validThru = new SimpleDateFormat("MM/yy").format(newDate);
+
+        JLabel labelValidFrom = new JLabel("<html><p style='font-size:6pt'>VALID FROM&nbsp;&nbsp;&nbsp;&nbsp;VALID THRU</p><b>" + validFrom + "&nbsp;&nbsp;&nbsp;&nbsp;" + validThru + "</b></html>");
+        labelValidFrom.setBorder(BorderFactory.createEmptyBorder(0,10, 5 ,0));
+        labelValidFrom.setFont(loadFont2("Font/OCR-B/OCR-B.ttf"));
+        labelValidFrom.setForeground(Color.white);
+        panel1.add(labelValidFrom, BorderLayout.CENTER);
 
         Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bank_account.getCustomer_no() + "'").get(0);
 

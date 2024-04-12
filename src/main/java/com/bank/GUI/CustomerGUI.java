@@ -5,6 +5,7 @@ import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.*;
 
 import com.bank.GUI.DialogGUI.FormAddGUI.AddCustomerGUI;
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBank_AccountGUI;
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI;
 import com.bank.GUI.DialogGUI.FormEditGUI.EditCustomerGUI;
 import com.bank.GUI.components.*;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI.loadCardList;
 import static java.lang.Thread.sleep;
 
 public class CustomerGUI extends Layout1 {
@@ -51,7 +53,7 @@ public class CustomerGUI extends Layout1 {
     private boolean remove = false;
     private String[] columnNames;
     private Object[][] data = new Object[0][0];
-
+    public static List<Pair<Customer, List<Card>>> pairList = new ArrayList<>();
     public CustomerGUI(List<Function> functions) {
         super();
         this.functions = functions;
@@ -227,6 +229,26 @@ public class CustomerGUI extends Layout1 {
             panel.setIcon(new FlatSVGIcon("icon/export.svg"));
             roundedPanel.add(panel);
         }
+
+        Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
+        for (Customer customer: customerBLL.searchCustomers("[deleted] = 0")) {
+            List<Card> cardList = new ArrayList<>();
+            for (Bank_Account bank_account : bankAccountBLL.findAllBank_Accounts("customer_no", customer.getCustomerNo())) {
+                Card card = new Card(bank_account);
+                card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                card.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+//                    dispose();
+                        new DetailBank_AccountGUI(card.bankAccount);
+                        loadCardList();
+                    }
+                });
+                cardList.add(card);
+            }
+            pairList.add(new Pair<>(customer, cardList));
+        }
+
     }
 
     public void refresh() {
@@ -291,7 +313,13 @@ public class CustomerGUI extends Layout1 {
 
         Customer selectedCustomer = customerBLL.searchCustomers("[no] = '" + data[indexRow][0].toString() + "'").get(0);
         if (detail && indexColumn == indexColumnDetail){
-            new DetailCustomerGUI(selectedCustomer); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+            for (Pair pair : pairList) {
+                Customer customer = (Customer) pair.getKey();
+                if (Objects.equals(customer.getCustomerNo(), selectedCustomer.getCustomerNo())) {
+                    new DetailCustomerGUI(pair); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+                    return;
+                }
+            }
         }
 
         if (edit && indexColumn == indexColumnEdit) {
@@ -312,7 +340,7 @@ public class CustomerGUI extends Layout1 {
         }
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận xoá và đóng các tài khoản ngân hàng của khách hàng?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Pair<Boolean, String> result = customerBLL.deleteCustomer(customer);
             if (result.getKey()) {

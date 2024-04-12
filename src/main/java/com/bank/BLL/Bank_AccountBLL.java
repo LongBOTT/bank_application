@@ -88,6 +88,12 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
         return list;
     }
 
+    public List<Bank_Account> findAllBank_AccountsActiveByStaff(String customer_no) {
+        List<Bank_Account> list = findAllBank_Accounts("customer_no", customer_no);
+        list.removeIf(bank_account -> !bank_account.isStatus());
+        return list;
+    }
+
 //    public List<Bank_Account> findBank_AccountsBy(Map<String, Object> conditions) {
 //        List<Bank_Account> Bank_Accounts = Bank_AccountDAL.searchBank_Accounts();
 //        for (Map.Entry<String, Object> entry : conditions.entrySet())

@@ -1,27 +1,30 @@
 package com.bank.GUI.DialogGUI.FormDetailGUI;
-;
+
 import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Bank_Account;
-import com.bank.DTO.Branch;
 import com.bank.DTO.Customer;
 import com.bank.GUI.Bank_AccountGUI;
+import com.bank.GUI.CustomerGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.*;
 import com.bank.main.Bank_Application;
 import com.bank.utils.Email;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class DetailCustomerGUI extends DialogForm {
     private Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
@@ -30,16 +33,19 @@ public class DetailCustomerGUI extends DialogForm {
     private List<JLabel> attributeCustomer;
     private List<JTextField> jTextFieldsCustomer;
     private JDateChooser jDateChooser = new JDateChooser();
-    private DataTable dataTable;
-    private Object[][] data = new Object[0][0];
     private Thread currentCountDownThread;
-    private Customer customer;
-    public DetailCustomerGUI(Customer customer) {
+    private static Customer customer;
+    private static List<Card> cardList;
+    private RoundedPanel addPanel;
+    public static RoundedPanel roundedPanel1 = new RoundedPanel();
+    public DetailCustomerGUI(Pair<Customer, List<Card>> pair) {
         super();
+        super.setName("DetailCustomer");
         super.setTitle("Thông Tin Khách Hàng ");
         super.setSize(new Dimension(1000, 600));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
-        this.customer = customer;
+        customer = pair.getKey();
+        cardList = pair.getValue();
         init(customer);
         setVisible(true);
     }
@@ -113,98 +119,159 @@ public class DetailCustomerGUI extends DialogForm {
             }
         }
 
-        String[] columnNames = new String[]{"Số Thẻ", "CCCD", "Số Dư", "Chi Nhánh", "Ngày Mở", "Trạng Thái"};
-        dataTable = new DataTable(new Object[0][0], columnNames, e -> selectFunction());
-
         super.remove(containerButton);
-        RoundedScrollPane scrollPanel = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPanel.getViewport().setBackground(new Color(191, 198, 208));
-        scrollPanel.setPreferredSize(new Dimension(1000, 300));
-        super.add(scrollPanel, "wrap");
+        RoundedPanel roundedPanel = new RoundedPanel();
+        roundedPanel.setBackground(new Color(228,231,235));
+        roundedPanel.setLayout(new GridBagLayout());
+        roundedPanel.setPreferredSize(new Dimension(1000, 220));
+        super.add(roundedPanel, "wrap");
 
-        loadDataTable(bankAccountBLL.getData(bankAccountBLL.findAllBank_Accounts("customer_no", customer.getCustomerNo())));
+        roundedPanel1.setBackground(new Color(228,231,235));
+        roundedPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        RoundedScrollPane scrollPanel = new RoundedScrollPane(roundedPanel1, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPanel.getViewport().setBackground(new Color(228,231,235));
+        scrollPanel.setPreferredSize(new Dimension(850, 180));
+        roundedPanel.add(scrollPanel);
+
+        roundedPanel1.removeAll();
+        for (Card card: cardList) {
+            roundedPanel1.add(card);
+        }
+
+        addPanel = new RoundedPanel();
+        addPanel.setBackground(new Color(111, 163, 201));
+        addPanel.setLayout(new GridBagLayout());
+        addPanel.setPreferredSize(new Dimension(300, 160));
+        addPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                addBank_Account();
+            }
+        });
+        roundedPanel1.add(addPanel);
+
+
+        JLabel iconAdd = new JLabel(new FlatSVGIcon("icon/add.svg"));
+        iconAdd.setText("Mở Tài Khoản");
+        iconAdd.setForeground(Color.white);
+        iconAdd.setFont((new Font("Public Sans", Font.BOLD, 15)));
+        iconAdd.setIconTextGap(10);
+        addPanel.add(iconAdd);
+
+        roundedPanel1.repaint();
+        roundedPanel1.revalidate();
     }
 
-    public void loadDataTable(Object[][] objects) {
-        DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
-        model.setRowCount(0);
+    private static void addBank_Account() {
+        Pair<Boolean, String> result;
+        String[] options = new String[]{"Huỷ", "Xác nhận"};
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận mở tài khoản ngân hàng cho khách hàng?",
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+        if (choice == 1) {
+            Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
+            if (bankAccountBLL.findAllBank_AccountsActiveByStaff(customer.getCustomerNo()).size() >= 2) {
+                JOptionPane.showMessageDialog(null, "Mỗi khách hàng không thể có quá 2 tài khoản ngân hàng đang mở!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        if (objects.length == 0) {
-            return;
-        }
+            String number = bankAccountBLL.getAutoNumber();
+            Bank_Account bank_account = new Bank_Account();
+            bank_account.setNumber(number);
+            bank_account.setCustomer_no(customer.getCustomerNo());
+            bank_account.setBalance(BigDecimal.valueOf(0));
+            bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
+            bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
+            bank_account.setStatus(true);
 
-        data = new Object[objects.length + 1][objects[0].length];
+            result = bankAccountBLL.addBank_Account(bank_account);
 
-        for (int i = 0; i < objects.length; i++) {
-            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
-            Branch branch = branchBLL.findAllBranchs("id", data[i][3].toString()).get(0);
+            if (!result.getKey()) {
+                JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-            data[i][3] = branch.getName();
-        }
+            Card newCard = new Card(bank_account);
+            newCard.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            newCard.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    new DetailBank_AccountGUI(newCard.bankAccount);
+                    loadCardList();
+                }
+            });
+            cardList.add(newCard);
 
-        data[data.length - 1][0] = "+";
+            try {
+                Thread threadRepaint = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadCardList();
+                    }
+                });
+                threadRepaint.start();
+                threadRepaint.join();
+                Thread thread = new Thread(() -> {
+                    Email.sendOTP(customer.getEmail(), "Mở thẻ Ngân Hàng ACB",
+                            "<html><p>Ngân Hàng ACB xin thông báo quý khách đã mở thẻ thành công vào ngày <strong> "+ LocalDate.now() + " </strong>.</p>" +
+                                    "    <p>Số thẻ của quý khách là: <strong>" + number +"</strong></p>" +
+                                    "    <p>Mật khẩu mặc định là: <strong>" + Email.getOTP() + "</strong></p>" +
+                                    "    <p>Vui lòng thực hiện thay đổi mật khẩu.</p></html>");
+                });
+                thread.start();
+            } catch (Exception ignored) {
 
-        for (Object[] object : data) {
-            model.addRow(object);
+            }
+
+            Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+            circleProgressBar.getRootPane ().setOpaque (false);
+            circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+            circleProgressBar.progress();
+            circleProgressBar.setVisible(true);
+            JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+            Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+            bankAccountGUI.refresh();
         }
     }
 
-    private void selectFunction() {
-        int indexRow = dataTable.getSelectedRow();
-        int indexColumn = dataTable.getSelectedColumn();
-        Pair<Boolean, String> result = new Pair<>(true, "");
-        if (indexColumn == 0 && indexRow == dataTable.getRowCount() - 1) {
-            String[] options = new String[]{"Huỷ", "Xác nhận"};
-            int choice = JOptionPane.showOptionDialog(null, "Xác nhận mở tài khoản ngân hàng cho khách hàng?",
-                    "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-            if (choice == 1) {
-                String number = bankAccountBLL.getAutoNumber();
-                Bank_Account bank_account = new Bank_Account();
-                bank_account.setNumber(number);
-                bank_account.setCustomer_no(customer.getCustomerNo());
-                bank_account.setBalance(BigDecimal.valueOf(0));
-                bank_account.setBranch_id(HomeGUI.staff.getBranch_id());
-                bank_account.setCreation_date(java.sql.Date.valueOf(LocalDate.now()));
-                bank_account.setStatus(true);
-
-                result = bankAccountBLL.addBank_Account(bank_account);
-
-                if (!result.getKey()) {
-                    JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
+    public static void loadCardList() {
+        DetailCustomerGUI.roundedPanel1.removeAll();
+        for (Pair pair : CustomerGUI.pairList) {
+            Customer customer = (Customer) pair.getKey();
+            if (Objects.equals(customer.getCustomerNo(), DetailCustomerGUI.customer.getCustomerNo())) {
+                List<Card> cardList = (List<Card>) pair.getValue();
+                for (Card card : cardList) {
+                    DetailCustomerGUI.roundedPanel1.add(card);
                 }
-                try {
-                    Thread thread = new Thread(() -> sendOTP(customer.getEmail(), number));
-                    thread.start();
-                } catch (Exception ignored) {
-
-                }
-                Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
-                circleProgressBar.getRootPane ().setOpaque (false);
-                circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
-                circleProgressBar.setBackground (new Color (0, 0, 0, 0));
-                circleProgressBar.progress();
-                circleProgressBar.setVisible(true);
-                JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                bankAccountBLL = new Bank_AccountBLL();
-                loadDataTable(bankAccountBLL.getData(bankAccountBLL.findAllBank_Accounts("customer_no", customer.getCustomerNo())));
-                Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
-                bankAccountGUI.refresh();
+                break;
             }
         }
+
+        RoundedPanel addPanel = new RoundedPanel();
+        addPanel.setBackground(new Color(111, 163, 201));
+        addPanel.setLayout(new GridBagLayout());
+        addPanel.setPreferredSize(new Dimension(300, 160));
+        addPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                addBank_Account();
+            }
+        });
+        JLabel iconAdd = new JLabel(new FlatSVGIcon("icon/add.svg"));
+        iconAdd.setText("Mở Tài Khoản");
+        iconAdd.setForeground(Color.white);
+        iconAdd.setFont((new Font("Public Sans", Font.BOLD, 15)));
+        iconAdd.setIconTextGap(10);
+        addPanel.add(iconAdd);
+
+        DetailCustomerGUI.roundedPanel1.add(addPanel);
+        DetailCustomerGUI.roundedPanel1.repaint();
+        DetailCustomerGUI.roundedPanel1.revalidate();
     }
 
-    private void sendOTP(String email, String number)    {
-        if (currentCountDownThread != null)
-            currentCountDownThread.interrupt();
-        currentCountDownThread = new Thread(() -> {
-            Email.sendOTP(email, "Mở thẻ Ngân Hàng ACB",
-                    "<html><p>Ngân Hàng ACB xin thông báo quý khách đã mở thẻ thành công vào ngày <strong> "+ LocalDate.now() + " </strong>.</p>" +
-                            "    <p>Số thẻ của quý khách là: <strong>" + number +"</strong></p>" +
-                            "    <p>Mật khẩu mặc định là: <strong>" + Email.getOTP() + "</strong></p>" +
-                            "    <p>Vui lòng thực hiện thay đổi mật khẩu.</p></html>");
-        });
-        currentCountDownThread.start();
-    }
 }
 

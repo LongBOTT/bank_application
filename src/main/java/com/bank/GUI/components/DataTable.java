@@ -28,7 +28,7 @@ public class DataTable extends JTable {
             setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
         }
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 
@@ -73,7 +73,7 @@ public class DataTable extends JTable {
             setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
         }
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 
@@ -127,7 +127,7 @@ public class DataTable extends JTable {
             setDefaultRenderer(getColumnClass(i), new CustomTableCellRenderer());
         }
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 
@@ -182,7 +182,7 @@ public class DataTable extends JTable {
             getColumnModel().getColumn(i).setMaxWidth(50);
         }
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 
@@ -249,7 +249,7 @@ public class DataTable extends JTable {
             getColumnModel().getColumn(i).setMaxWidth(50);
         }
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 
@@ -340,7 +340,7 @@ public class DataTable extends JTable {
             getColumnModel().getColumn(i).setMaxWidth(50);
         }
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 
@@ -417,7 +417,7 @@ public class DataTable extends JTable {
         getColumnModel().getColumn(status).setCellEditor(new DefaultCellEditor(comboBox));
 
 
-        getTableHeader().setFont(new Font("Public Sans", Font.BOLD | Font.ITALIC, 15));
+        getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
 

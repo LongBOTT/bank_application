@@ -1,16 +1,17 @@
 package com.bank.GUI.DialogGUI.FormDetailGUI;
 
 import com.bank.BLL.BranchBLL;
-import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.Branch;
 import com.bank.DTO.Bank_Account;
+import com.bank.DTO.Customer;
+import com.bank.GUI.CustomerGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.DialogGUI.TransactionGUI;
-import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.Card;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.toedter.calendar.JDateChooser;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class DetailBank_AccountGUI extends DialogForm {
     private JLabel titleName;
@@ -30,6 +32,7 @@ public class DetailBank_AccountGUI extends DialogForm {
 
     public DetailBank_AccountGUI(Bank_Account Bank_Account) {
         super();
+        super.setName("DetailBankAccount");
         super.setTitle("Thông Tin Tài khoản Ngân Hàng ");
         super.setSize(new Dimension(1000, 400));
         super.setLocationRelativeTo(Bank_Application.homeGUI);
@@ -80,25 +83,8 @@ public class DetailBank_AccountGUI extends DialogForm {
                     continue;
                 }
                 if (string.trim().equals("CCCD Chủ Thẻ")) {
-                    JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                    jPanel.setPreferredSize(new Dimension(280, 35));
-                    jPanel.setBackground(Color.white);
-                    content.add(jPanel, "wrap");
-
-                    textField.setPreferredSize(new Dimension(215, 35));
                     textField.setText(Bank_Account.getCustomer_no());
-                    jPanel.add(textField);
-
-                    JLabel iconChangeRole = new JLabel(new FlatSVGIcon("icon/detail.svg"));
-                    iconChangeRole.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    iconChangeRole.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                            dispose();
-                            new DetailCustomerGUI(new CustomerBLL().searchCustomers("[no] = '" + Bank_Account.getCustomer_no() + "'").get(0));
-                        }
-                    });
-                    jPanel.add(iconChangeRole);
+                    content.add(textField, "wrap");
                     continue;
                 }
                 if (string.trim().equals("Số Dư")) {
@@ -129,7 +115,7 @@ public class DetailBank_AccountGUI extends DialogForm {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     dispose();
-                    new TransactionGUI(Bank_Account);
+//                    new TransactionGUI(Bank_Account, card);
                 }
             });
             containerButton.add(buttonTransfer);
@@ -141,7 +127,21 @@ public class DetailBank_AccountGUI extends DialogForm {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     dispose();
-                    new TransactionGUI(Bank_Account);
+                    Card selectedCard = null;
+                    for (Pair pair : CustomerGUI.pairList) {
+                        Customer customer = (Customer) pair.getKey();
+                        if (Objects.equals(customer.getCustomerNo(), Bank_Account.getCustomer_no())) {
+                            List<Card> cardList = (List<Card>) pair.getValue();
+                            for (Card card : cardList) {
+                                if (card.bankAccount.getNumber().equals(Bank_Account.getNumber())) {
+                                    selectedCard = card;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    new TransactionGUI(Bank_Account, selectedCard);
                 }
             });
             containerButton.add(buttonTransaction);

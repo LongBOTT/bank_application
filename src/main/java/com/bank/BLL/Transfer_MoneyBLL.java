@@ -100,9 +100,10 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
             case "id" -> transfer_Money.getId();
             case "sender_bank_account_number" -> transfer_Money.getSender_bank_account_number();
             case "receiver_bank_account_number" -> transfer_Money.getReceiver_bank_account_number();
-            case "money_amount" -> transfer_Money.getMoney_amount();
-            case "staff_id" -> transfer_Money.getStaff_id();
             case "send_date" -> transfer_Money.getSend_date();
+            case "money_amount" -> transfer_Money.getMoney_amount();
+            case "description" -> transfer_Money.getDescription();
+            case "staff_id" -> transfer_Money.getStaff_id();
             default -> null;
         };
     }

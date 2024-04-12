@@ -2,6 +2,7 @@ package com.bank.DAL;
 
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
                         "transaction_type",
                         "transaction_date",
                         "money_amount",
+                        "description",
                         "staff_id"));
     }
 
@@ -32,7 +34,8 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
                         Boolean.parseBoolean(row.get(2)), // transaction_type
                         LocalDateTime.parse(row.get(3), myFormatObj), // transaction_date
                         new BigDecimal(row.get(4)).setScale(2), // money_amount
-                        Integer.parseInt(row.get(5)) //staff_id
+                        row.get(5),
+                        Integer.parseInt(row.get(6)) //staff_id
                 );
             } catch (Exception e) {
                 System.out.println("Error occurred in Transaction_Deposit_WithdrawalDAL.convertToTransaction_Deposit_Withdrawals(): " + e.getMessage());
@@ -42,18 +45,22 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
     }
 
     public int addTransaction_Deposit_Withdrawal(Transaction_Deposit_Withdrawal transaction_Deposit_Withdrawal) {
+        int result = 0;
         try {
-            return create(transaction_Deposit_Withdrawal.getId(),
-                    transaction_Deposit_Withdrawal.getBank_number_account(),
-                    transaction_Deposit_Withdrawal.getTransaction_type(),
-                    transaction_Deposit_Withdrawal.getTransaction_date(),
-                    transaction_Deposit_Withdrawal.getMoney_amount(),
-                    transaction_Deposit_Withdrawal.getStaff_id()
-            );
+            result = Integer.parseInt(executeProcedure("sp_AddTransaction_Deposit_Withdrawal",
+                    new Pair<>("id", transaction_Deposit_Withdrawal.getId()),
+                    new Pair<>("bank_account_number", transaction_Deposit_Withdrawal.getBank_number_account()),
+                    new Pair<>("transaction_type", transaction_Deposit_Withdrawal.getTransaction_type()),
+                    new Pair<>("transaction_date", transaction_Deposit_Withdrawal.getTransaction_date()),
+                    new Pair<>("money_amount", transaction_Deposit_Withdrawal.getMoney_amount()),
+                    new Pair<>("description", transaction_Deposit_Withdrawal.getDescription()),
+                    new Pair<>("staff_id", transaction_Deposit_Withdrawal.getStaff_id())
+                    ).get(0).get(0));
+            return result;
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Transaction_Deposit_WithdrawalDAL.addTransaction_Deposit_Withdrawal(): " + e.getMessage());
         }
-        return 0;
+        return result;
     }
 
     public int updateTransaction_Deposit_Withdrawal(Transaction_Deposit_Withdrawal transaction_Deposit_Withdrawal) {
@@ -64,6 +71,7 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
             updateValues.add(transaction_Deposit_Withdrawal.getTransaction_type());
             updateValues.add(transaction_Deposit_Withdrawal.getTransaction_date());
             updateValues.add(transaction_Deposit_Withdrawal.getMoney_amount());
+            updateValues.add(transaction_Deposit_Withdrawal.getDescription());
             updateValues.add(transaction_Deposit_Withdrawal.getStaff_id());
             return update(updateValues, "[id] = " + transaction_Deposit_Withdrawal.getId());
         } catch (SQLException | IOException e) {

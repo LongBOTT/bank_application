@@ -104,6 +104,7 @@ public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Depos
             case "transaction_type" -> transaction_deposit_withdrawal.getTransaction_type();
             case "transaction_date" -> transaction_deposit_withdrawal.getTransaction_date();
             case "money_amount" -> transaction_deposit_withdrawal.getMoney_amount();
+            case "description" -> transaction_deposit_withdrawal.getDescription();
             case "staff_id" -> transaction_deposit_withdrawal.getStaff_id();
             default -> null;
         };

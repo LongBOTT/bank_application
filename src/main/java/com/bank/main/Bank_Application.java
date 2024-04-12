@@ -29,12 +29,12 @@ public class Bank_Application {
         UIManager.put("PasswordField.capsLockIcon", new FlatSVGIcon("icon/capslock.svg"));
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
-//
-//        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
-//        thread.start();
-//        loginGUI = new LoginGUI();
-//        loginGUI.setVisible(true);
-        new TransactionGUI(new Bank_AccountBLL().getBank_accountListAll().get(10));
+
+        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
+        thread.start();
+        loginGUI = new LoginGUI();
+        loginGUI.setVisible(true);
+//        new TransactionGUI(new Bank_AccountBLL().getBank_accountListAll().get(10));
     }
 
     public static void exit(int status) {

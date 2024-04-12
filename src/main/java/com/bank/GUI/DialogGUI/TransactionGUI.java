@@ -5,20 +5,24 @@ import com.bank.BLL.Transaction_Deposit_WithdrawalBLL;
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Customer;
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
+import com.bank.GUI.CustomerGUI;
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.*;
-import com.bank.GUI.components.swing.MyTextField;
 import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class TransactionGUI extends JDialog {
     private Transaction_Deposit_WithdrawalBLL transactionDepositWithdrawalBLL = new Transaction_Deposit_WithdrawalBLL();
@@ -29,9 +33,8 @@ public class TransactionGUI extends JDialog {
     private MyTextFieldUnderLine myTextFieldUnderLine;
     private JButton buttonCancel;
     private JButton buttonAdd;
-    private Card card;
     private JTextArea jTextArea;
-    public TransactionGUI(Bank_Account bank_account) {
+    public TransactionGUI(Bank_Account bank_account, Card card) {
         super((Frame) null, "", true);
         getContentPane().setBackground(new Color(228,231,235));
         setTitle("Hệ Thống Giao Dịch");
@@ -47,11 +50,11 @@ public class TransactionGUI extends JDialog {
                 cancel();
             }
         });
-        initComponents(bank_account);
+        initComponents(bank_account, card);
         setVisible(true);
     }
 
-    private void initComponents(Bank_Account bank_account) {
+    private void initComponents(Bank_Account bank_account, Card card) {
         switchButton =  new SwitchButton();
         myTextFieldUnderLine = new MyTextFieldUnderLine();
         jComboBox = new JComboBox<>(new String[]{"Gửi Tiền", "Rút Tiền"});
@@ -76,7 +79,6 @@ public class TransactionGUI extends JDialog {
         panelCard.setPreferredSize(new Dimension(300, 170));
         left.add(panelCard, "center, wrap");
 
-        card = new Card(bank_account);
         panelCard.add(card, BorderLayout.CENTER);
 
         RoundedPanel panel = new RoundedPanel();
@@ -238,6 +240,12 @@ public class TransactionGUI extends JDialog {
         buttonCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonCancel.setBackground(new Color(237, 239, 253));
         buttonCancel.setForeground(new Color(112,130,236));
+        buttonCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cancel();
+            }
+        });
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(150, 50));
@@ -245,10 +253,10 @@ public class TransactionGUI extends JDialog {
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.setBackground(new Color(112,130,236));
         buttonAdd.setForeground(Color.white);
-        buttonAdd.addMouseListener(new MouseAdapter() {
+        buttonAdd.addActionListener(new ActionListener() {
             @Override
-            public void mousePressed(MouseEvent e) {
-//                addAccount();
+            public void actionPerformed(ActionEvent e) {
+                addTransaction(bank_account, card);
             }
         });
         containerButton.add(buttonAdd);
@@ -278,10 +286,56 @@ public class TransactionGUI extends JDialog {
     public void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
-                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1)
             dispose();
     }
 
+    private void addTransaction(Bank_Account bank_account, Card card) {
+        String[] options = new String[]{"Huỷ", "Xác nhận"};
+        int choice = JOptionPane.showOptionDialog(null, "Xác nhận thực hiện giao dịch?",
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+        if (choice == 1) {
+            if (myTextFieldUnderLine.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền giao dịch!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int id, staff_id;
+            boolean transaction_type;
+            LocalDateTime transaction_date;
+            BigDecimal money_amount = new BigDecimal(myTextFieldUnderLine.getText());
+            String description;
+
+            id = transactionDepositWithdrawalBLL.getAutoID();
+            staff_id = HomeGUI.staff.getId();
+            transaction_type = jComboBox.getSelectedIndex() == 0;
+            transaction_date = LocalDateTime.now();
+            description = jTextArea.getText();
+
+            if (!transaction_type && bank_account.getBalance().compareTo(money_amount) < 0) {
+                JOptionPane.showMessageDialog(null, "Số tiền trong tài khoản không đủ để thực hiện giao dịch!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Pair<Boolean, String> result;
+            Transaction_Deposit_Withdrawal transaction_deposit_withdrawal = new Transaction_Deposit_Withdrawal(id, bank_account.getNumber(), transaction_type, transaction_date, money_amount, description, staff_id);
+            result = transactionDepositWithdrawalBLL.addTransaction_Deposit_Withdrawal(transaction_deposit_withdrawal);
+
+            if (result.getKey()) {
+                Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
+                circleProgressBar.getRootPane ().setOpaque (false);
+                circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.setBackground (new Color (0, 0, 0, 0));
+                circleProgressBar.progress();
+                circleProgressBar.setVisible(true);
+                JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+            } else {
+
+                JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
 }

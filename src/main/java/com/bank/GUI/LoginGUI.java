@@ -294,7 +294,7 @@ public class LoginGUI extends JFrame {
     private void cancel() {
         String[] options = new String[]{"Huỷ", "Thoát ứng dụng"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát ứng dụng?",
-                "Lỗi", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[1]);
         if (choice == 1)
             Bank_Application.exit(1);
     }
