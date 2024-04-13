@@ -6,8 +6,11 @@ import com.bank.BLL.CustomerBLL;
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Customer;
 import com.bank.GUI.Bank_AccountGUI;
+import com.bank.GUI.CustomerGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBank_AccountGUI;
 import com.bank.GUI.HomeGUI;
+import com.bank.GUI.components.Card;
 import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 
@@ -30,6 +33,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI.loadCardList;
 
 
 public class AddCustomerGUI extends DialogForm {
@@ -141,6 +146,8 @@ public class AddCustomerGUI extends DialogForm {
         containerButton.add(buttonCancel);
 
         buttonAdd.setPreferredSize(new Dimension(100, 30));
+        buttonAdd.setBackground(new Color(1, 120, 220));
+        buttonAdd.setForeground(Color.white);
         buttonAdd.setFont(new Font("Public Sans", Font.BOLD, 15));
         buttonAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonAdd.addMouseListener(new MouseAdapter() {
@@ -174,7 +181,28 @@ public class AddCustomerGUI extends DialogForm {
         result = customerBLL.addCustomer(customer);
 
         if (result.getKey()) {
-            if (!result.getValue().equals("Khôi phục khách hàng thành công.")) {
+            if (result.getValue().equals("Khôi phục khách hàng thành công.")) {
+                Customer rollBackCustomer = customerBLL.searchCustomers("[no] = '" + customerNo + "'").get(0);
+                List<Card> cardList = new ArrayList<>();
+                bankAccountBLL = new Bank_AccountBLL();
+                for (Bank_Account bank_account : bankAccountBLL.findAllBank_Accounts("customer_no", rollBackCustomer.getCustomerNo())) {
+                    Card card = new Card(bank_account);
+                    card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    card.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            if (card.mouseListenerIsActive) {
+                                new DetailBank_AccountGUI(card.bankAccount);
+                                loadCardList();
+                            }
+                        }
+                    });
+                    cardList.add(card);
+                }
+                Pair<Customer, List<Card>> pair = new Pair<>(customer,cardList);
+                CustomerGUI.pairList.add(pair);
+            }
+            else if (!result.getValue().equals("Khôi phục khách hàng thành công.")) {
                 String number = bankAccountBLL.getAutoNumber();
                 Bank_Account bank_account = new Bank_Account();
                 bank_account.setNumber(number);
@@ -188,6 +216,21 @@ public class AddCustomerGUI extends DialogForm {
                     JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+
+                Card card = new Card(bank_account);
+                card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                card.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        if (card.mouseListenerIsActive) {
+                            new DetailBank_AccountGUI(card.bankAccount);
+                            loadCardList();
+                        }
+                    }
+                });
+                Pair<Customer, List<Card>> pair = new Pair<>(customer, List.of(card));
+                CustomerGUI.pairList.add(pair);
+
                 try {
                     Thread thread = new Thread(() -> sendOTP(email, number));
                     thread.start();

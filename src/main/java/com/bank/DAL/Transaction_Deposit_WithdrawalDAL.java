@@ -51,7 +51,6 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
                     new Pair<>("id", transaction_Deposit_Withdrawal.getId()),
                     new Pair<>("bank_account_number", transaction_Deposit_Withdrawal.getBank_number_account()),
                     new Pair<>("transaction_type", transaction_Deposit_Withdrawal.getTransaction_type()),
-                    new Pair<>("transaction_date", transaction_Deposit_Withdrawal.getTransaction_date()),
                     new Pair<>("money_amount", transaction_Deposit_Withdrawal.getMoney_amount()),
                     new Pair<>("description", transaction_Deposit_Withdrawal.getDescription()),
                     new Pair<>("staff_id", transaction_Deposit_Withdrawal.getStaff_id())

@@ -90,6 +90,7 @@ public class Transaction_Deposit_Withdrawal {
                 bank_number_account + " | " +
                 type + " | " +
                 money_amount + " | " +
-                transaction_date.format(myFormatObj);
+                transaction_date.format(myFormatObj) + " | " +
+                (description.isEmpty() ? " " : description);
     }
 }

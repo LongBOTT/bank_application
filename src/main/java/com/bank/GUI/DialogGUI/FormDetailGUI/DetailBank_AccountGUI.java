@@ -109,6 +109,8 @@ public class DetailBank_AccountGUI extends DialogForm {
 
         if (Bank_Account.isStatus()) {
             buttonTransfer.setPreferredSize(new Dimension(150, 30));
+            buttonTransfer.setBackground(new Color(1, 120, 220));
+            buttonTransfer.setForeground(Color.white);
             buttonTransfer.setFont(new Font("Public Sans", Font.BOLD, 15));
             buttonTransfer.setCursor(new Cursor(Cursor.HAND_CURSOR));
             buttonTransfer.addMouseListener(new MouseAdapter() {
@@ -121,6 +123,8 @@ public class DetailBank_AccountGUI extends DialogForm {
             containerButton.add(buttonTransfer);
 
             buttonTransaction.setPreferredSize(new Dimension(150, 30));
+            buttonTransaction.setBackground(new Color(1, 120, 220));
+            buttonTransaction.setForeground(Color.white);
             buttonTransaction.setFont(new Font("Public Sans", Font.BOLD, 15));
             buttonTransaction.setCursor(new Cursor(Cursor.HAND_CURSOR));
             buttonTransaction.addMouseListener(new MouseAdapter() {

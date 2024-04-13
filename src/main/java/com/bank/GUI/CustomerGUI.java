@@ -209,10 +209,10 @@ public class CustomerGUI extends Layout1 {
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setForeground(Color.white);
-            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
@@ -239,9 +239,10 @@ public class CustomerGUI extends Layout1 {
                 card.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-//                    dispose();
-                        new DetailBank_AccountGUI(card.bankAccount);
-                        loadCardList();
+                        if (card.mouseListenerIsActive) {
+                            new DetailBank_AccountGUI(card.bankAccount);
+                            loadCardList();
+                        }
                     }
                 });
                 cardList.add(card);

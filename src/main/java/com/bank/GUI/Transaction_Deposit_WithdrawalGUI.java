@@ -3,6 +3,7 @@ package com.bank.GUI;
 import com.bank.BLL.Transaction_Deposit_WithdrawalBLL;
 import com.bank.DTO.Function;
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailTransaction_Deposit_WithdrawalGUI;
 import com.bank.GUI.components.DataTable;
 import com.bank.GUI.components.Layout2;
 import com.bank.GUI.components.RoundedPanel;
@@ -182,10 +183,10 @@ public class Transaction_Deposit_WithdrawalGUI extends Layout2 {
             roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             FunctionPanel.add(roundedPanel);
 
-            JLabel panel = new JLabel("Xuất Excel");
+            JLabel panel = new JLabel("Nhập Excel");
             panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
             panel.setForeground(Color.white);
-            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
+            panel.setIcon(new FlatSVGIcon("icon/import.svg"));
             roundedPanel.add(panel);
         }
         if (functions.stream().anyMatch(f -> f.getName().equals("pdf"))) {
@@ -269,10 +270,10 @@ public class Transaction_Deposit_WithdrawalGUI extends Layout2 {
             return;
         }
 
-        data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length -1];
 
         for (int i = 0; i < objects.length; i++) {
-            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
+            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length -1);
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -290,10 +291,10 @@ public class Transaction_Deposit_WithdrawalGUI extends Layout2 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-//        Transaction_Deposit_Withdrawal selectedTransaction_Deposit_Withdrawal = Transaction_Deposit_WithdrawalBLL.findAllTransaction_Deposit_Withdrawals("number",  data[indexRow][0].toString()).get(0);
-//        if (detail && indexColumn == indexColumnDetail) {
-//            new DetailTransaction_Deposit_WithdrawalGUI(selectedTransaction_Deposit_Withdrawal); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//        }
+        Transaction_Deposit_Withdrawal selectedTransaction_Deposit_Withdrawal = Transaction_Deposit_WithdrawalBLL.findAllTransaction_Deposit_Withdrawals("id",  data[indexRow][0].toString()).get(0);
+        if (detail && indexColumn == indexColumnDetail) {
+            new DetailTransaction_Deposit_WithdrawalGUI(selectedTransaction_Deposit_Withdrawal); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        }
 
     }
 }

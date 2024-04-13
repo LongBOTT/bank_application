@@ -171,8 +171,8 @@ public class DetailCustomerGUI extends DialogForm {
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
         if (choice == 1) {
             Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
-            if (bankAccountBLL.findAllBank_AccountsActiveByStaff(customer.getCustomerNo()).size() >= 2) {
-                JOptionPane.showMessageDialog(null, "Mỗi khách hàng không thể có quá 2 tài khoản ngân hàng đang mở!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            if (!bankAccountBLL.findAllBank_AccountsActiveByStaffAndBranch(customer.getCustomerNo(), HomeGUI.staff.getBranch_id()).isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Mỗi khách hàng chỉ sở sữu 1 tài khoản ngân hàng đang hoạt động tại mỗi chi nhánh!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -197,8 +197,10 @@ public class DetailCustomerGUI extends DialogForm {
             newCard.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    new DetailBank_AccountGUI(newCard.bankAccount);
-                    loadCardList();
+                    if (newCard.mouseListenerIsActive) {
+                        new DetailBank_AccountGUI(newCard.bankAccount);
+                        loadCardList();
+                    }
                 }
             });
             cardList.add(newCard);

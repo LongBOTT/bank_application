@@ -1,10 +1,12 @@
 package com.bank.GUI.DialogGUI;
 
+import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.CustomerBLL;
 import com.bank.BLL.Transaction_Deposit_WithdrawalBLL;
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Customer;
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
+import com.bank.GUI.Transaction_Deposit_WithdrawalGUI;
 import com.bank.GUI.CustomerGUI;
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailCustomerGUI;
 import com.bank.GUI.HomeGUI;
@@ -34,8 +36,13 @@ public class TransactionGUI extends JDialog {
     private JButton buttonCancel;
     private JButton buttonAdd;
     private JTextArea jTextArea;
+    private Bank_Account bankAccount;
+    private Card card;
     public TransactionGUI(Bank_Account bank_account, Card card) {
         super((Frame) null, "", true);
+        this.bankAccount = bank_account;
+        this.card = card;
+        this.card.mouseListenerIsActive = false;
         getContentPane().setBackground(new Color(228,231,235));
         setTitle("Hệ Thống Giao Dịch");
         setLayout(new BorderLayout());
@@ -50,11 +57,11 @@ public class TransactionGUI extends JDialog {
                 cancel();
             }
         });
-        initComponents(bank_account, card);
+        initComponents();
         setVisible(true);
     }
 
-    private void initComponents(Bank_Account bank_account, Card card) {
+    private void initComponents() {
         switchButton =  new SwitchButton();
         myTextFieldUnderLine = new MyTextFieldUnderLine();
         jComboBox = new JComboBox<>(new String[]{"Gửi Tiền", "Rút Tiền"});
@@ -102,7 +109,7 @@ public class TransactionGUI extends JDialog {
                 if (selected) {
                     jLabelTitle.setText("Lịch Sử Giao Dịch Rút Tiền");
                     List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawals = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
-                    transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bank_account.getNumber()));
+                    transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bankAccount.getNumber()));
                     transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal::getTransaction_type);
 
                     loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
@@ -110,7 +117,7 @@ public class TransactionGUI extends JDialog {
                 else {
                     jLabelTitle.setText("Lịch Sử Giao Dịch Gửi Tiền");
                     List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawals = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
-                    transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bank_account.getNumber()));
+                    transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bankAccount.getNumber()));
                     transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getTransaction_type());
 
                     loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
@@ -119,7 +126,7 @@ public class TransactionGUI extends JDialog {
         });
         panel1.add(switchButton);
 
-        String[] columnNames = new String[]{"Thời Gian Giao Dịch", "Loại Giao Dịch", "Số Tiền"};
+        String[] columnNames = new String[]{"Thời Gian Giao Dịch", "Nội Dung", "Số Tiền"};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         dataTable.setBackground(Color.white);
@@ -130,7 +137,7 @@ public class TransactionGUI extends JDialog {
         left.add(scrollPane, "wrap");
 
         List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawals = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
-        transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bank_account.getNumber()));
+        transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bankAccount.getNumber()));
         transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getTransaction_type());
 
         loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
@@ -178,10 +185,10 @@ public class TransactionGUI extends JDialog {
         textField1.setBackground(new Color(246, 246, 246));
         textField1.setOpaque(true);
         textField1.setEditable(false);
-        textField1.setText(bank_account.getNumber());
+        textField1.setText(bankAccount.getNumber());
         content.add(textField1, "right");
 
-        Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bank_account.getCustomer_no() + "'").get(0);
+        Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bankAccount.getCustomer_no() + "'").get(0);
 
         MyTextFieldUnderLine textField2 = new MyTextFieldUnderLine();
         textField2.setPreferredSize(new Dimension(290, 40));
@@ -209,6 +216,12 @@ public class TransactionGUI extends JDialog {
 
         jComboBox.setPreferredSize(new Dimension(310, 40));
         jComboBox.setFont((new Font("Inter", Font.PLAIN, 14)));
+        jComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jTextArea.setText(Objects.requireNonNull(jComboBox.getSelectedItem()).toString());
+            }
+        });
         jPanel.add(jComboBox);
 
         myTextFieldUnderLine.setPreferredSize(new Dimension(310, 40));
@@ -229,6 +242,7 @@ public class TransactionGUI extends JDialog {
         jLabel5.setFont((new Font("Inter", Font.BOLD, 13)));
         content.add(jLabel5, "wrap");
 
+        jTextArea.setText("Gửi Tiền");
         jTextArea.setPreferredSize(new Dimension(590, 150));
         jTextArea.setMaximumSize(new Dimension(590, 150));
         jTextArea.setFont((new Font("Inter", Font.PLAIN, 14)));
@@ -256,7 +270,7 @@ public class TransactionGUI extends JDialog {
         buttonAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addTransaction(bank_account, card);
+                addTransaction();
             }
         });
         containerButton.add(buttonAdd);
@@ -274,7 +288,7 @@ public class TransactionGUI extends JDialog {
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][4];
-            data[i][1] = objects[i][2];
+            data[i][1] = objects[i][5];
             data[i][2] = objects[i][3];
         }
 
@@ -287,11 +301,13 @@ public class TransactionGUI extends JDialog {
         String[] options = new String[]{"Huỷ", "Thoát"};
         int choice = JOptionPane.showOptionDialog(null, "Bạn có muốn thoát?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
-        if (choice == 1)
+        if (choice == 1) {
+            this.card.mouseListenerIsActive = true;
             dispose();
+        }
     }
 
-    private void addTransaction(Bank_Account bank_account, Card card) {
+    private void addTransaction() {
         String[] options = new String[]{"Huỷ", "Xác nhận"};
         int choice = JOptionPane.showOptionDialog(null, "Xác nhận thực hiện giao dịch?",
                 "Thông báo", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
@@ -313,13 +329,13 @@ public class TransactionGUI extends JDialog {
             transaction_date = LocalDateTime.now();
             description = jTextArea.getText();
 
-            if (!transaction_type && bank_account.getBalance().compareTo(money_amount) < 0) {
+            if (!transaction_type && bankAccount.getBalance().compareTo(money_amount) < 0) {
                 JOptionPane.showMessageDialog(null, "Số tiền trong tài khoản không đủ để thực hiện giao dịch!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             Pair<Boolean, String> result;
-            Transaction_Deposit_Withdrawal transaction_deposit_withdrawal = new Transaction_Deposit_Withdrawal(id, bank_account.getNumber(), transaction_type, transaction_date, money_amount, description, staff_id);
+            Transaction_Deposit_Withdrawal transaction_deposit_withdrawal = new Transaction_Deposit_Withdrawal(id, bankAccount.getNumber(), transaction_type, transaction_date, money_amount, description, staff_id);
             result = transactionDepositWithdrawalBLL.addTransaction_Deposit_Withdrawal(transaction_deposit_withdrawal);
 
             if (result.getKey()) {
@@ -330,9 +346,24 @@ public class TransactionGUI extends JDialog {
                 circleProgressBar.progress();
                 circleProgressBar.setVisible(true);
                 JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
-            } else {
 
+                bankAccount = new Bank_AccountBLL().findAllBank_Accounts("number", bankAccount.getNumber()).get(0);
+                card.balance.setText("$" + bankAccount.getBalance());
+
+                jComboBox.setSelectedIndex(0);
+                myTextFieldUnderLine.setText("");
+                jTextArea.setText("");
+                switchButton.setSelected(false);
+
+                transactionDepositWithdrawalBLL = new Transaction_Deposit_WithdrawalBLL();
+                List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawals = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
+                transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bankAccount.getNumber()));
+                transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getTransaction_type());
+                loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
+
+                Transaction_Deposit_WithdrawalGUI indexModuleTransaction_Deposit_WithdrawalGUI = (Transaction_Deposit_WithdrawalGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleTransactionGUI];
+                indexModuleTransaction_Deposit_WithdrawalGUI.refresh();
+            } else {
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }

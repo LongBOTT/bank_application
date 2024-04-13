@@ -149,7 +149,7 @@ public class AccountGUI extends Layout1 {
 //            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 //            FunctionPanel.add(roundedPanel);
 //
-//            JLabel panel = new JLabel("Xuất Excel");
+//            JLabel panel = new JLabel("Nhập Excel");
 //            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
 //            panel.setIcon(new FlatSVGIcon("icon/export.svg"));
 //            roundedPanel.add(panel);

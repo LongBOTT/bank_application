@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 public class Card extends RoundedPanel {
     public Bank_Account bankAccount;
     public JLabel balance;
+    public boolean mouseListenerIsActive = true;
     public Card(Bank_Account bank_account) {
         this.bankAccount = bank_account;
         initComponents(bank_account);
