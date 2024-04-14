@@ -1,11 +1,7 @@
-package com.bank.GUI.DialogGUI;
+package com.bank.GUI;
 
-import com.bank.BLL.Bank_AccountBLL;
-import com.bank.BLL.CustomerBLL;
-import com.bank.BLL.Transfer_MoneyBLL;
-import com.bank.DTO.Bank_Account;
-import com.bank.DTO.Customer;
-import com.bank.DTO.Transfer_Money;
+import com.bank.BLL.*;
+import com.bank.DTO.*;
 import com.bank.GUI.CustomerGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.Transfer_MoneyGUI;
@@ -41,6 +37,8 @@ public class TransferGUI extends JDialog {
     private JPopupMenu menu;
     private MyTextFieldUnderLine myTextFieldUnderLine;
     private MyTextFieldUnderLine myTextFieldUnderLine1;
+    private MyTextFieldUnderLine myTextFieldUnderLine2;
+    private MyTextFieldUnderLine myTextFieldUnderLine3;
     private JButton buttonCancel;
     private JButton buttonAdd;
     private JTextArea jTextArea;
@@ -48,6 +46,8 @@ public class TransferGUI extends JDialog {
     private Card card;
     private String receiver_bank_account_number = "";
     private Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
+    private BranchBLL branchBLL = new BranchBLL();
+    private CustomerBLL customerBLL = new CustomerBLL();
     private String defaultContent;
     public TransferGUI(Bank_Account bank_account, Card card) {
         super((Frame) null, "", true);
@@ -98,6 +98,8 @@ public class TransferGUI extends JDialog {
     private void initComponents() {
         myTextFieldUnderLine = new MyTextFieldUnderLine();
         myTextFieldUnderLine1 = new MyTextFieldUnderLine();
+        myTextFieldUnderLine2 = new MyTextFieldUnderLine();
+        myTextFieldUnderLine3 = new MyTextFieldUnderLine();
         buttonCancel = new JButton("Huỷ");
         buttonAdd = new JButton("Chuyển Tiền");
         txtSearch = new MyTextField();
@@ -132,7 +134,7 @@ public class TransferGUI extends JDialog {
         jLabelTitle.setFont(new Font("Public Sans", Font.BOLD, 15));
         panel.add(jLabelTitle, BorderLayout.WEST);
 
-        String[] columnNames = new String[]{"Thời Gian CT", "Nội Dung", "Số Tiền"};
+        String[] columnNames = new String[]{"Thời Gian CT", "TK Thụ Hưởng", "Số Tiền"};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         dataTable.setBackground(Color.white);
@@ -150,14 +152,14 @@ public class TransferGUI extends JDialog {
         RoundedPanel top = new RoundedPanel();
         top.setLayout(new BorderLayout());
         top.setBackground(new Color(112,130,236));
-        top.setPreferredSize(new Dimension(630, 150));
+        top.setPreferredSize(new Dimension(630, 60));
         top.setBorder(BorderFactory.createMatteBorder(0,0,15,0, new Color(112,130,236)));
         right.add(top, "wrap");
 
         JPanel content = new JPanel();
-        content.setLayout(new MigLayout("", "0[]10[]0", "20[]10[]20[]10[]10[]0"));
+        content.setLayout(new MigLayout("", "0[]10[]0", "20[]10[]20[]10[]10[]10[]10[]0"));
         content.setBackground(new Color(255,255,255));
-        content.setPreferredSize(new Dimension(630, 400));
+        content.setPreferredSize(new Dimension(630, 490));
         right.add(content,"wrap");
 
         JPanel containerButton = new JPanel();
@@ -171,7 +173,7 @@ public class TransferGUI extends JDialog {
         jLabel.setHorizontalAlignment(JLabel.CENTER);
         jLabel.setVerticalAlignment(JLabel.CENTER);
         jLabel.setForeground(Color.white);
-        top.add(jLabel, BorderLayout.CENTER);
+        top.add(jLabel, BorderLayout.SOUTH);
 
         JLabel jLabel1 = new JLabel("Số Tài Khoản Gửi");
         jLabel1.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
@@ -179,7 +181,7 @@ public class TransferGUI extends JDialog {
         jLabel1.setFont((new Font("Inter", Font.BOLD, 13)));
         content.add(jLabel1);
 
-        JLabel jLabel2 = new JLabel("Khách Hàng");
+        JLabel jLabel2 = new JLabel("Khách Hàng Gửi");
         jLabel2.setPreferredSize(new Dimension(310, 20));
         jLabel2.setFont((new Font("Inter", Font.BOLD, 13)));
         content.add(jLabel2, "wrap");
@@ -193,7 +195,7 @@ public class TransferGUI extends JDialog {
         textField1.setText(bankAccount.getNumber());
         content.add(textField1, "right");
 
-        Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bankAccount.getCustomer_no() + "'").get(0);
+        Customer customer = customerBLL.searchCustomers("[no] = '" + bankAccount.getCustomer_no() + "'").get(0);
 
         MyTextFieldUnderLine textField2 = new MyTextFieldUnderLine();
         textField2.setPreferredSize(new Dimension(290, 40));
@@ -203,6 +205,54 @@ public class TransferGUI extends JDialog {
         textField2.setEditable(false);
         textField2.setText(customer.getName());
         content.add(textField2, "left, wrap");
+
+        JLabel jLabel7 = new JLabel("Chi Nhánh Gửi");
+        jLabel7.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+        jLabel7.setPreferredSize(new Dimension(310, 20));
+        jLabel7.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel7);
+
+        JLabel jLabel8 = new JLabel("Trụ Sở Gửi");
+        jLabel8.setPreferredSize(new Dimension(310, 20));
+        jLabel8.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel8, "wrap");
+
+        Branch branch = branchBLL.findAllBranchs("id", String.valueOf(bankAccount.getBranch_id())).get(0);
+
+        MyTextFieldUnderLine textField3 = new MyTextFieldUnderLine();
+        textField3.setPreferredSize(new Dimension(285, 40));
+        textField3.setFont((new Font("Inter", Font.PLAIN, 14)));
+        textField3.setBackground(new Color(246, 246, 246));
+        textField3.setOpaque(true);
+        textField3.setEditable(false);
+        textField3.setText(branch.getName());
+        content.add(textField3, "right");
+
+
+        MyTextFieldUnderLine textField4 = new MyTextFieldUnderLine();
+        textField4.setPreferredSize(new Dimension(290, 40));
+        textField4.setFont((new Font("Inter", Font.PLAIN, 14)));
+        textField4.setBackground(new Color(246, 246, 246));
+        textField4.setOpaque(true);
+        textField4.setEditable(false);
+
+        if (branch.getHeadquarter_id() == 1)
+            textField4.setText("Hồ Chí Minh");
+
+        else if (branch.getHeadquarter_id() == 2)
+            textField4.setText("Hà Nội");
+
+
+        else if (branch.getHeadquarter_id() == 3)
+            textField4.setText("Hải Phòng");
+
+
+        else if (branch.getHeadquarter_id() == 4)
+            textField4.setText("Đà Nẵng");
+
+        else textField4.setText("Khác");
+
+        content.add(textField4, "left, wrap");
 
         JPanel jPanel  = new JPanel(new MigLayout("", "20[]10[]20", "20[]10[]0"));
         jPanel.setBackground(new Color(237, 239, 253));
@@ -214,7 +264,7 @@ public class TransferGUI extends JDialog {
         jLabel3.setFont((new Font("Inter", Font.BOLD, 13)));
         jPanel.add(jLabel3);
 
-        JLabel jLabel4 = new JLabel("Khách Hàng");
+        JLabel jLabel4 = new JLabel("Khách Hàng Thụ Hưởng");
         jLabel4.setPreferredSize(new Dimension(310, 20));
         jLabel4.setFont((new Font("Inter", Font.BOLD, 13)));
         jPanel.add(jLabel4, "wrap");
@@ -242,6 +292,26 @@ public class TransferGUI extends JDialog {
         myTextFieldUnderLine1.setEditable(false);
         jPanel.add(myTextFieldUnderLine1, "left, wrap");
 
+        JLabel jLabel9 = new JLabel("Chi Nhánh Thụ Hưởng");
+        jLabel9.setPreferredSize(new Dimension(310, 20));
+        jLabel9.setFont((new Font("Inter", Font.BOLD, 13)));
+        jPanel.add(jLabel9);
+
+        JLabel jLabel10 = new JLabel("Trụ Sở Thụ Hưởng");
+        jLabel10.setPreferredSize(new Dimension(310, 20));
+        jLabel10.setFont((new Font("Inter", Font.BOLD, 13)));
+        jPanel.add(jLabel10, "wrap");
+
+        myTextFieldUnderLine2.setPreferredSize(new Dimension(290, 40));
+        myTextFieldUnderLine2.setFont((new Font("Inter", Font.PLAIN, 14)));
+        myTextFieldUnderLine2.setEditable(false);
+        jPanel.add(myTextFieldUnderLine2);
+
+        myTextFieldUnderLine3.setPreferredSize(new Dimension(290, 40));
+        myTextFieldUnderLine3.setFont((new Font("Inter", Font.PLAIN, 14)));
+        myTextFieldUnderLine3.setEditable(false);
+        jPanel.add(myTextFieldUnderLine3, "left, wrap");
+
         JLabel jLabel5 = new JLabel("Số Tiền");
         jLabel5.setPreferredSize(new Dimension(310, 20));
         jLabel5.setFont((new Font("Inter", Font.BOLD, 13)));
@@ -267,7 +337,7 @@ public class TransferGUI extends JDialog {
 
         String normalized = Normalizer.normalize(customer.getName(), Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        defaultContent = pattern.matcher(normalized).replaceAll("") + " chuyen khoan";
+        defaultContent = pattern.matcher(normalized).replaceAll("").toUpperCase() + " chuyen khoan";
 
         jTextArea.setText(defaultContent);
         jTextArea.setPreferredSize(new Dimension(590, 110));
@@ -315,7 +385,7 @@ public class TransferGUI extends JDialog {
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][4];
-            data[i][1] = objects[i][5];
+            data[i][1] = objects[i][2];
             data[i][2] = objects[i][3];
         }
 
@@ -363,6 +433,21 @@ public class TransferGUI extends JDialog {
                 return;
             }
 
+            if (money_amount.compareTo(new BigDecimal(30000000)) > 0) {
+                JOptionPane.showMessageDialog(null, "Hạn mức chuyển tiền tối đa/lần: 30.000.000 VNĐ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Transfer_Money> transfer_MoneysList = new ArrayList<>(transfer_MoneyBLL.getTransfer_moneyListAll());
+            transfer_MoneysList.removeIf(Transfer_Money -> !Transfer_Money.getSender_bank_account_number().equals(bankAccount.getNumber()));
+            BigDecimal total = new BigDecimal(0);
+            for (Transfer_Money transferMoney : transfer_MoneysList)
+                total = total.add(transferMoney.getMoney_amount());
+            BigDecimal decimal = total.add(money_amount);
+            if (decimal.compareTo(new BigDecimal(50000000)) > 0) {
+                JOptionPane.showMessageDialog(null, "Hạn mức chuyển tiền tối đa/ngày tại quầy: 50.000.000 VNĐ!\nKhách hàng đã chuyển " + VNString.currency(Double.parseDouble(total.toString())) + " trong hôm nay." , "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             Pair<Boolean, String> result;
             Transfer_Money transfer_Money = new Transfer_Money(id, bankAccount.getNumber(), receiver_bank_account_number, send_date, money_amount, description, staff_id);
             result = transfer_MoneyBLL.addTransfer_Money(transfer_Money);
@@ -385,6 +470,8 @@ public class TransferGUI extends JDialog {
                 txtSearch.setText("");
                 receiver_bank_account_number = "";
                 myTextFieldUnderLine1.setText("");
+                myTextFieldUnderLine2.setText("");
+                myTextFieldUnderLine3.setText("");
                 myTextFieldUnderLine.setText("");
                 jTextArea.setText(defaultContent);
 
@@ -394,8 +481,15 @@ public class TransferGUI extends JDialog {
 
                 loadDataTable(transfer_MoneyBLL.getData(transfer_Moneys));
 
-                Transfer_MoneyGUI indexModuleTransfer_MoneyGUI = (Transfer_MoneyGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleTransferGUI];
-                indexModuleTransfer_MoneyGUI.refresh();
+                if (Bank_Application.homeGUI.indexModuleTransferGUI != -1) {
+                    Transfer_MoneyGUI indexModuleTransfer_MoneyGUI = (Transfer_MoneyGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleTransferGUI];
+                    indexModuleTransfer_MoneyGUI.refresh();
+                }
+
+                if (Bank_Application.homeGUI.indexModuleBank_AccountGUI != -1) {
+                    Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                    bankAccountGUI.refresh();
+                }
 
                 Bank_Account receiveBankAccount = bankAccountBLL.findAllBank_Accounts("number", transfer_Money.getReceiver_bank_account_number()).get(0);
                 for (Pair pair : CustomerGUI.pairList) {
@@ -425,8 +519,25 @@ public class TransferGUI extends JDialog {
             myTextFieldUnderLine1.setText("Không tìm thấy người thụ hưởng");
         } else {
             Bank_Account receiver_bank_account = bankAccounts.get(0);
-            Customer customer = new CustomerBLL().searchCustomers("[no] = '" + receiver_bank_account.getCustomer_no() + "'").get(0);
+            Customer customer = customerBLL.searchCustomers("[no] = '" + receiver_bank_account.getCustomer_no() + "'").get(0);
+            Branch branch = branchBLL.findAllBranchs("id", String.valueOf(receiver_bank_account.getBranch_id())).get(0);
             myTextFieldUnderLine1.setText(customer.getName());
+            myTextFieldUnderLine2.setText(branch.getName());
+            if (branch.getHeadquarter_id() == 1)
+                myTextFieldUnderLine3.setText("Hồ Chí Minh");
+
+            else if (branch.getHeadquarter_id() == 2)
+                myTextFieldUnderLine3.setText("Hà Nội");
+
+
+            else if (branch.getHeadquarter_id() == 3)
+                myTextFieldUnderLine3.setText("Hải Phòng");
+
+
+            else if (branch.getHeadquarter_id() == 4)
+                myTextFieldUnderLine3.setText("Đà Nẵng");
+
+            else myTextFieldUnderLine3.setText("Khác");
         }
     }
 

@@ -247,8 +247,11 @@ public class AddCustomerGUI extends DialogForm {
             JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             dispose();
             refresh.actionPerformed(null);
-            Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
-            bankAccountGUI.refresh();
+            if (Bank_Application.homeGUI.indexModuleBank_AccountGUI != -1) {
+                Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                bankAccountGUI.refresh();
+            }
+
         } else {
             JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }

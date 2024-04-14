@@ -1,11 +1,7 @@
 package com.bank.main;
 
-import com.bank.BLL.Bank_AccountBLL;
-import com.bank.GUI.DialogGUI.TransactionGUI;
-import com.bank.GUI.DialogGUI.TransferGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.LoginGUI;
-import com.bank.GUI.components.Card;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 

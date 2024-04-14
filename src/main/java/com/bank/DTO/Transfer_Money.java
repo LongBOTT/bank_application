@@ -86,7 +86,7 @@ public class Transfer_Money {
 
     @Override
     public String toString() {
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return id + " | " +
                 sender_bank_account_number + " | " +
                 receiver_bank_account_number + " | " +

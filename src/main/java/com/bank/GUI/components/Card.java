@@ -28,7 +28,7 @@ public class Card extends RoundedPanel {
     }
 
     private void initComponents(Bank_Account bank_account) {
-        setBackground(new Color(51,162,255));
+        setBackground(new Color(137,170,243));
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(300, 160));
 
@@ -42,13 +42,13 @@ public class Card extends RoundedPanel {
         RoundedPanel center = new RoundedPanel();
         center.setLayout(new BorderLayout());
         center.setPreferredSize(new Dimension(300, 50));
-        center.setBackground(new Color(51,162,255));
+        center.setBackground(new Color(137,170,243));
         add(center, BorderLayout.CENTER);
 
         RoundedPanel bottom = new RoundedPanel();
         bottom.setLayout(new BorderLayout());
         bottom.setPreferredSize(new Dimension(300, 60));
-        bottom.setBackground(new Color(51,162,255));
+        bottom.setBackground(new Color(137,170,243));
         add(bottom, BorderLayout.SOUTH);
 
         RoundedPanel logoPanel = new RoundedPanel();
@@ -81,13 +81,13 @@ public class Card extends RoundedPanel {
         center.add(balance, BorderLayout.CENTER);
 
         RoundedPanel panel1 = new RoundedPanel();
-        panel1.setBackground(new Color(51,162,255));
+        panel1.setBackground(new Color(137,170,243));
         panel1.setLayout(new BorderLayout());
         panel1.setPreferredSize(new Dimension(180, 60));
         bottom.add(panel1, BorderLayout.WEST);
 
         RoundedPanel panel2 = new RoundedPanel();
-        panel2.setBackground(new Color(51,162,255));
+        panel2.setBackground(new Color(137,170,243));
         panel2.setLayout(new BorderLayout());
         panel2.setPreferredSize(new Dimension(120, 60));
         bottom.add(panel2, BorderLayout.EAST);

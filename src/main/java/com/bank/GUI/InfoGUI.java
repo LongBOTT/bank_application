@@ -7,6 +7,7 @@ import com.bank.DTO.Branch;
 import com.bank.DTO.Staff;
 import com.bank.GUI.components.InfoPanel;
 import com.bank.GUI.components.MyTextFieldUnderLine;
+import com.bank.GUI.components.RoundedPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 
@@ -37,7 +38,14 @@ public class InfoGUI extends InfoPanel {
         init();
     }
 
-    private void init() {
+    public void init() {
+        this.staff = new StaffBLL().searchStaffs("[id] = " + this.staff.getId()).get(0);
+
+        TitleInfoAccount.removeAll();
+        InfoAccountPanel.removeAll();
+        TitleInfoStaff.removeAll();
+        InfoStaffPanel.removeAll();
+
         jLabelAccount = new JLabel("    Thông Tin Đăng Nhập");
         jLabelStaff = new JLabel("  Thông Tin Cá Nhân");
         jTextFieldsAccount = new ArrayList<>();
@@ -178,6 +186,7 @@ public class InfoGUI extends InfoPanel {
 //            }
 //        });
 //        InfoStaffPanel.add(buttonOffDay, "span, wrap");
+
     }
 
     private void editStaff() {

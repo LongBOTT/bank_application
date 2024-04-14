@@ -1,9 +1,11 @@
-package com.bank.GUI.DialogGUI;
+package com.bank.GUI;
 
 import com.bank.BLL.Bank_AccountBLL;
+import com.bank.BLL.BranchBLL;
 import com.bank.BLL.CustomerBLL;
 import com.bank.BLL.Transaction_Deposit_WithdrawalBLL;
 import com.bank.DTO.Bank_Account;
+import com.bank.DTO.Branch;
 import com.bank.DTO.Customer;
 import com.bank.DTO.Transaction_Deposit_Withdrawal;
 import com.bank.GUI.Transaction_Deposit_WithdrawalGUI;
@@ -22,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ public class TransactionGUI extends JDialog {
     private JButton buttonAdd;
     private JTextArea jTextArea;
     private Bank_Account bankAccount;
+    private BranchBLL branchBLL = new BranchBLL();
     private Card card;
     public TransactionGUI(Bank_Account bank_account, Card card) {
         super((Frame) null, "", true);
@@ -127,7 +131,7 @@ public class TransactionGUI extends JDialog {
         });
         panel1.add(switchButton);
 
-        String[] columnNames = new String[]{"Thời Gian Giao Dịch", "Nội Dung", "Số Tiền"};
+        String[] columnNames = new String[]{"Thời Gian Giao Dịch", "Loại Giao Dịch", "Số Tiền"};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         dataTable.setBackground(Color.white);
@@ -146,14 +150,14 @@ public class TransactionGUI extends JDialog {
         RoundedPanel top = new RoundedPanel();
         top.setLayout(new BorderLayout());
         top.setBackground(new Color(112,130,236));
-        top.setPreferredSize(new Dimension(630, 150));
+        top.setPreferredSize(new Dimension(630, 60));
         top.setBorder(BorderFactory.createMatteBorder(0,0,15,0, new Color(112,130,236)));
         right.add(top, "wrap");
 
         JPanel content = new JPanel();
         content.setLayout(new MigLayout("", "0[]10[]0", "20[]10[]20[]10[]10[]0"));
         content.setBackground(new Color(255,255,255));
-        content.setPreferredSize(new Dimension(630, 400));
+        content.setPreferredSize(new Dimension(630, 490));
         right.add(content,"wrap");
 
         JPanel containerButton = new JPanel();
@@ -167,7 +171,7 @@ public class TransactionGUI extends JDialog {
         jLabel.setHorizontalAlignment(JLabel.CENTER);
         jLabel.setVerticalAlignment(JLabel.CENTER);
         jLabel.setForeground(Color.white);
-        top.add(jLabel, BorderLayout.CENTER);
+        top.add(jLabel, BorderLayout.SOUTH);
 
         JLabel jLabel1 = new JLabel("Số Tài Khoản");
         jLabel1.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
@@ -199,6 +203,53 @@ public class TransactionGUI extends JDialog {
         textField2.setEditable(false);
         textField2.setText(customer.getName());
         content.add(textField2, "left, wrap");
+
+        JLabel jLabel7 = new JLabel("Chi Nhánh");
+        jLabel7.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+        jLabel7.setPreferredSize(new Dimension(310, 20));
+        jLabel7.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel7);
+
+        JLabel jLabel8 = new JLabel("Trụ Sở");
+        jLabel8.setPreferredSize(new Dimension(310, 20));
+        jLabel8.setFont((new Font("Inter", Font.BOLD, 13)));
+        content.add(jLabel8, "wrap");
+
+        Branch branch = branchBLL.findAllBranchs("id", String.valueOf(bankAccount.getBranch_id())).get(0);
+
+        MyTextFieldUnderLine textField3 = new MyTextFieldUnderLine();
+        textField3.setPreferredSize(new Dimension(285, 40));
+        textField3.setFont((new Font("Inter", Font.PLAIN, 14)));
+        textField3.setBackground(new Color(246, 246, 246));
+        textField3.setOpaque(true);
+        textField3.setEditable(false);
+        textField3.setText(branch.getName());
+        content.add(textField3, "right");
+
+        MyTextFieldUnderLine textField4 = new MyTextFieldUnderLine();
+        textField4.setPreferredSize(new Dimension(290, 40));
+        textField4.setFont((new Font("Inter", Font.PLAIN, 14)));
+        textField4.setBackground(new Color(246, 246, 246));
+        textField4.setOpaque(true);
+        textField4.setEditable(false);
+
+        if (branch.getHeadquarter_id() == 1)
+            textField4.setText("Hồ Chí Minh");
+
+        else if (branch.getHeadquarter_id() == 2)
+            textField4.setText("Hà Nội");
+
+
+        else if (branch.getHeadquarter_id() == 3)
+            textField4.setText("Hải Phòng");
+
+
+        else if (branch.getHeadquarter_id() == 4)
+            textField4.setText("Đà Nẵng");
+
+        else textField4.setText("Khác");
+
+        content.add(textField4, "left, wrap");
 
         JPanel jPanel  = new JPanel(new MigLayout("", "20[]10[]20", "20[]10[]0"));
         jPanel.setBackground(new Color(237, 239, 253));
@@ -244,8 +295,8 @@ public class TransactionGUI extends JDialog {
         content.add(jLabel5, "wrap");
 
         jTextArea.setText("Gửi Tiền");
-        jTextArea.setPreferredSize(new Dimension(590, 150));
-        jTextArea.setMaximumSize(new Dimension(590, 150));
+        jTextArea.setPreferredSize(new Dimension(590, 160));
+        jTextArea.setMaximumSize(new Dimension(590, 170));
         jTextArea.setFont((new Font("Inter", Font.PLAIN, 14)));
         jTextArea.setBackground(new Color(246, 246, 246));
         content.add(jTextArea, "span, center");
@@ -289,7 +340,7 @@ public class TransactionGUI extends JDialog {
 
         for (int i = 0; i < objects.length; i++) {
             data[i][0] = objects[i][4];
-            data[i][1] = objects[i][5];
+            data[i][1] = objects[i][2];
             data[i][2] = objects[i][3];
         }
 
@@ -335,6 +386,30 @@ public class TransactionGUI extends JDialog {
                 return;
             }
 
+            if (!transaction_type && money_amount.compareTo(new BigDecimal(40000000)) > 0) {
+                JOptionPane.showMessageDialog(null, "Hạn mức rút tiền tối đa/lần tại quầy: 40.000.000 VNĐ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Transaction_Deposit_Withdrawal> transactionDepositWithdrawalsList = new ArrayList<>(transactionDepositWithdrawalBLL.getTransaction_deposit_withdrawalListAll());
+            transactionDepositWithdrawalsList.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getBank_number_account().equals(bankAccount.getNumber()));
+            transactionDepositWithdrawalsList.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getTransaction_date().toLocalDate().equals(LocalDate.now()));
+            if (transactionDepositWithdrawalsList.size() == 20) {
+                JOptionPane.showMessageDialog(null, "Số lần giao dịch tối đa/ngày: 20 lần!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!transaction_type) {
+                transactionDepositWithdrawalsList.removeIf(Transaction_Deposit_Withdrawal::getTransaction_type);
+                BigDecimal total = new BigDecimal(0);
+                for (Transaction_Deposit_Withdrawal transaction_deposit_withdrawal : transactionDepositWithdrawalsList)
+                    total = total.add(transaction_deposit_withdrawal.getMoney_amount());
+                BigDecimal decimal = total.add(money_amount);
+                if (decimal.compareTo(new BigDecimal(40000000)) > 0) {
+                    JOptionPane.showMessageDialog(null, "Hạn mức rút tiền tối đa/ngày tại quầy: 40.000.000 VNĐ!\nKhách hàng đã rút " + VNString.currency(Double.parseDouble(total.toString())) + " trong hôm nay." , "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
             Pair<Boolean, String> result;
             Transaction_Deposit_Withdrawal transaction_deposit_withdrawal = new Transaction_Deposit_Withdrawal(id, bankAccount.getNumber(), transaction_type, transaction_date, money_amount, description, staff_id);
             result = transactionDepositWithdrawalBLL.addTransaction_Deposit_Withdrawal(transaction_deposit_withdrawal);
@@ -354,7 +429,7 @@ public class TransactionGUI extends JDialog {
 
                 jComboBox.setSelectedIndex(0);
                 myTextFieldUnderLine.setText("");
-                jTextArea.setText("");
+                jTextArea.setText("Gửi Tiền");
                 switchButton.setSelected(false);
 
                 transactionDepositWithdrawalBLL = new Transaction_Deposit_WithdrawalBLL();
@@ -363,8 +438,15 @@ public class TransactionGUI extends JDialog {
                 transactionDepositWithdrawals.removeIf(Transaction_Deposit_Withdrawal -> !Transaction_Deposit_Withdrawal.getTransaction_type());
                 loadDataTable(transactionDepositWithdrawalBLL.getData(transactionDepositWithdrawals));
 
-                Transaction_Deposit_WithdrawalGUI indexModuleTransaction_Deposit_WithdrawalGUI = (Transaction_Deposit_WithdrawalGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleTransactionGUI];
-                indexModuleTransaction_Deposit_WithdrawalGUI.refresh();
+                if (Bank_Application.homeGUI.indexModuleTransactionGUI != -1) {
+                    Transaction_Deposit_WithdrawalGUI indexModuleTransaction_Deposit_WithdrawalGUI = (Transaction_Deposit_WithdrawalGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleTransactionGUI];
+                    indexModuleTransaction_Deposit_WithdrawalGUI.refresh();
+                }
+
+                if (Bank_Application.homeGUI.indexModuleBank_AccountGUI != -1) {
+                    Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                    bankAccountGUI.refresh();
+                }
             } else {
                 JOptionPane.showMessageDialog(null, result.getValue(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }

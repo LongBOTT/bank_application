@@ -86,7 +86,7 @@ public class Transaction_Deposit_Withdrawal {
 
     @Override
     public String toString() {
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String type = transaction_type ? "Gửi Tiền" : "Rút Tiền";
         return id + " | " +
                 bank_number_account + " | " +

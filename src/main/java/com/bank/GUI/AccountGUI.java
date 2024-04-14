@@ -120,27 +120,27 @@ public class AccountGUI extends Layout1 {
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
-        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
-            RoundedPanel roundedPanel = new RoundedPanel();
-            roundedPanel.setLayout(new GridBagLayout());
-            roundedPanel.setPreferredSize(new Dimension(130, 40));
-            roundedPanel.setBackground(new Color(1, 120, 220));
-            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            roundedPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    new AddAccountGUI();
-                    refresh();
-                }
-            });
-            FunctionPanel.add(roundedPanel);
-
-            JLabel panel = new JLabel("Thêm mới");
-            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
-            panel.setForeground(Color.white);
-            panel.setIcon(new FlatSVGIcon("icon/add.svg"));
-            roundedPanel.add(panel);
-        }
+//        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
+//            RoundedPanel roundedPanel = new RoundedPanel();
+//            roundedPanel.setLayout(new GridBagLayout());
+//            roundedPanel.setPreferredSize(new Dimension(130, 40));
+//            roundedPanel.setBackground(new Color(1, 120, 220));
+//            roundedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//            roundedPanel.addMouseListener(new MouseAdapter() {
+//                @Override
+//                public void mousePressed(MouseEvent e) {
+//                    new AddAccountGUI();
+//                    refresh();
+//                }
+//            });
+//            FunctionPanel.add(roundedPanel);
+//
+//            JLabel panel = new JLabel("Thêm mới");
+//            panel.setFont(new Font("Public Sans", Font.PLAIN, 13));
+//            panel.setForeground(Color.white);
+//            panel.setIcon(new FlatSVGIcon("icon/add.svg"));
+//            roundedPanel.add(panel);
+//        }
 //        if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
 //            RoundedPanel roundedPanel = new RoundedPanel();
 //            roundedPanel.setLayout(new GridBagLayout());

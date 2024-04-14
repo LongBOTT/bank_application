@@ -1,5 +1,7 @@
 package com.bank.DTO;
 
+import com.bank.utils.VNString;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -76,8 +78,7 @@ public class Bank_Account {
         String status1 = status? "Đang mở" : "Đã đóng";
         return number + " | " +
                 customer_no + " | " +
-                balance + " | " +
-                branch_id + " | " +
+                VNString.currency(Double.parseDouble(balance.toString())) + " | " +                branch_id + " | " +
                 creation_date + " | " +
                 status1;
     }

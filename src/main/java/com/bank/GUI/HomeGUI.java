@@ -54,6 +54,7 @@ public class HomeGUI extends JFrame {
     public int indexModuleBank_AccountGUI = -1;
     public int indexModuleTransactionGUI = -1;
     public int indexModuleTransferGUI = -1;
+    public int indexModuleInforGUI = -1;
     public HomeGUI() {
         initComponents();
     }
@@ -211,6 +212,11 @@ public class HomeGUI extends JFrame {
     }
 
     private void initMenu() {
+        indexModuleBank_AccountGUI = -1;
+        indexModuleTransactionGUI = -1;
+        indexModuleTransferGUI = -1;
+        indexModuleInforGUI = -1;
+
         menu.removeAll();
         Pair<List<Module>, List<List<Function>>> result = getModulesAndFunctionsFromRole(role.getId());
         List<Module> moduleList = result.getKey();
@@ -235,6 +241,8 @@ public class HomeGUI extends JFrame {
                 indexModuleTransferGUI = index;
             if (module.getId() == 6)
                 indexModuleTransactionGUI = index;
+            if (module.getId() == 10)
+                indexModuleInforGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {

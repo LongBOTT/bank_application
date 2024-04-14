@@ -10,10 +10,8 @@ import com.bank.DTO.Role_Detail;
 import com.bank.DTO.Staff;
 //import com.bank.GUI.ChangeRoleGUI;
 //import com.bank.GUI.CreateWorkScheduleGUI;
-import com.bank.GUI.ChangeBranchGUI;
-import com.bank.GUI.ChangeRoleGUI;
+import com.bank.GUI.*;
 import com.bank.GUI.DialogGUI.DialogForm;
-import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.GUI.components.swing.DataSearch;
@@ -36,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class EditStaffGUI extends DialogForm {
     private JLabel titleName;
@@ -269,6 +268,15 @@ public class EditStaffGUI extends DialogForm {
         result = staffBLL.updateStaff(staff, newStaff);
 
         if (result.getKey()) {
+            if (Objects.equals(newStaff.getStaffNo(), HomeGUI.staff.getStaffNo())) {
+                if (Bank_Application.homeGUI.indexModuleInforGUI != -1) {
+                    InfoGUI inforGUI = (InfoGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleInforGUI];
+                    inforGUI.init();
+                    inforGUI.repaint();
+                    inforGUI.revalidate();
+                }
+            }
+
             Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
             circleProgressBar.getRootPane ().setOpaque (false);
             circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));

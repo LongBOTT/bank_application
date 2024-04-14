@@ -365,8 +365,10 @@ public class CustomerGUI extends Layout1 {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 refresh();
-                Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
-                bankAccountGUI.refresh();
+                if (Bank_Application.homeGUI.indexModuleBank_AccountGUI != -1) {
+                    Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                    bankAccountGUI.refresh();
+                }
             } else {
                 JOptionPane.showMessageDialog(null, result.getValue(),
                         "Lỗi", JOptionPane.ERROR_MESSAGE);

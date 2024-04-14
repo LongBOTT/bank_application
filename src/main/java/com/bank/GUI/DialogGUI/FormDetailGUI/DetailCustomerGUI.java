@@ -121,16 +121,16 @@ public class DetailCustomerGUI extends DialogForm {
 
         super.remove(containerButton);
         RoundedPanel roundedPanel = new RoundedPanel();
-        roundedPanel.setBackground(new Color(228,231,235));
+        roundedPanel.setBackground(new Color(76,116,253));
         roundedPanel.setLayout(new GridBagLayout());
         roundedPanel.setPreferredSize(new Dimension(1000, 220));
         super.add(roundedPanel, "wrap");
 
-        roundedPanel1.setBackground(new Color(228,231,235));
+        roundedPanel1.setBackground(new Color(76,116,253));
         roundedPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         RoundedScrollPane scrollPanel = new RoundedScrollPane(roundedPanel1, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPanel.getViewport().setBackground(new Color(228,231,235));
+        scrollPanel.getViewport().setBackground(new Color(76,116,253));
         scrollPanel.setPreferredSize(new Dimension(850, 180));
         roundedPanel.add(scrollPanel);
 
@@ -140,7 +140,7 @@ public class DetailCustomerGUI extends DialogForm {
         }
 
         addPanel = new RoundedPanel();
-        addPanel.setBackground(new Color(111, 163, 201));
+        addPanel.setBackground(new Color(137,170,243));
         addPanel.setLayout(new GridBagLayout());
         addPanel.setPreferredSize(new Dimension(300, 160));
         addPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -234,8 +234,10 @@ public class DetailCustomerGUI extends DialogForm {
             circleProgressBar.setVisible(true);
             JOptionPane.showMessageDialog(null, result.getValue(), "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
-            Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
-            bankAccountGUI.refresh();
+            if (Bank_Application.homeGUI.indexModuleBank_AccountGUI != -1) {
+                Bank_AccountGUI bankAccountGUI = (Bank_AccountGUI) Bank_Application.homeGUI.allPanelModules[Bank_Application.homeGUI.indexModuleBank_AccountGUI];
+                bankAccountGUI.refresh();
+            }
         }
     }
 
@@ -253,7 +255,7 @@ public class DetailCustomerGUI extends DialogForm {
         }
 
         RoundedPanel addPanel = new RoundedPanel();
-        addPanel.setBackground(new Color(111, 163, 201));
+        addPanel.setBackground(new Color(137,170,243));
         addPanel.setLayout(new GridBagLayout());
         addPanel.setPreferredSize(new Dimension(300, 160));
         addPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
