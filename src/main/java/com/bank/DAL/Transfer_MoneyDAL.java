@@ -1,6 +1,7 @@
 package com.bank.DAL;
 
 import com.bank.DTO.Transfer_Money;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -43,19 +44,21 @@ public class Transfer_MoneyDAL extends Manager{
     }
 
     public int addTransfer_Money(Transfer_Money transfer_Money) {
+        int result = 0;
         try {
-            return create(transfer_Money.getId(),
-                    transfer_Money.getSender_bank_account_number(),
-                    transfer_Money.getReceiver_bank_account_number(),
-                    transfer_Money.getSend_date(),
-                    transfer_Money.getMoney_amount(),
-                    transfer_Money.getDescription(),
-                    transfer_Money.getStaff_id()
-            );
+            result = Integer.parseInt(executeProcedure("sp_AddTransfer_Money",
+                    new Pair<>("id", transfer_Money.getId()),
+                    new Pair<>("sender_bank_account_number", transfer_Money.getSender_bank_account_number()),
+                    new Pair<>("receiver_bank_account_number", transfer_Money.getReceiver_bank_account_number()),
+                    new Pair<>("money_amount", transfer_Money.getMoney_amount()),
+                    new Pair<>("description", transfer_Money.getDescription()),
+                    new Pair<>("staff_id", transfer_Money.getStaff_id())
+            ).get(0).get(0));
+            return result;
         } catch (SQLException | IOException e) {
             System.out.println("Error occurred in Transfer_MoneyDAL.addTransfer_Money(): " + e.getMessage());
         }
-        return 0;
+        return result;
     }
 
     public int updateTransfer_Money(Transfer_Money transfer_Money) {

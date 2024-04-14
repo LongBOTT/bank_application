@@ -44,9 +44,9 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
             return new Pair<>(false,result.getValue());
 
         if (transfer_MoneyDAL.addTransfer_Money(transfer_Money) == 0)
-            return new Pair<>(false, "Thêm giao dịch không thành công.");
+            return new Pair<>(false, "Chuyển tiền không thành công.");
 
-        return new Pair<>(true, "Thêm giao dịch thành công.");
+        return new Pair<>(true, "Chuyển tiền thành công.");
     }
 
     public List<Transfer_Money> searchTransfer_Moneys(String... conditions) {

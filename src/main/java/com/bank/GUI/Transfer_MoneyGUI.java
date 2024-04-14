@@ -6,6 +6,7 @@ import com.bank.DTO.Transfer_Money;
 
 import com.bank.DTO.Function;
 
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailTransfer_MoneyGUI;
 import com.bank.GUI.components.*;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -265,10 +266,10 @@ public class Transfer_MoneyGUI extends Layout2 {
             return;
         }
 
-        data = new Object[objects.length][objects[0].length];
+        data = new Object[objects.length][objects[0].length - 1];
 
         for (int i = 0; i < objects.length; i++) {
-            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
+            System.arraycopy(objects[i], 0, data[i], 0, objects[i].length - 1);
 
             if (detail) {
                 JLabel iconDetail = new JLabel(new FlatSVGIcon("icon/detail.svg"));
@@ -286,10 +287,10 @@ public class Transfer_MoneyGUI extends Layout2 {
         int indexRow = dataTable.getSelectedRow();
         int indexColumn = dataTable.getSelectedColumn();
 
-//        Transfer_Money selectedTransfer_Money = Transfer_MoneyBLL.findAllTransfer_Moneys("number",  data[indexRow][0].toString()).get(0);
-//        if (detail && indexColumn == indexColumnDetail) {
-//            new DetailTransfer_MoneyGUI(selectedTransfer_Money); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
-//        }
+        Transfer_Money selectedTransfer_Money = Transfer_MoneyBLL.findAllTransfer_Moneys("id",  data[indexRow][0].toString()).get(0);
+        if (detail && indexColumn == indexColumnDetail) {
+            new DetailTransfer_MoneyGUI(selectedTransfer_Money); // Đối tượng nào có thuộc tính deleted thì thêm "deleted = 0" để lấy các đối tượng còn tồn tại, chưa xoá
+        }
 
     }
 }

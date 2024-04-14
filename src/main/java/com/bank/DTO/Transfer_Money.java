@@ -1,5 +1,7 @@
 package com.bank.DTO;
 
+import com.bank.utils.VNString;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -88,7 +90,8 @@ public class Transfer_Money {
         return id + " | " +
                 sender_bank_account_number + " | " +
                 receiver_bank_account_number + " | " +
-                money_amount + " | " +
-                send_date.format(myFormatObj);
+                VNString.currency(Double.parseDouble(money_amount.toString())) + " | " +
+                send_date.format(myFormatObj)  + " | " +
+                (description.isEmpty() ? " " : description);
     }
 }

@@ -7,6 +7,7 @@ import com.bank.DTO.Customer;
 import com.bank.GUI.CustomerGUI;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.DialogGUI.TransactionGUI;
+import com.bank.GUI.DialogGUI.TransferGUI;
 import com.bank.GUI.components.Card;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
@@ -117,7 +118,21 @@ public class DetailBank_AccountGUI extends DialogForm {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     dispose();
-//                    new TransactionGUI(Bank_Account, card);
+                    Card selectedCard = null;
+                    for (Pair pair : CustomerGUI.pairList) {
+                        Customer customer = (Customer) pair.getKey();
+                        if (Objects.equals(customer.getCustomerNo(), Bank_Account.getCustomer_no())) {
+                            List<Card> cardList = (List<Card>) pair.getValue();
+                            for (Card card : cardList) {
+                                if (card.bankAccount.getNumber().equals(Bank_Account.getNumber())) {
+                                    selectedCard = card;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    new TransferGUI(Bank_Account, selectedCard);
                 }
             });
             containerButton.add(buttonTransfer);

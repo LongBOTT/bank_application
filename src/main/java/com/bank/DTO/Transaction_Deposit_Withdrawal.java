@@ -1,5 +1,7 @@
 package com.bank.DTO;
 
+import com.bank.utils.VNString;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,7 +91,7 @@ public class Transaction_Deposit_Withdrawal {
         return id + " | " +
                 bank_number_account + " | " +
                 type + " | " +
-                money_amount + " | " +
+                VNString.currency(Double.parseDouble(money_amount.toString())) + " | " +
                 transaction_date.format(myFormatObj) + " | " +
                 (description.isEmpty() ? " " : description);
     }

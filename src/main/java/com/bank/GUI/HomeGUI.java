@@ -53,6 +53,7 @@ public class HomeGUI extends JFrame {
     private boolean over = false;
     public int indexModuleBank_AccountGUI = -1;
     public int indexModuleTransactionGUI = -1;
+    public int indexModuleTransferGUI = -1;
     public HomeGUI() {
         initComponents();
     }
@@ -230,6 +231,8 @@ public class HomeGUI extends JFrame {
             int index = i;
             if (module.getId() == 4)
                 indexModuleBank_AccountGUI = index;
+            if (module.getId() == 5)
+                indexModuleTransferGUI = index;
             if (module.getId() == 6)
                 indexModuleTransactionGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {

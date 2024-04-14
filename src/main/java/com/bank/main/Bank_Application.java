@@ -2,6 +2,7 @@ package com.bank.main;
 
 import com.bank.BLL.Bank_AccountBLL;
 import com.bank.GUI.DialogGUI.TransactionGUI;
+import com.bank.GUI.DialogGUI.TransferGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.LoginGUI;
 import com.bank.GUI.components.Card;
@@ -34,7 +35,7 @@ public class Bank_Application {
         thread.start();
         loginGUI = new LoginGUI();
         loginGUI.setVisible(true);
-//        new TransactionGUI(new Bank_AccountBLL().getBank_accountListAll().get(10));
+//        new TransferGUI(new Bank_AccountBLL().getBank_accountListAll().get(23), new Card(new Bank_AccountBLL().getBank_accountListAll().get(23)));
     }
 
     public static void exit(int status) {
