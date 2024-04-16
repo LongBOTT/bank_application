@@ -130,9 +130,9 @@ public class StaffGUI extends Layout1 {
         SearchPanel.add(jComboBoxSearch);
 
         if (Database.headquarter_id == 0)
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[deleted] = 0")));
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[id] != 0","[deleted] = 0")));
         else
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0")));
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[id] != 0","[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -209,15 +209,15 @@ public class StaffGUI extends Layout1 {
         jTextFieldSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
         if (Database.headquarter_id == 0)
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[deleted] = 0")));
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[id] != 0","[deleted] = 0")));
         else
-            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0")));
+            loadDataTable(staffBLL.getData(staffBLL.searchStaffs( "[id] != 0","[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0")));
     }
 
     private void searchStaffs() {
         List<Staff> staffList;
         if (Database.headquarter_id == 0)
-            staffList = staffBLL.searchStaffs( "[deleted] = 0");
+            staffList = staffBLL.searchStaffs( "[id] != 0","[deleted] = 0");
         else
             staffList = staffBLL.searchStaffs("[branch_id] = " + HomeGUI.staff.getBranch_id(), "[deleted] = 0");
 

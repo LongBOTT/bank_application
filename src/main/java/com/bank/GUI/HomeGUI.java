@@ -241,7 +241,7 @@ public class HomeGUI extends JFrame {
                 indexModuleTransferGUI = index;
             if (module.getId() == 6)
                 indexModuleTransactionGUI = index;
-            if (module.getId() == 10)
+            if (module.getId() == 9)
                 indexModuleInforGUI = index;
             modules[i].addMouseListener(new MouseAdapter() {
                 @Override
@@ -333,17 +333,8 @@ public class HomeGUI extends JFrame {
             case 6 -> new Transaction_Deposit_WithdrawalGUI(functions);
             case 7 -> new AccountGUI(functions);
 //            case 8 -> new ExportGUI(functions);
-//            case 9 -> new ImportGUI(functions);
-            case 10 -> new InfoGUI(account, staff);
-            case 11 -> new DecentralizationGUI(functions);
-//            case 12 -> new StaffGUI(functions, this);
-//            case 13 -> new Leave_Of_Absence_FormGUI(functions);
-//            case 14 -> new AccountGUI(functions);
-//            case 15 -> new DecentralizationGUI(functions);
-//            case 16 -> new InfoGUI(account, staff);
-//            case 17 -> new MyWorkScheduleGUI(staff);
-//            case 18 -> new CreateWorkScheduleGUI();
-//            case 19 -> new PayrollGUI(functions, this);
+            case 9 -> new InfoGUI(account, staff);
+            case 10 -> new DecentralizationGUI(functions);
             default -> new RoundedPanel();
         };
     }

@@ -2,12 +2,15 @@ package com.bank.BLL;
 
 import com.bank.DAL.AccountDAL;
 import com.bank.DTO.Account;
+import com.bank.DTO.Staff;
+import com.bank.utils.Email;
 import com.bank.utils.Password;
 import com.bank.utils.VNString;
 import javafx.util.Pair;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +48,14 @@ public class AccountBLL extends Manager<Account>{
         String hashedPassword = Password.hashPassword(password);
         account.setPassword("first" + hashedPassword);
         accountDAL.updateAccountPassword(account);
+
+        Staff staff = new StaffBLL().searchStaffs("id = " + account.getStaff_id()).get(0);
+        Email.sendOTP(staff.getEmail(), "Mở tài khoản nhân viên Ngân Hàng ACB",
+                "<html><p>Ngân Hàng ACB xin thông báo thông tin tài khoản của nhân viên</p>" +
+                        "    <p>Tên đăng nhập là: <strong>" + account.getUsername() +"</strong></p>" +
+                        "    <p>Mật khẩu mặc định là: <strong>" + password + "</strong></p>" +
+                        "    <p>Vui lòng thực hiện thay đổi mật khẩu.</p></html>");
+
         return new Pair<>(true,"Thêm tài khoản thành công.");
     }
 

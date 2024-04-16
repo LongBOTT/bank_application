@@ -5,6 +5,7 @@ import com.bank.DTO.Function;
 import com.bank.DTO.Role;
 import com.bank.GUI.DialogGUI.FormAddGUI.AddRoleGUI;
 import com.bank.GUI.components.*;
+import com.bank.utils.Database;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -24,14 +25,17 @@ public class DecentralizationGUI extends Layout1 {
     private JLabel iconSearch;
     private JTextField jTextFieldSearch;
     private RoleBLL roleBLL = new RoleBLL();
-    private boolean flag = true;
+    private int indexColumnRemove = -1;
     private DecentralizationTable detailTable;
     private RoundedScrollPane scrollPane;
     private DataTable dataTable;
     private JButton jButtonSearch;
+    private boolean remove = false;
+    private String[] columnNames;
     private Object[][] data = new Object[0][0];
     public DecentralizationGUI(List<Function> functions) {
         super();
+        if (functions.stream().anyMatch(f -> f.getName().equals("remove"))) remove = true;
         init(functions);
     }
 
@@ -39,9 +43,18 @@ public class DecentralizationGUI extends Layout1 {
         containerSearch = new RoundedPanel();
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
-        dataTable = new DataTable(new Object[][]{}, new Object[]{"Tên chức vụ", "Xoá"},
+        columnNames = new String[] {"Tên Chức Vụ"};
+
+        if (remove && Database.headquarter_id == 0) {
+            columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
+            indexColumnRemove = columnNames.length - 1;
+            columnNames[indexColumnRemove] = "Xoá";
+        }
+
+        dataTable = new DataTable(new Object[0][0], columnNames,
                 e -> selectFunction(),
-                false, false, true, 1);
+                false, false, remove, 1);
+
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(300, 680));
         bottom.add(scrollPane, BorderLayout.WEST);
@@ -108,7 +121,7 @@ public class DecentralizationGUI extends Layout1 {
         refreshLabel.setIcon(new FlatSVGIcon("icon/refresh.svg"));
         refreshPanel.add(refreshLabel);
 
-        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
+        if (functions.stream().anyMatch(f -> f.getName().equals("add")) && Database.headquarter_id == 0) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
@@ -151,9 +164,11 @@ public class DecentralizationGUI extends Layout1 {
 
         for (int i = 0; i < objects.length; i++) {
             System.arraycopy(objects[i], 0, data[i], 0, objects[i].length);
-            JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
-            data[i] = Arrays.copyOf(data[i], data[i].length + 1);
-            data[i][data[i].length - 1] = iconRemove;
+            if (remove && Database.headquarter_id == 0) {
+                JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
+                data[i] = Arrays.copyOf(data[i], data[i].length + 1);
+                data[i][data[i].length - 1] = iconRemove;
+            }
         }
 
         for (Object[] object : data) {
@@ -202,6 +217,13 @@ public class DecentralizationGUI extends Layout1 {
     private void showDetailRole(Role role) {
         detailTable.refreshTable();
         detailTable.setRole(role);
+        if (Database.headquarter_id != 0) {
+            for (JCheckBox[] checkBoxes : detailTable.checkboxes) {
+                for (JCheckBox checkBox : checkBoxes) {
+                    checkBox.setEnabled(false);
+                }
+            }
+        }
     }
 
 }

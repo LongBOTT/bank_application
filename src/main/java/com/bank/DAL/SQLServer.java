@@ -105,7 +105,12 @@ public class SQLServer {
     // EXECUTE [dbo].[sp_CheckLogin] @username = 'admin'
 
     public List<List<String>> executeProcedure(String procedureName , Pair<String, Object>... conditions) throws SQLException, IOException {
-        String query = "EXECUTE [dbo].[" + procedureName + "]";
+        String query = "";
+        if (procedureName.equals("sp_GetAutoID"))
+            query = "DECLARE @return_value int, @newId bigint EXECUTE @return_value = [dbo].[" + procedureName + "]";
+        else
+            query = "EXECUTE [dbo].[" + procedureName + "]";
+
         if (conditions != null && conditions.length > 0) {
             String[] strings = new String[0];
             for (Pair condition: conditions) {
@@ -130,6 +135,8 @@ public class SQLServer {
             }
             query += " " + String.join(", ", strings);
         }
+        if (procedureName.equals("sp_GetAutoID"))
+            query += ", @newId = @newId OUTPUT SELECT @newId";
         query += ";";
         return executeQuery(query);
     }

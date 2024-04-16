@@ -48,9 +48,9 @@ public class AccountGUI extends Layout1 {
         iconSearch = new JLabel();
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
-        jComboBoxSearch = new JComboBox<>(new String[]{"Tài khoản", "Nhân viên"});
+        jComboBoxSearch = new JComboBox<>(new String[]{"Tài Khoản", "Nhân Viên"});
         dataTable = new DataTable(new Object[][]{},
-                new String[]{"Mã tài khoản", "Tên tài khoản", "Nhân viên"});
+                new String[]{"Mã Tài Khoản", "Tên Tài Khoản", "Nhân Viên"});
         scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         scrollPane.setPreferredSize(new Dimension(1165, 680));
@@ -99,7 +99,7 @@ public class AccountGUI extends Layout1 {
         jComboBoxSearch.addActionListener(e -> selectSearchFilter());
         SearchPanel.add(jComboBoxSearch);
 
-        loadDataTable(accountBLL.getData(accountBLL.searchAccounts()));
+        loadDataTable(accountBLL.getData(accountBLL.searchAccounts("[id] != 0")));
 
         RoundedPanel refreshPanel = new RoundedPanel();
         refreshPanel.setLayout(new GridBagLayout());
@@ -172,12 +172,12 @@ public class AccountGUI extends Layout1 {
     public void refresh() {
         jTextFieldSearch.setText("");
         jComboBoxSearch.setSelectedIndex(0);
-        loadDataTable(accountBLL.getData(accountBLL.searchAccounts()));
+        loadDataTable(accountBLL.getData(accountBLL.searchAccounts("[id] != 0")));
     }
 
     private void searchAccounts() {
         if (jTextFieldSearch.getText().isEmpty()) {
-            loadDataTable(accountBLL.getData(accountBLL.searchAccounts()));
+            loadDataTable(accountBLL.getData(accountBLL.searchAccounts("[id] != 0")));
         } else {
             selectSearchFilter();
         }
@@ -195,7 +195,7 @@ public class AccountGUI extends Layout1 {
         List<Account> accountList = new ArrayList<>();
         for (Staff staff : staffBLL.searchStaffs("[deleted] = 0")) {
             if (staff.getName().toLowerCase().contains(jTextFieldSearch.getText().toLowerCase())) {
-                accountList.add(accountBLL.searchAccounts("[staff_id] = " + staff.getId()).get(0));
+                accountList.add(accountBLL.searchAccounts("[id] != 0", "[staff_id] = " + staff.getId()).get(0));
             }
         }
         loadDataTable(accountBLL.getData(accountList));

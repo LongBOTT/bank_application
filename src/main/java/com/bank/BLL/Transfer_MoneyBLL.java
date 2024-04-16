@@ -94,6 +94,10 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
         return transfer_MoneyDAL.getAllTransfer_Money();
     }
 
+    public List<List<String>> getTotalTransfer_By_Month_In_Year(String bank_account_number) {
+        return transfer_MoneyDAL.getTotalTransfer_By_Month_In_Year(bank_account_number);
+    }
+
     @Override
     public Object getValueByKey(Transfer_Money transfer_Money, String key) {
         return switch (key) {

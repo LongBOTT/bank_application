@@ -97,4 +97,13 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<List<String>> getTotalTransaction_By_Month_In_Year(String bank_account_number) {
+        try {
+            return executeProcedure("sp_GetTotalTransaction_By_Month_In_Year", new Pair<>("bank_account_number", bank_account_number));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Transfer_MoneyDAL.getTotalTransfer_By_Month_In_Year(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

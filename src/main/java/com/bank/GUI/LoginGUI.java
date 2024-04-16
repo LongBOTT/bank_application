@@ -6,6 +6,7 @@ import com.bank.DTO.Account;
 import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.RoundedPanel;
 import com.bank.main.Bank_Application;
+import com.bank.utils.Database;
 import com.bank.utils.Password;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.ui.FlatProgressBarUI;
@@ -275,7 +276,11 @@ public class LoginGUI extends JFrame {
             return;
         }
         setEnabled(false);
-        Account account = accountList.get(0);
+        Account account;
+        if (Database.headquarter_id == 1 && userName.equals("admin"))
+            account = accountList.get(1);
+        else
+            account = accountList.get(0);
         try {
             Thread thread = new Thread(() -> Bank_Application.homeGUI.setAccount(account));
             thread.start();

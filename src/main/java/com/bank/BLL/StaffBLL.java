@@ -39,7 +39,7 @@ public class StaffBLL extends Manager<Staff> {
         if (staffDAL.addStaff(staff) == 0)
             return new Pair<>(false, "Thêm nhân viên không thành công.");
 
-        return new Pair<>(true, "Thêm nhân viên thành công.");
+        return new Pair<>(true, "Thêm nhân viên thành công.\nTài khoản nhân viên được gửi qua email nhân viên đã đăng ký.");
     }
 
 

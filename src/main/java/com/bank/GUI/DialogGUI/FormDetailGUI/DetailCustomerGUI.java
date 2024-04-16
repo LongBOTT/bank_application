@@ -121,16 +121,16 @@ public class DetailCustomerGUI extends DialogForm {
 
         super.remove(containerButton);
         RoundedPanel roundedPanel = new RoundedPanel();
-        roundedPanel.setBackground(new Color(76,116,253));
+        roundedPanel.setBackground(new Color(76,116,203));
         roundedPanel.setLayout(new GridBagLayout());
         roundedPanel.setPreferredSize(new Dimension(1000, 220));
         super.add(roundedPanel, "wrap");
 
-        roundedPanel1.setBackground(new Color(76,116,253));
+        roundedPanel1.setBackground(new Color(76,116,203));
         roundedPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         RoundedScrollPane scrollPanel = new RoundedScrollPane(roundedPanel1, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPanel.getViewport().setBackground(new Color(76,116,253));
+        scrollPanel.getViewport().setBackground(new Color(76,116,203));
         scrollPanel.setPreferredSize(new Dimension(850, 180));
         roundedPanel.add(scrollPanel);
 

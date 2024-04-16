@@ -7,6 +7,7 @@ import com.bank.GUI.DialogGUI.FormAddGUI.AddBranchGUI;
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBranchGUI;
 import com.bank.GUI.DialogGUI.FormEditGUI.EditBranchGUI;
 import com.bank.GUI.components.*;
+import com.bank.utils.Database;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
@@ -61,13 +62,13 @@ public class BranchGUI extends Layout1 {
             columnNames[indexColumnDetail] = "Xem";
         }
 
-        if (edit) {
+        if (edit && Database.headquarter_id == 0) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnEdit = columnNames.length - 1;
             columnNames[indexColumnEdit] = "Sửa";
         }
 
-        if (remove) {
+        if (remove && Database.headquarter_id == 0) {
             columnNames = Arrays.copyOf(columnNames, columnNames.length + 1);
             indexColumnRemove = columnNames.length - 1;
             columnNames[indexColumnRemove] = "Xoá";
@@ -138,7 +139,7 @@ public class BranchGUI extends Layout1 {
         refreshLabel.setForeground(Color.white);
         refreshPanel.add(refreshLabel);
 
-        if (functions.stream().anyMatch(f -> f.getName().equals("add"))) {
+        if (functions.stream().anyMatch(f -> f.getName().equals("add")) && Database.headquarter_id == 0) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
@@ -160,7 +161,7 @@ public class BranchGUI extends Layout1 {
             panel.setIcon(new FlatSVGIcon("icon/add.svg"));
             roundedPanel.add(panel);
         }
-        if (functions.stream().anyMatch(f -> f.getName().equals("excel"))) {
+        if (functions.stream().anyMatch(f -> f.getName().equals("excel")) && Database.headquarter_id == 0) {
             RoundedPanel roundedPanel = new RoundedPanel();
             roundedPanel.setLayout(new GridBagLayout());
             roundedPanel.setPreferredSize(new Dimension(130, 40));
@@ -221,12 +222,12 @@ public class BranchGUI extends Layout1 {
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconDetail;
             }
-            if (edit) {
+            if (edit && Database.headquarter_id == 0) {
                 JLabel iconEdit = new JLabel(new FlatSVGIcon("icon/edit.svg"));
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconEdit;
             }
-            if (remove) {
+            if (remove && Database.headquarter_id == 0) {
                 JLabel iconRemove = new JLabel(new FlatSVGIcon("icon/remove.svg"));
                 data[i] = Arrays.copyOf(data[i], data[i].length + 1);
                 data[i][data[i].length - 1] = iconRemove;

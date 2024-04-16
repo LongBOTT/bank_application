@@ -25,7 +25,7 @@ public class DecentralizationTable extends JScrollPane {
     protected final List<Module> modules;
     protected final List<Function> functions;
     protected final Map<Pair<Integer, Integer>, Pair<Module, Function>> table;
-    protected final JCheckBox[][] checkboxes;
+    public final JCheckBox[][] checkboxes;
     protected Role role;
 
     public DecentralizationTable() {
@@ -96,10 +96,10 @@ public class DecentralizationTable extends JScrollPane {
         if (role.getId() == 1) {
             checkboxes[6][0].setEnabled(false);
             checkboxes[6][1].setEnabled(false);
-            checkboxes[10][0].setEnabled(false);
-            checkboxes[10][1].setEnabled(false);
-            checkboxes[10][2].setEnabled(false);
-            checkboxes[10][3].setEnabled(false);
+            checkboxes[9][0].setEnabled(false);
+            checkboxes[9][1].setEnabled(false);
+            checkboxes[9][2].setEnabled(false);
+            checkboxes[9][3].setEnabled(false);
         }
 
     }

@@ -1,5 +1,6 @@
 package com.bank.GUI.DialogGUI.FormAddGUI;
 
+import com.bank.BLL.AccountBLL;
 import com.bank.BLL.BranchBLL;
 import com.bank.BLL.RoleBLL;
 import com.bank.BLL.StaffBLL;
@@ -226,6 +227,14 @@ public class AddStaffGUI extends DialogForm {
         result = staffBLL.addStaff(staff);
 
         if (result.getKey()) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    AccountBLL accountBLL = new AccountBLL();
+                    accountBLL.addAccount(new Account(accountBLL.getAutoID(), staff.getStaffNo(), staff.getId()));
+                }
+            });
+            thread.start();
             Circle_ProgressBar circleProgressBar = new Circle_ProgressBar();
             circleProgressBar.getRootPane ().setOpaque (false);
             circleProgressBar.getContentPane ().setBackground (new Color (0, 0, 0, 0));

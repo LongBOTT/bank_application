@@ -1,7 +1,11 @@
 package com.bank.main;
 
+import com.bank.BLL.Bank_AccountBLL;
+import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBank_AccountGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.LoginGUI;
+import com.bank.GUI.StatementGUI;
+import com.bank.GUI.components.Card;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
@@ -27,11 +31,12 @@ public class Bank_Application {
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
 
-        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
-        thread.start();
-        loginGUI = new LoginGUI();
-        loginGUI.setVisible(true);
-//        new TransferGUI(new Bank_AccountBLL().getBank_accountListAll().get(23), new Card(new Bank_AccountBLL().getBank_accountListAll().get(23)));
+//        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
+//        thread.start();
+//        loginGUI = new LoginGUI();
+//        loginGUI.setVisible(true);
+//        new DetailBank_AccountGUI(new Bank_AccountBLL().bank_accountListAll.get(0));
+        new StatementGUI(new Bank_AccountBLL().getBank_accountListAll().get(3), new Card(new Bank_AccountBLL().getBank_accountListAll().get(3)));
     }
 
     public static void exit(int status) {

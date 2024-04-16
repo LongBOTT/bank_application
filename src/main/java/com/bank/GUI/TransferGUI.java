@@ -426,7 +426,10 @@ public class TransferGUI extends JDialog {
             id = transfer_MoneyBLL.getAutoID();
             staff_id = HomeGUI.staff.getId();
             send_date = LocalDateTime.now();
-            description = jTextArea.getText();
+
+            String normalized = Normalizer.normalize(jTextArea.getText(), Normalizer.Form.NFD);
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            description = pattern.matcher(normalized).replaceAll("");
 
             if (bankAccount.getBalance().compareTo(money_amount) < 0) {
                 JOptionPane.showMessageDialog(null, "Số tiền trong tài khoản không đủ để thực hiện giao dịch!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -554,6 +557,7 @@ public class TransferGUI extends JDialog {
 
         List<Bank_Account> bankAccounts = bankAccountBLL.findAllBank_Accounts("number", text);
         bankAccounts.removeIf(bank_account -> Objects.equals(bank_account.getNumber(), bankAccount.getNumber()));
+        bankAccounts.removeIf(bank_account -> !bank_account.isStatus());
         for (Bank_Account m : bankAccounts) {
             if (list.size() == 7)
                 break;

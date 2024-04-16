@@ -24,11 +24,13 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class TransactionGUI extends JDialog {
     private Transaction_Deposit_WithdrawalBLL transactionDepositWithdrawalBLL = new Transaction_Deposit_WithdrawalBLL();
@@ -379,7 +381,10 @@ public class TransactionGUI extends JDialog {
             staff_id = HomeGUI.staff.getId();
             transaction_type = jComboBox.getSelectedIndex() == 0;
             transaction_date = LocalDateTime.now();
-            description = jTextArea.getText();
+
+            String normalized = Normalizer.normalize(jTextArea.getText(), Normalizer.Form.NFD);
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            description = pattern.matcher(normalized).replaceAll("");
 
             if (!transaction_type && bankAccount.getBalance().compareTo(money_amount) < 0) {
                 JOptionPane.showMessageDialog(null, "Số tiền trong tài khoản không đủ để thực hiện giao dịch!", "Lỗi", JOptionPane.ERROR_MESSAGE);
