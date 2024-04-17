@@ -332,7 +332,7 @@ public class HomeGUI extends JFrame {
             case 5 -> new Transfer_MoneyGUI(functions);
             case 6 -> new Transaction_Deposit_WithdrawalGUI(functions);
             case 7 -> new AccountGUI(functions);
-//            case 8 -> new ExportGUI(functions);
+            case 8 -> new StatisticGUI();
             case 9 -> new InfoGUI(account, staff);
             case 10 -> new DecentralizationGUI(functions);
             default -> new RoundedPanel();
