@@ -6,6 +6,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,15 +48,6 @@ public class DataTable extends JTable {
                 }
             }
         });
-//        addMouseMotionListener(new MouseAdapter() {
-//            @Override
-//            public void mouseDragged(MouseEvent e) {
-//                int row = rowAtPoint(e.getPoint());
-//                if (row != -1 && row != lastSelectedRow) {
-//                    setRowSelectionInterval(lastSelectedRow, lastSelectedRow);
-//                }
-//            }
-//        });
 
         JTableHeader jTableHeader = getTableHeader();
         jTableHeader.setBackground(Color.white);
@@ -467,6 +459,34 @@ public class DataTable extends JTable {
 
         JTableHeader jTableHeader = getTableHeader();
         jTableHeader.setBackground(Color.white);
+    }
+
+    class MultiLineTableCellRenderer extends JTextArea implements TableCellRenderer {
+        public MultiLineTableCellRenderer() {
+            setLineWrap(true);
+            setWrapStyleWord(true);
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            } else {
+                setForeground(table.getForeground());
+                setBackground(table.getBackground());
+            }
+
+            setText((value == null) ? "" : value.toString());
+
+            // Auto-adjust row height
+            setPreferredSize(new Dimension(table.getColumnModel().getColumn(column).getWidth(), getPreferredSize().height));
+            table.setRowHeight(row, getPreferredSize().height);
+
+            return this;
+        }
     }
 }
 

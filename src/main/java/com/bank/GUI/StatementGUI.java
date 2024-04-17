@@ -1,6 +1,7 @@
 package com.bank.GUI;
 
 import com.bank.BLL.*;
+import com.bank.DAL.SQLServer;
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Branch;
 import com.bank.DTO.Customer;
@@ -27,35 +28,28 @@ import java.awt.event.*;
 import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class StatementGUI extends JDialog {
+    private JLabel firstBalance;
     private JDateChooser[] jDateChooser;
     private Transfer_MoneyBLL transfer_MoneyBLL = new Transfer_MoneyBLL();
     private Transaction_Deposit_WithdrawalBLL transactionDepositWithdrawalBLL = new Transaction_Deposit_WithdrawalBLL();
     private DataTable dataTable;
-    private JLabel jLabelTitle;
-    private MyTextFieldUnderLine myTextFieldUnderLine;
-    private MyTextFieldUnderLine myTextFieldUnderLine1;
-    private MyTextFieldUnderLine myTextFieldUnderLine2;
-    private MyTextFieldUnderLine myTextFieldUnderLine3;
-    private JButton buttonCancel;
     private JButton buttonPrint;
-    private JTextArea jTextArea;
+    private JButton buttonSearch;
     private Bank_Account bankAccount;
     private Card card;
-    private String receiver_bank_account_number = "";
-    private Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
-    private BranchBLL branchBLL = new BranchBLL();
-    private CustomerBLL customerBLL = new CustomerBLL();
-    private String defaultContent;
     private CurveLineChart chart;
     private RoundedPanel currentPanel = null;
+    private SQLServer sqlServer = new SQLServer();
+    private Object[][] data;
     public StatementGUI(Bank_Account bank_account, Card card) {
         super((Frame) null, "", true);
         this.bankAccount = bank_account;
@@ -80,13 +74,8 @@ public class StatementGUI extends JDialog {
     }
 
     private void initComponents() {
-        myTextFieldUnderLine = new MyTextFieldUnderLine();
-        myTextFieldUnderLine1 = new MyTextFieldUnderLine();
-        myTextFieldUnderLine2 = new MyTextFieldUnderLine();
-        myTextFieldUnderLine3 = new MyTextFieldUnderLine();
-        buttonCancel = new JButton("Huỷ");
         buttonPrint = new JButton("In Sao Kê");
-        jTextArea = new JTextArea();
+        buttonSearch = new JButton("Tìm Kiếm");
         jDateChooser = new JDateChooser[2];
         chart = new CurveLineChart();
 
@@ -134,16 +123,17 @@ public class StatementGUI extends JDialog {
         last3Month.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Active(last3Month);
-                last3Month.disable();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setData(3);
-                    }
-                });
-                thread.start();
-                currentPanel = last3Month;
+                if (currentPanel != last3Month) {
+                    Active(last3Month);
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setData(3);
+                        }
+                    });
+                    thread.start();
+                    currentPanel = last3Month;
+                }
             }
         });
         filterPanel.add(last3Month);
@@ -156,16 +146,17 @@ public class StatementGUI extends JDialog {
         last6Month.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Active(last6Month);
-                last6Month.disable();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setData(6);
-                    }
-                });
-                thread.start();
-                currentPanel = last6Month;
+                if (currentPanel != last6Month) {
+                    Active(last6Month);
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setData(6);
+                        }
+                    });
+                    thread.start();
+                    currentPanel = last6Month;
+                }
             }
         });
         filterPanel.add(last6Month);
@@ -178,16 +169,17 @@ public class StatementGUI extends JDialog {
         last9Month.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Active(last9Month);
-                last9Month.disable();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setData(9);
-                    }
-                });
-                thread.start();
-                currentPanel = last9Month;
+                if (currentPanel != last9Month) {
+                    Active(last9Month);
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setData(9);
+                        }
+                    });
+                    thread.start();
+                    currentPanel = last9Month;
+                }
             }
         });
         filterPanel.add(last9Month);
@@ -200,16 +192,17 @@ public class StatementGUI extends JDialog {
         lastYear.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                Active(lastYear);
-                lastYear.disable();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setData(12);
-                    }
-                });
-                thread.start();
-                currentPanel = lastYear;
+                if (currentPanel != lastYear) {
+                    Active(lastYear);
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setData(9);
+                        }
+                    });
+                    thread.start();
+                    currentPanel = lastYear;
+                }
             }
         });
         filterPanel.add(lastYear, "wrap");
@@ -252,7 +245,7 @@ public class StatementGUI extends JDialog {
             jDateChooser[i] = new JDateChooser();
             jDateChooser[i].setDateFormatString("dd/MM/yyyy");
             jDateChooser[i].setBackground(new Color(220, 224, 253));
-            jDateChooser[i].setPreferredSize(new Dimension(250, 60));
+            jDateChooser[i].setPreferredSize(new Dimension(175, 60));
             jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
 
             if (i == 0) {
@@ -272,6 +265,20 @@ public class StatementGUI extends JDialog {
             }
             filterDate.add(jDateChooser[i]);
         }
+
+        buttonSearch.setIcon(new FlatSVGIcon("icon/search1.svg"));
+        buttonSearch.setBackground(new Color(115,121,210));
+        buttonSearch.setForeground(Color.white);
+        buttonSearch.setPreferredSize(new Dimension(150,60));
+        buttonSearch.setFont(new Font("Inter", Font.BOLD, 13));
+        buttonSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                search();
+            }
+        });
+        filterDate.add(buttonSearch);
 
         buttonPrint.setIcon(new FlatSVGIcon("icon/print.svg"));
         buttonPrint.setBackground(new Color(115,121,210));
@@ -296,13 +303,29 @@ public class StatementGUI extends JDialog {
         panelShadow.add(chart, BorderLayout.CENTER);
         center.add(panelShadow);
 
-        String[] columnNames = new String[]{"Thời Gian", "Mã GD", "Diễn Giải", "Số Tiền", "Số Dư"};
+        firstBalance = new JLabel();
+        firstBalance.setFont(new Font("Inter", Font.BOLD, 15));
+        bottom.add(firstBalance, "wrap");
+
+        String[] columnNames = new String[]{"Thời Gian", "Số Tiền Ghi Nợ", "Số Tiền Ghi Có", "Số Dư", "Nội Dung Chi Tiết"};
         dataTable = new DataTable(new Object[0][0], columnNames);
         dataTable.getTableHeader().setFont(new Font("Public Sans", Font.BOLD, 15));
         dataTable.setBackground(Color.white);
         dataTable.setSelectionBackground(new Color(245, 243, 243, 221));
+        dataTable.setFont(new Font("Public Sans", Font.PLAIN, 13));
+        dataTable.getColumnModel().getColumn(0).setMinWidth(130);
+        dataTable.getColumnModel().getColumn(1).setMinWidth(170);
+        dataTable.getColumnModel().getColumn(2).setMinWidth(170);
+        dataTable.getColumnModel().getColumn(3).setMinWidth(170);
+        dataTable.getColumnModel().getColumn(0).setMaxWidth(130);
+        dataTable.getColumnModel().getColumn(1).setMaxWidth(170);
+        dataTable.getColumnModel().getColumn(2).setMaxWidth(170);
+        dataTable.getColumnModel().getColumn(3).setMaxWidth(170);
+        dataTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        dataTable.setSelectionBackground(new Color(176, 180, 183));
+        dataTable.setRowHeight(20);
 
-        RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        RoundedScrollPane scrollPane = new RoundedScrollPane(dataTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setPreferredSize(new Dimension(1165, 300));
         bottom.add(scrollPane);
 
@@ -310,7 +333,6 @@ public class StatementGUI extends JDialog {
         transfer_Moneys.removeIf(Transfer_Money -> !Transfer_Money.getSender_bank_account_number().equals(bankAccount.getNumber()));
 
         Active(last3Month);
-        last3Month.disable();
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -319,23 +341,45 @@ public class StatementGUI extends JDialog {
         });
         thread.start();
         currentPanel = last3Month;
-//        loadDataTable(transfer_MoneyBLL.getData(transfer_Moneys));
+
     }
 
-    public void loadDataTable(Object[][] objects) {
+    public void loadDataTable(List<List<String>> objects) {
         DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
         model.setRowCount(0);
 
-        if (objects.length == 0) {
+        if (objects.isEmpty()) {
+            firstBalance.setText("");
             return;
         }
 
-        Object[][] data = new Object[objects.length][3];
+        data = new Object[objects.size()][5];
+        double balance = Double.parseDouble(objects.get(0).get(3));
+        double amount;
+        if (objects.get(0).get(1).equals("0.0")) {
+            amount = Double.parseDouble(objects.get(0).get(2));
+            balance -= amount;
+        }
+        else {
+            amount = Double.parseDouble(objects.get(0).get(1));
+            balance += amount;
+        }
+        firstBalance.setText("Số Dư Đầu Kỳ: " + VNString.currency(balance));
 
-        for (int i = 0; i < objects.length; i++) {
-            data[i][0] = objects[i][4];
-            data[i][1] = objects[i][2];
-            data[i][2] = objects[i][3];
+        for (int i = 0; i < objects.size(); i++) {
+            data[i][0] = objects.get(i).get(0);
+            if (!objects.get(i).get(1).equals("0.0"))
+                data[i][1] = VNString.currency(Double.parseDouble(objects.get(i).get(1)));
+            else
+                data[i][1] = " ";
+
+            if (!objects.get(i).get(2).equals("0.0"))
+                data[i][2] = VNString.currency(Double.parseDouble(objects.get(i).get(2)));
+            else
+                data[i][2] = " ";
+
+            data[i][3] = VNString.currency(Double.parseDouble(objects.get(i).get(3)));
+            data[i][4] = objects.get(i).get(4);
         }
 
         for (Object[] object : data) {
@@ -354,7 +398,18 @@ public class StatementGUI extends JDialog {
     }
 
     private void setData(int numberOfMonth) {
+        jDateChooser[0].setDate(null);
+        jDateChooser[1].setDate(null);
+
         chart.clear();
+
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        List<List<String>> objects = new ArrayList<>();
+        List<List<String>> statement = sqlServer.getStatement(bankAccount.getNumber());
+
+        for (List<String> strings : statement) {
+            strings.set(0, LocalDateTime.parse(strings.get(0), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(myFormatObj));
+        }
 
         List<ModelData> lists = new ArrayList<>();
 
@@ -390,6 +445,10 @@ public class StatementGUI extends JDialog {
             lists.add(new ModelData(month, deposit, withdrawal, transfer));
 
             cal.add(Calendar.MONTH, 1);
+
+            List<List<String>> list = new ArrayList<>(statement);
+            list.removeIf(strings -> !strings.get(0).contains(formattedDate));
+            objects.addAll(list);
         }
 
         for (ModelData d : lists) {
@@ -397,6 +456,9 @@ public class StatementGUI extends JDialog {
         }
 
         chart.start();
+
+        loadDataTable(objects);
+
     }
 
     private void Disable() {
@@ -411,4 +473,86 @@ public class StatementGUI extends JDialog {
         module.setBackground(new Color(176, 180, 183));
     }
 
+    private void search() {
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        if (jDateChooser[0].getDateEditor().getDate() == null || jDateChooser[1].getDateEditor().getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày bắt đầu và ngày kết thúc sao kê.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }else {
+            Disable();
+            currentPanel = null;
+
+            chart.clear();
+
+            List<ModelData> lists = new ArrayList<>();
+            List<List<String>> totalTransaction;
+            List<List<String>> totalTransfer;
+
+            String startDate = LocalDate.parse(jDateChooser[0].getDate().toString(), myFormatObj).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String endDate = LocalDate.parse(jDateChooser[1].getDate().toString(), myFormatObj).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if (LocalDate.parse(startDate).isAfter(LocalDate.parse(endDate))) {
+                JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (LocalDate.parse(startDate).isAfter(LocalDate.now()) || LocalDate.parse(endDate).isAfter(LocalDate.now())) {
+                JOptionPane.showMessageDialog(null, "Ngày sao kê không hợp lệ.",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+
+            DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            List<List<String>> statement = sqlServer.getStatement_By_Date(bankAccount.getNumber(), startDate, endDate);
+
+            for (List<String> strings : statement) {
+                strings.set(0, LocalDateTime.parse(strings.get(0), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(myFormat));
+            }
+
+            totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Date(bankAccount.getNumber(), startDate, endDate);
+
+            totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Date(bankAccount.getNumber(), startDate, endDate);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
+
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(jDateChooser[0].getDate());
+            String formattedDate = dateFormat.format(cal1.getTime());
+
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(jDateChooser[1].getDate());
+            cal2.add(Calendar.MONTH, 1);
+            String end = dateFormat.format(cal2.getTime());
+
+            while (!formattedDate.equals(end)) {
+                String month = formattedDate;
+                double deposit = 0;
+                double withdrawal = 0;
+                double transfer = 0;
+                for (List<String> strings : totalTransaction) {
+                    if (strings.get(0).equals(formattedDate)) {
+                        deposit = Double.parseDouble(strings.get(1));
+                        withdrawal = Double.parseDouble(strings.get(2));
+                        break;
+                    }
+                }
+
+                for (List<String> strings : totalTransfer) {
+                    if (strings.get(0).equals(formattedDate)) {
+                        transfer = Double.parseDouble(strings.get(1));
+                        break;
+                    }
+                }
+                lists.add(new ModelData(month, deposit, withdrawal, transfer));
+
+                cal1.add(Calendar.MONTH, 1);
+                formattedDate = dateFormat.format(cal1.getTime());
+            }
+
+            for (ModelData d : lists) {
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
+            }
+            chart.start();
+
+            loadDataTable(statement);
+        }
+    }
 }

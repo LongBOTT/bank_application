@@ -98,6 +98,10 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
         return transfer_MoneyDAL.getTotalTransfer_By_Month_In_Year(bank_account_number);
     }
 
+    public List<List<String>> getTotalTransfer_By_Date(String bank_account_number, String start_date, String end_date) {
+        return transfer_MoneyDAL.getTotalTransfer_By_Date(bank_account_number, start_date, end_date);
+    }
+
     @Override
     public Object getValueByKey(Transfer_Money transfer_Money, String key) {
         return switch (key) {

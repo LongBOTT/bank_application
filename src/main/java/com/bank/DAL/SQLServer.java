@@ -140,4 +140,22 @@ public class SQLServer {
         query += ";";
         return executeQuery(query);
     }
+
+    public List<List<String>> getStatement(String bank_account_number) {
+        try {
+            return executeProcedure("sp_GetStatement", new Pair<>("bank_account_number", bank_account_number));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in SQPServer.getStatement(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<List<String>> getStatement_By_Date(String bank_account_number, String start_date, String end_date) {
+        try {
+            return executeProcedure("sp_GetStatement_By_Date", new Pair<>("bank_account_number", bank_account_number), new Pair<>("start_date", start_date), new Pair<>("end_date", end_date));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in SQPServer.getStatement_By_Date(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

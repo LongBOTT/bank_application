@@ -105,4 +105,13 @@ public class Transfer_MoneyDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<List<String>> getTotalTransfer_By_Date(String bank_account_number, String start_date, String end_date) {
+        try {
+            return executeProcedure("sp_GetTotalTransfer_By_Date", new Pair<>("bank_account_number", bank_account_number), new Pair<>("start_date", start_date), new Pair<>("end_date", end_date));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Transfer_MoneyDAL.getTotalTransfer_By_Date(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

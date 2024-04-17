@@ -31,12 +31,12 @@ public class Bank_Application {
         UIManager.put("TitlePane.iconSize", new Dimension(25, 25));
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
 
-//        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
-//        thread.start();
-//        loginGUI = new LoginGUI();
-//        loginGUI.setVisible(true);
+        Thread thread = new Thread(() -> homeGUI = new HomeGUI());
+        thread.start();
+        loginGUI = new LoginGUI();
+        loginGUI.setVisible(true);
 //        new DetailBank_AccountGUI(new Bank_AccountBLL().bank_accountListAll.get(0));
-        new StatementGUI(new Bank_AccountBLL().getBank_accountListAll().get(3), new Card(new Bank_AccountBLL().getBank_accountListAll().get(3)));
+//        new StatementGUI(new Bank_AccountBLL().getBank_accountListAll().get(2), new Card(new Bank_AccountBLL().getBank_accountListAll().get(2)));
     }
 
     public static void exit(int status) {
