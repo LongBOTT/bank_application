@@ -114,4 +114,13 @@ public class Bank_AccountDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<List<String>> getStatisticBank_Account(int branch_id) {
+        try {
+            return executeProcedure("sp_GetStatisticBank_Account", new Pair<>("branch_id", branch_id));
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Bank_AccountDAL.GetStatisticBank_Account(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

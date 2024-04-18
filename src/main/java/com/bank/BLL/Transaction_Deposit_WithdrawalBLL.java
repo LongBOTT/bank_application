@@ -47,6 +47,10 @@ public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Depos
         return transaction_deposit_withdrawalDAL.getTotalTransaction_By_Date(bank_account_number, start_date, end_date);
     }
 
+    public List<List<String>> getStatisticTotalTransaction() {
+        return transaction_deposit_withdrawalDAL.getStatisticTotalTransaction();
+    }
+
     public Pair<Boolean, String> addTransaction_Deposit_Withdrawal(Transaction_Deposit_Withdrawal transaction_deposit_withdrawal) {
         Pair<Boolean ,String> result ;
         result = validateMoney_Amount(String.valueOf(transaction_deposit_withdrawal.getMoney_amount()));

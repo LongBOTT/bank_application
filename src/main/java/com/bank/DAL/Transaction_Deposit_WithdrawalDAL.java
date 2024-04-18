@@ -115,4 +115,13 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<List<String>> getStatisticTotalTransaction() {
+        try {
+            return executeProcedure("sp_GetStatisticTotalTransaction");
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Transfer_MoneyDAL.getStatisticTotalTransaction(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

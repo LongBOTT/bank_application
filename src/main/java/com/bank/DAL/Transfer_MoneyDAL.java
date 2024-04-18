@@ -114,4 +114,13 @@ public class Transfer_MoneyDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<List<String>> getStatisticTotalTransfer() {
+        try {
+            return executeProcedure("sp_GetStatisticTotalTransfer");
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in Transfer_MoneyDAL.getStatisticTotalTransfer(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

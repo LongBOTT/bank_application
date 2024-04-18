@@ -4,6 +4,7 @@ import com.bank.BLL.Bank_AccountBLL;
 import com.bank.BLL.BranchBLL;
 import com.bank.DTO.Bank_Account;
 import com.bank.DTO.Branch;
+import com.bank.DTO.Customer;
 import com.bank.DTO.Function;
 
 import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBank_AccountGUI;
@@ -374,6 +375,25 @@ public class Bank_AccountGUI extends Layout2 {
                     JOptionPane.showMessageDialog(null, result.getValue(),
                             "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     refresh();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (Pair pair : CustomerGUI.pairList) {
+                                Customer customer = (Customer) pair.getKey();
+                                if (Objects.equals(customer.getCustomerNo(), bank_account.getCustomer_no())) {
+                                    List<Card> cardList = (List<Card>) pair.getValue();
+                                    for (Card card : cardList) {
+                                        if (card.bankAccount.getNumber().equals(bank_account.getNumber())) {
+                                            card.bankAccount = bank_account;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    thread.start();
                 } else {
                     JOptionPane.showMessageDialog(null, result.getValue(),
                             "Thông báo", JOptionPane.ERROR_MESSAGE);

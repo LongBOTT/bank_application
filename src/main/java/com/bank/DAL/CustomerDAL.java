@@ -158,12 +158,12 @@ public class CustomerDAL extends Manager{
         return new ArrayList<>();
     }
 
-//    public List<Customer> getAllCustomers() {
-//        try {
-//            return convertToCustomers(executeProcedure("sp_GetAllCustomers"));
-//        } catch (SQLException | IOException e) {
-//            System.out.println("Error occurred in CustomerDAL.getAllCustomers(): " + e.getMessage());
-//        }
-//        return new ArrayList<>();
-//    }
+    public List<List<String>> getStatisticCustomer() {
+        try {
+            return executeProcedure("sp_GetStatisticCustomer");
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in CustomerDAL.GetStatisticCustomer(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

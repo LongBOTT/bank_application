@@ -5,7 +5,9 @@ import com.bank.DTO.Staff;
 import com.bank.utils.VNString;
 import javafx.util.Pair;
 
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -113,6 +115,10 @@ public class StaffBLL extends Manager<Staff> {
             }
         }
         return list;
+    }
+
+    public List<List<String>> getStatisticStaff() {
+        return staffDAL.getStatisticStaff();
     }
 
 //    public List<Staff> findStaffsBy(Map<String, Object> conditions) {

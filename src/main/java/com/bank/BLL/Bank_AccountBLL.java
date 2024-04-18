@@ -5,6 +5,8 @@ import com.bank.DTO.Bank_Account;
 
 import javafx.util.Pair;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,9 +98,13 @@ public class Bank_AccountBLL extends Manager<Bank_Account>{
 
     public List<Bank_Account> findAllBank_AccountsActiveByStaffAndBranch(String customer_no, int branch_id) {
         List<Bank_Account> list = findAllBank_Accounts("customer_no", customer_no);
-        list.removeIf(bank_account -> !bank_account.isStatus());
+//        list.removeIf(bank_account -> !bank_account.isStatus());
         list.removeIf(bank_account -> bank_account.getBranch_id() != branch_id);
         return list;
+    }
+
+    public List<List<String>> getStatisticBank_Account(int branch_id) {
+        return Bank_AccountDAL.getStatisticBank_Account(branch_id);
     }
 
 //    public List<Bank_Account> findBank_AccountsBy(Map<String, Object> conditions) {

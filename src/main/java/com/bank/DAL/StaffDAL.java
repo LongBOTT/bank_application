@@ -124,4 +124,13 @@ public class StaffDAL extends Manager{
         }
         return new ArrayList<>();
     }
+
+    public List<List<String>> getStatisticStaff() {
+        try {
+            return executeProcedure("sp_GetStatisticStaff");
+        } catch (SQLException | IOException e) {
+            System.out.println("Error occurred in StaffDAL.GetStatisticStaff(): " + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
 }

@@ -124,12 +124,9 @@ public class CustomerBLL extends Manager<Customer> {
         return customerDAL.searchCustomerByBranch(branch_id);
     }
 
-//    public List<Customer> findCustomersBy(Map<String, Object> conditions) {
-//        List<Customer> customers = customerDAL.searchCustomers("[deleted] = 0");
-//        for (Map.Entry<String, Object> entry : conditions.entrySet())
-//            customers = findObjectsBy(entry.getKey(), entry.getValue(), customers);
-//        return customers;
-//    }
+    public List<List<String>> getStatisticCustomer() {
+        return customerDAL.getStatisticCustomer();
+    }
 
     public Pair<Boolean, String> validateCustomerAll(Customer customer) {
         Pair<Boolean, String> result;

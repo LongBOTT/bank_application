@@ -172,7 +172,7 @@ public class DetailCustomerGUI extends DialogForm {
         if (choice == 1) {
             Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
             if (!bankAccountBLL.findAllBank_AccountsActiveByStaffAndBranch(customer.getCustomerNo(), HomeGUI.staff.getBranch_id()).isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Mỗi khách hàng chỉ sở sữu 1 tài khoản ngân hàng đang hoạt động tại mỗi chi nhánh!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Mỗi khách hàng chỉ sở sữu 1 tài khoản ngân hàng tại mỗi chi nhánh!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
