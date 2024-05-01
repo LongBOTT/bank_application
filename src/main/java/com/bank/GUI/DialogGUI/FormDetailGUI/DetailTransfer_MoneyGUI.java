@@ -9,8 +9,8 @@ import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.GUI.components.RoundedPanel;
 import com.bank.main.Bank_Application;
+import com.bank.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 
 import javax.swing.*;
@@ -128,7 +128,7 @@ public class DetailTransfer_MoneyGUI extends DialogForm {
                 continue;
             }
             if (string.trim().equals("Số Tiền")) {
-                textField.setText(transfer_Money.getMoney_amount().toString());
+                textField.setText(VNString.currency(Double.parseDouble(transfer_Money.getMoney_amount().toString())));
                 content.add(textField);
                 continue;
             }

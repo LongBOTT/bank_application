@@ -20,7 +20,6 @@ import com.bank.GUI.components.swing.MyTextField;
 import com.bank.GUI.components.swing.PanelSearch;
 import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -46,7 +45,6 @@ public class EditStaffGUI extends DialogForm {
     private List<JTextField> jTextFieldsStaff;
     public JTextField textFieldRole;
     public static boolean changeRole = false;
-    private JDateChooser jDateChooser = new JDateChooser();
     private Staff staff;
     private ActionListener refresh;
     public EditStaffGUI(ActionListener refresh, Staff staff) {
@@ -89,14 +87,9 @@ public class EditStaffGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                Date birthDate = staff.getBirthdate();
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setDate(birthDate);
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                jDateChooser.setEnabled(false);
-                content.add(jDateChooser);
+                textField.setText(new SimpleDateFormat("dd-MM-yyyy").format(staff.getBirthdate()));
+                textField.setEditable(false);
+                content.add(textField, "wrap");
             } else {
                 if (string.trim().equals("Mã Nhân Viên")) {
                     String staffId = Integer.toString(staff.getId());

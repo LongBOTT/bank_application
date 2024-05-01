@@ -20,7 +20,6 @@ import com.bank.GUI.components.line_chart.chart.ModelChart;
 import com.bank.GUI.components.line_chart.panel.PanelShadow;
 import com.bank.main.Bank_Application;
 import com.bank.utils.VNString;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
 
@@ -40,7 +39,6 @@ public class DetailBank_AccountGUI extends DialogForm {
     private JLabel titleName;
     private List<JLabel> attributeBank_Account;
     private List<JTextField> jTextFieldsBank_Account;
-    private JDateChooser jDateChooser = new JDateChooser();
     private JButton buttonTransfer;
     private JButton buttonTransaction;
     private JButton buttonStatement;
@@ -132,14 +130,9 @@ public class DetailBank_AccountGUI extends DialogForm {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setEditable(false);
             if (string.trim().equals("Ngày Mở")) {
-                Date birthDate = Bank_Account.getCreation_date();
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setDate(birthDate);
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                jDateChooser.setEnabled(false);
-                panelInfo.add(jDateChooser, "wrap");
+                textField.setText(new SimpleDateFormat("dd-MM-yyyy").format(bankAccount.getCreation_date()));
+                textField.setEditable(false);
+                panelInfo.add(textField, "wrap");
             } else {
                 if (string.trim().equals("Số Thẻ")) {
                     String Bank_AccountId = Bank_Account.getNumber();

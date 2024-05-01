@@ -80,7 +80,7 @@ public class CustomerGUI extends Layout1 {
             @Override
             public void itemRemove(Component com, DataSearch data) {
                 search.remove(com);
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                menu.setPopupSize(200, (search.getItemSize() * 35) + 2);
                 if (search.getItemSize() == 0) {
                     menu.setVisible(false);
                 }
@@ -413,7 +413,7 @@ public class CustomerGUI extends Layout1 {
             search.setData(search(text));
             if (search.getItemSize() > 0 && !txtSearch.getText().isEmpty()) {
                 menu.show(txtSearch, 0, txtSearch.getHeight());
-                menu.setPopupSize(menu.getWidth(), (search.getItemSize() * 35) + 2);
+                menu.setPopupSize(200, (search.getItemSize() * 35) + 2);
             } else {
                 menu.setVisible(false);
             }

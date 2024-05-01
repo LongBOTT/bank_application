@@ -16,9 +16,10 @@ import com.bank.GUI.components.swing.PanelSearch;
 import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -41,7 +42,8 @@ public class Bank_AccountGUI extends Layout2 {
     private JTextField jTextFieldSearch;
     private JButton jButtonSearch;
     private JComboBox<String> jComboBoxSearch;
-    private JDateChooser[] jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private List<Function> functions;
     private Bank_AccountBLL bank_accountBLL = new Bank_AccountBLL();
     private BranchBLL branchBLL = new BranchBLL();
@@ -93,7 +95,8 @@ public class Bank_AccountGUI extends Layout2 {
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
         jComboBoxSearch = new JComboBox<>(new String[]{"Số thẻ", "CCCD", "Trạng Thái Mở", "Trạng Thái Đóng"});
-        jDateChooser = new JDateChooser[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
         txtSearch = new MyTextField();
 
         columnNames = new String[]{"Số Thẻ", "CCCD", "Số Dư", "Chi Nhánh", "Ngày Mở", "Trạng Thái"};
@@ -110,24 +113,19 @@ public class Bank_AccountGUI extends Layout2 {
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        for (int i = 0; i < 2; i++) {
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setBackground(new Color(191, 198, 208));
-            jDateChooser[i].setPreferredSize(new Dimension(198, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                searchBank_Accounts();
             }
-            FilterDatePanel.add(jDateChooser[i]);
-        }
+        });
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        FilterDatePanel.add(editor);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(255, 255, 255));
@@ -247,8 +245,7 @@ public class Bank_AccountGUI extends Layout2 {
         jTextFieldSearch.setText("");
         txtSearch.setText("");
         branch_id = 0;
-        jDateChooser[0].getDateEditor().setDate(null);
-        jDateChooser[1].getDateEditor().setDate(null);
+        datePicker.clearSelectedDate();
         jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(bank_accountBLL.getData(bank_accountBLL.getBank_accountListAll()));
     }
@@ -271,7 +268,7 @@ public class Bank_AccountGUI extends Layout2 {
         if (jComboBoxSearch.getSelectedIndex() == 2) {
             bank_accountList.removeIf(bank_account -> !bank_account.isStatus());
         }
-        if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between() == null) {
             loadDataTable(bank_accountBLL.getData(bank_accountList));
         } else {
 
@@ -286,25 +283,15 @@ public class Bank_AccountGUI extends Layout2 {
                     bank_accountList.removeIf(bank_account -> !bank_account.getNumber().toLowerCase().contains(jTextFieldSearch.getText().toLowerCase()));
                 }
             }
-            if (jDateChooser[0].getDateEditor().getDate() != null || jDateChooser[1].getDateEditor().getDate() != null) {
-                if (jDateChooser[0].getDateEditor().getDate() != null && jDateChooser[1].getDateEditor().getDate() != null) {
-                    Date startDate = jDateChooser[0].getDate();
-                    Date endDate = jDateChooser[1].getDate();
-                    if (startDate.after(endDate)) {
-                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    bank_accountList.removeIf(bank_account -> (bank_account.getCreation_date().before(startDate) || bank_account.getCreation_date().after(endDate)));
-                } else {
-                    if (jDateChooser[0].getDateEditor().getDate() == null) {
-                        Date endDate = jDateChooser[1].getDate();
-                        bank_accountList.removeIf(bank_account -> (bank_account.getCreation_date().before(java.sql.Date.valueOf("1000-1-1")) || bank_account.getCreation_date().after(endDate)));
-                    } else {
-                        Date startDate = jDateChooser[0].getDate();
-                        bank_accountList.removeIf(bank_account -> (bank_account.getCreation_date().before(startDate)));
-                    }
+            if (datePicker.getDateSQL_Between() != null) {
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                bank_accountList.removeIf(bank_account -> (bank_account.getCreation_date().before(startDate) || bank_account.getCreation_date().after(endDate)));
             }
             loadDataTable(bank_accountBLL.getData(bank_accountList));
         }

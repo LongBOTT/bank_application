@@ -102,13 +102,6 @@
             <version>5.8.2</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.toedter/jcalendar -->
-        <dependency>
-            <groupId>com.toedter</groupId>
-            <artifactId>jcalendar</artifactId>
-            <version>1.4</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -137,6 +130,13 @@
             <version>1.0.13</version>
         </dependency>
 
+        <dependency>
+            <groupId>raven.datetime</groupId>
+            <artifactId>swing-datetime-picker</artifactId>
+            <version>1.1.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/swing-datetime-picker-1.1.1.jar</systemPath>
+        </dependency>
 
     </dependencies>
 </project>

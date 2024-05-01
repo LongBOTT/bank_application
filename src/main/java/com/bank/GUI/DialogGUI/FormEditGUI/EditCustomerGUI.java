@@ -15,7 +15,6 @@ import com.bank.GUI.components.Circle_ProgressBar;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 
 import javax.swing.*;
@@ -23,6 +22,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +36,6 @@ public class EditCustomerGUI extends DialogForm {
     private List<JTextField> jTextFieldsCustomer;
     public static JTextField textFieldRole;
     public static boolean changeRole = false;
-    private JDateChooser jDateChooser = new JDateChooser();
     private Customer customer;
     private ActionListener refresh;
 
@@ -79,14 +78,9 @@ public class EditCustomerGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                Date birthDate = customer.getBirthdate();
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setDate(birthDate);
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                jDateChooser.setEnabled(false);
-                content.add(jDateChooser, "wrap");
+                textField.setText(new SimpleDateFormat("dd-MM-yyyy").format(customer.getBirthdate()));
+                textField.setEditable(false);
+                content.add(textField, "wrap");
             } else {
                 if (string.trim().equals("Tên Khách Hàng")) {
                     textField.setText(customer.getName());

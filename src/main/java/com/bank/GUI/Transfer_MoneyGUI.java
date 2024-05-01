@@ -10,9 +10,10 @@ import com.bank.GUI.DialogGUI.FormDetailGUI.DetailTransfer_MoneyGUI;
 import com.bank.GUI.components.*;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -22,6 +23,7 @@ import java.awt.*;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -33,7 +35,8 @@ public class Transfer_MoneyGUI extends Layout2 {
     private JTextField jTextFieldSearch;
     private JButton jButtonSearch;
     private JComboBox<String> jComboBoxSearch;
-    private JDateChooser[] jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private List<Function> functions;
     private Transfer_MoneyBLL Transfer_MoneyBLL = new Transfer_MoneyBLL();
     private DataTable dataTable;
@@ -59,7 +62,8 @@ public class Transfer_MoneyGUI extends Layout2 {
         jTextFieldSearch = new JTextField();
         jButtonSearch = new JButton("Tìm kiếm");
         jComboBoxSearch = new JComboBox<>(new String[]{"Mã Giao Dịch", "Số Tài Khoản Gửi", "Số Tài Khoản Nhận"});
-        jDateChooser = new JDateChooser[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
 
         columnNames = new String[]{"Mã Giao Dịch", "Số Tài Khoản Gửi", "Số Tài Khoản Nhận", "Số Tiền", "Thời Gian Giao Dịch"};
         if (detail) {
@@ -75,24 +79,19 @@ public class Transfer_MoneyGUI extends Layout2 {
         scrollPane.setPreferredSize(new Dimension(1165, 680));
         bottom.add(scrollPane, BorderLayout.CENTER);
 
-        for (int i = 0; i < 2; i++) {
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setBackground(new Color(191, 198, 208));
-            jDateChooser[i].setPreferredSize(new Dimension(198, 30));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Lexend", Font.BOLD, 14));
-                FilterDatePanel.add(jLabel);
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                searchTransfer_Moneys();
             }
-            FilterDatePanel.add(jDateChooser[i]);
-        }
+        });
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        FilterDatePanel.add(editor);
 
         containerSearch.setLayout(new MigLayout("", "10[]10[]10", ""));
         containerSearch.setBackground(new Color(255, 255, 255));
@@ -211,16 +210,14 @@ public class Transfer_MoneyGUI extends Layout2 {
     public void refresh() {
         Transfer_MoneyBLL = new Transfer_MoneyBLL();
         jTextFieldSearch.setText("");
-        jDateChooser[0].getDateEditor().setDate(null);
-        jDateChooser[1].getDateEditor().setDate(null);
+        datePicker.clearSelectedDate();
         jComboBoxSearch.setSelectedIndex(0);
         loadDataTable(Transfer_MoneyBLL.getData(Transfer_MoneyBLL.getTransfer_moneyListAll()));
     }
 
     private void searchTransfer_Moneys() {
         List<Transfer_Money> Transfer_MoneyList = new ArrayList<>(Transfer_MoneyBLL.getTransfer_moneyListAll());
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-        if (jTextFieldSearch.getText().isEmpty() && jDateChooser[0].getDateEditor().getDate() == null && jDateChooser[1].getDateEditor().getDate() == null) {
+        if (jTextFieldSearch.getText().isEmpty() && datePicker.getDateSQL_Between() == null) {
             loadDataTable(Transfer_MoneyBLL.getData(Transfer_MoneyList));
         } else {
             if (!jTextFieldSearch.getText().isEmpty()) {
@@ -234,25 +231,16 @@ public class Transfer_MoneyGUI extends Layout2 {
                     Transfer_MoneyList.removeIf(Transfer_Money -> !Transfer_Money.getReceiver_bank_account_number().toLowerCase().contains(jTextFieldSearch.getText().toLowerCase()));
                 }
             }
-            if (jDateChooser[0].getDateEditor().getDate() != null || jDateChooser[1].getDateEditor().getDate() != null) {
-                if (jDateChooser[0].getDateEditor().getDate() != null && jDateChooser[1].getDateEditor().getDate() != null) {
-                    Date startDate = jDateChooser[0].getDate();
-                    Date endDate = jDateChooser[1].getDate();
-                    if (startDate.after(endDate)) {
-                        JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    Transfer_MoneyList.removeIf(Transfer_Money -> (Transfer_Money.getSend_date().isBefore(LocalDateTime.parse(startDate.toString(), myFormatObj)) || Transfer_Money.getSend_date().isAfter(LocalDateTime.parse(endDate.toString(), myFormatObj))));
-                } else {
-                    if (jDateChooser[0].getDateEditor().getDate() == null) {
-                        Date endDate = jDateChooser[1].getDate();
-                        Transfer_MoneyList.removeIf(Transfer_Money -> (Transfer_Money.getSend_date().isBefore(LocalDateTime.MIN)) || Transfer_Money.getSend_date().isAfter(LocalDateTime.parse(endDate.toString(), myFormatObj)));
-                    } else {
-                        Date startDate = jDateChooser[0].getDate();
-                        Transfer_MoneyList.removeIf(Transfer_Money -> (Transfer_Money.getSend_date().isBefore(LocalDateTime.parse(startDate.toString(), myFormatObj))));
-                    }
+            if (datePicker.getDateSQL_Between() != null) {
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                Date startDate = datePicker.getDateSQL_Between()[0];
+                Date endDate = datePicker.getDateSQL_Between()[1];
+                if (startDate.after(endDate)) {
+                    JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+                Transfer_MoneyList.removeIf(Transfer_Money -> (Transfer_Money.getSend_date().toLocalDate().isBefore(LocalDate.parse(startDate.toString(), myFormatObj)) || Transfer_Money.getSend_date().toLocalDate().isAfter(LocalDate.parse(endDate.toString(), myFormatObj))));
             }
             loadDataTable(Transfer_MoneyBLL.getData(Transfer_MoneyList));
         }

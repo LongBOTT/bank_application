@@ -11,7 +11,6 @@ import com.bank.DTO.Staff;
 import com.bank.GUI.DialogGUI.DialogForm;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.main.Bank_Application;
-import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -27,7 +26,6 @@ public class DetailStaffGUI extends DialogForm {
     private List<JTextField> jTextFieldsStaff;
     private StaffBLL staffBLL = new StaffBLL();
     private Staff staff = new Staff();
-    private JDateChooser jDateChooser = new JDateChooser();
 
     public DetailStaffGUI(Staff staff) {
         super();
@@ -62,14 +60,9 @@ public class DetailStaffGUI extends DialogForm {
             textField.setFont((new Font("Public Sans", Font.PLAIN, 14)));
             textField.setEditable(false);
             if (string.trim().equals("Ngày Sinh")) {
-                Date birthDate = staff.getBirthdate();
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setDate(birthDate);
-                jDateChooser.setPreferredSize(new Dimension(180, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                jDateChooser.setEnabled(false);
-                content.add(jDateChooser);
+                textField.setText(new SimpleDateFormat("dd-MM-yyyy").format(staff.getBirthdate()));
+                textField.setEditable(false);
+                content.add(textField);
             } else {
                 if (string.trim().equals("Mã Nhân Viên")) {
                     String staffId = Integer.toString(staff.getId());

@@ -39,10 +39,11 @@ public class LoginGUI extends JFrame {
     private JTextField jTextFieldUserName;
     private JPasswordField jTextFieldPassword;
     private JButton jButtonLogin;
+    private JComboBox<String> jComboBox;
 
     public LoginGUI() {
         initComponents();
-        login();
+//        login();
     }
 
     private void initComponents() {
@@ -83,7 +84,7 @@ public class LoginGUI extends JFrame {
 
         jPanelTitleLogin = new JPanel(new GridBagLayout());
         jPanelTitleLogin.setBackground(new Color(255, 255, 255));
-        jPanelTitleLogin.setPreferredSize(new Dimension(300, 100));
+        jPanelTitleLogin.setPreferredSize(new Dimension(300, 50));
         jPanelTitle.add(jPanelTitleLogin);
 
         labelLogin = new JLabel("Login", SwingConstants.CENTER);
@@ -92,8 +93,20 @@ public class LoginGUI extends JFrame {
 
         formInput = new JPanel(new MigLayout("", "[]", "[]0[]"));
         formInput.setBackground(new Color(255, 255, 255));
-        formInput.setPreferredSize(new Dimension(350, 400));
+        formInput.setPreferredSize(new Dimension(350, 450));
         formLogin.add(formInput, BorderLayout.CENTER);
+
+        JLabel jLabel = new JLabel("Choose headquarter", JLabel.LEFT);
+        jLabel.setForeground(new Color(166, 175, 182));
+        jLabel.setPreferredSize(new Dimension(100, 50));
+        jLabel.setFont(new Font("Inter", Font.BOLD, 13));
+        formInput.add(jLabel, "span, wrap");
+
+        jComboBox = new JComboBox<>(new String[] {"Trụ sở chính", "Trụ sở Hồ Chí Minh", "Trụ sở Hà Nội", "Trụ sở Hải Phòng", "Trụ sở Đà Nẵng", "Trụ sở Khác"});
+        jComboBox.setPreferredSize(new Dimension(250, 30));
+        jComboBox.setFont(new Font("Inter", Font.BOLD, 13));
+        jComboBox.setSelectedIndex(0);
+        formInput.add(jComboBox, "wrap");
 
         labelUsername = new JLabel("Username", JLabel.LEFT);
         labelUsername.setForeground(new Color(166, 175, 182));
@@ -235,6 +248,8 @@ public class LoginGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        Database.headquarter_id = jComboBox.getSelectedIndex();
 
         SQLServer sqlServer = new SQLServer();
         List<List<String>> list = new ArrayList<>();

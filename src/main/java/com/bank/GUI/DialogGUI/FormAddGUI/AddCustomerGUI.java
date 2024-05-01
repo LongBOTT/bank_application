@@ -12,11 +12,11 @@ import com.bank.GUI.DialogGUI.FormDetailGUI.DetailBank_AccountGUI;
 import com.bank.GUI.HomeGUI;
 import com.bank.GUI.components.Card;
 import com.bank.GUI.components.Circle_ProgressBar;
+import com.bank.GUI.components.DatePicker;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 
 import com.bank.main.Bank_Application;
 import com.bank.utils.Email;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 
 import javax.swing.*;
@@ -43,7 +43,8 @@ public class AddCustomerGUI extends DialogForm {
     private JLabel titleName;
     private JButton buttonCancel;
     private JButton buttonAdd;
-    private JDateChooser jDateChooser = new JDateChooser();
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private CustomerBLL customerBLL = new CustomerBLL();
     private JRadioButton radioMale = new JRadioButton();
     private JRadioButton radioFemale = new JRadioButton();
@@ -90,11 +91,16 @@ public class AddCustomerGUI extends DialogForm {
             textField.setBackground(new Color(245, 246, 250));
 
             if (string.trim().equals("Ngày Sinh")) {
-                jDateChooser = new JDateChooser();
-                jDateChooser.setDateFormatString("dd/MM/yyyy");
-                jDateChooser.setPreferredSize(new Dimension(280, 35));
-                jDateChooser.setMinSelectableDate(java.sql.Date.valueOf("1000-01-01"));
-                content.add(jDateChooser, "wrap");
+                datePicker = new DatePicker();
+                editor = new JFormattedTextField();
+                datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+                datePicker.setEditor(editor);
+                datePicker.setUsePanelOption(true);
+                datePicker.setCloseAfterSelected(true);
+
+                editor.setPreferredSize(new Dimension(280, 40));
+                editor.setFont(new Font("Inter", Font.BOLD, 15));
+                content.add(editor, "wrap");
             } else {
                 if (string.trim().equals("Giới Tính")) {
                     JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -169,11 +175,15 @@ public class AddCustomerGUI extends DialogForm {
         name = jTextFieldsCustomer.get(0).getText().trim();
         customerNo = jTextFieldsCustomer.get(1).getText().trim();
         gender = !radioMale.isSelected();
-        birthdate = jDateChooser.getDate() != null ? java.sql.Date.valueOf(new SimpleDateFormat("yyyy-MM-dd").format(jDateChooser.getDate())) : null;
+        birthdate = datePicker.getDateSQL_Single();
         phone = jTextFieldsCustomer.get(2).getText().trim();
         address = jTextFieldsCustomer.get(3).getText().trim();
         email = jTextFieldsCustomer.get(4).getText().trim();
-
+        if (birthdate == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập ngày sinh!",
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         Customer customer = new Customer(customerNo, name, gender, birthdate, phone, address, email, false);
 
         Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();

@@ -1,4 +1,4 @@
-package com.bank.GUI.components;//package com.coffee.GUI.components;
+package com.bank.GUI.components;
 
 import javax.swing.*;
 import javax.swing.border.Border;

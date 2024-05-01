@@ -3,10 +3,10 @@ package com.bank.GUI.components.swing;///*
 // * To change this template file, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package com.coffee.GUI.components.swing;
+//package com.bank.GUI.components.swing;
 //
-//import com.coffee.BLL.MaterialBLL;
-//import com.coffee.DTO.Material;
+//import com.bank.BLL.MaterialBLL;
+//import com.bank.DTO.Material;
 //
 //import java.awt.*;
 //import java.awt.event.KeyEvent;

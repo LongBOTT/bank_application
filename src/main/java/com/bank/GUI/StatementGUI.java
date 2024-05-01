@@ -17,9 +17,10 @@ import com.bank.GUI.components.swing.PanelSearch;
 import com.bank.main.Bank_Application;
 import com.bank.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.toedter.calendar.JDateChooser;
 import javafx.util.Pair;
 import net.miginfocom.swing.MigLayout;
+import raven.datetime.component.date.DateEvent;
+import raven.datetime.component.date.DateSelectionListener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -38,7 +39,8 @@ import java.util.regex.Pattern;
 
 public class StatementGUI extends JDialog {
     private JLabel firstBalance;
-    private JDateChooser[] jDateChooser;
+    private DatePicker datePicker;
+    private JFormattedTextField editor;
     private Transfer_MoneyBLL transfer_MoneyBLL = new Transfer_MoneyBLL();
     private Transaction_Deposit_WithdrawalBLL transactionDepositWithdrawalBLL = new Transaction_Deposit_WithdrawalBLL();
     private DataTable dataTable;
@@ -76,7 +78,8 @@ public class StatementGUI extends JDialog {
     private void initComponents() {
         buttonPrint = new JButton("In Sao Kê");
         buttonSearch = new JButton("Tìm Kiếm");
-        jDateChooser = new JDateChooser[2];
+        datePicker = new DatePicker();
+        editor = new JFormattedTextField();
         chart = new CurveLineChart();
 
         RoundedPanel top = new RoundedPanel();
@@ -241,30 +244,19 @@ public class StatementGUI extends JDialog {
         filterDate.setBackground(new Color(255,255,255));
         filterPanel.add(filterDate, "span");
 
-        for (int i = 0; i < 2; i++) {
-            jDateChooser[i] = new JDateChooser();
-            jDateChooser[i].setDateFormatString("dd/MM/yyyy");
-            jDateChooser[i].setBackground(new Color(220, 224, 253));
-            jDateChooser[i].setPreferredSize(new Dimension(175, 60));
-            jDateChooser[i].setMinSelectableDate(java.sql.Date.valueOf("1000-1-1"));
-
-            if (i == 0) {
-                JLabel jLabel = new JLabel("Từ Ngày");
-                jLabel.setFont(new Font("Inter", Font.BOLD, 14));
-                jLabel.setForeground(new Color(0x919191));
-                jLabel.setVerticalAlignment(JLabel.CENTER);
-                jLabel.setHorizontalAlignment(JLabel.CENTER);
-                filterDate.add(jLabel, "center");
-            } else {
-                JLabel jLabel = new JLabel("Đến Ngày");
-                jLabel.setFont(new Font("Inter", Font.BOLD, 14));
-                jLabel.setForeground(new Color(0x919191));
-                jLabel.setHorizontalAlignment(JLabel.CENTER);
-                jLabel.setVerticalAlignment(JLabel.CENTER);
-                filterDate.add(jLabel, "center");
+        datePicker.setDateSelectionMode(raven.datetime.component.date.DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        datePicker.setEditor(editor);
+        datePicker.setUsePanelOption(true);
+        datePicker.setCloseAfterSelected(true);
+        datePicker.addDateSelectionListener(new DateSelectionListener() {
+            @Override
+            public void dateSelected(DateEvent dateEvent) {
+                search();
             }
-            filterDate.add(jDateChooser[i]);
-        }
+        });
+        editor.setPreferredSize(new Dimension(280, 40));
+        editor.setFont(new Font("Inter", Font.BOLD, 15));
+        filterDate.add(editor);
 
         buttonSearch.setIcon(new FlatSVGIcon("icon/search1.svg"));
         buttonSearch.setBackground(new Color(115,121,210));
@@ -398,9 +390,7 @@ public class StatementGUI extends JDialog {
     }
 
     private void setData(int numberOfMonth) {
-        jDateChooser[0].setDate(null);
-        jDateChooser[1].setDate(null);
-
+        datePicker.clearSelectedDate();
         chart.clear();
 
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -474,10 +464,8 @@ public class StatementGUI extends JDialog {
     }
 
     private void search() {
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-        if (jDateChooser[0].getDateEditor().getDate() == null || jDateChooser[1].getDateEditor().getDate() == null) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày bắt đầu và ngày kết thúc sao kê.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (datePicker.getDateSQL_Between() == null) {
+
         }else {
             Disable();
             currentPanel = null;
@@ -488,37 +476,33 @@ public class StatementGUI extends JDialog {
             List<List<String>> totalTransaction;
             List<List<String>> totalTransfer;
 
-            String startDate = LocalDate.parse(jDateChooser[0].getDate().toString(), myFormatObj).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String endDate = LocalDate.parse(jDateChooser[1].getDate().toString(), myFormatObj).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            if (LocalDate.parse(startDate).isAfter(LocalDate.parse(endDate))) {
+            Date startDate = datePicker.getDateSQL_Between()[0];
+            Date endDate = datePicker.getDateSQL_Between()[1];
+            if (startDate.after(endDate)) {
                 JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (LocalDate.parse(startDate).isAfter(LocalDate.now()) || LocalDate.parse(endDate).isAfter(LocalDate.now())) {
-                JOptionPane.showMessageDialog(null, "Ngày sao kê không hợp lệ.",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
 
             DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-            List<List<String>> statement = sqlServer.getStatement_By_Date(bankAccount.getNumber(), startDate, endDate);
+            List<List<String>> statement = sqlServer.getStatement_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
 
             for (List<String> strings : statement) {
                 strings.set(0, LocalDateTime.parse(strings.get(0), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(myFormat));
             }
 
-            totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Date(bankAccount.getNumber(), startDate, endDate);
+            totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
 
-            totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Date(bankAccount.getNumber(), startDate, endDate);
+            totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
 
             Calendar cal1 = Calendar.getInstance();
-            cal1.setTime(jDateChooser[0].getDate());
+            cal1.setTime(startDate);
             String formattedDate = dateFormat.format(cal1.getTime());
 
             Calendar cal2 = Calendar.getInstance();
-            cal2.setTime(jDateChooser[1].getDate());
+            cal2.setTime(endDate);
             cal2.add(Calendar.MONTH, 1);
             String end = dateFormat.format(cal2.getTime());
 
