@@ -11,7 +11,7 @@ import java.util.Properties;
 
 
 public class Database {
-    public static int headquarter_id = 1;
+    public static int headquarter_id = 0;
     public static Connection getConnection() throws IOException {
         do {
             try {

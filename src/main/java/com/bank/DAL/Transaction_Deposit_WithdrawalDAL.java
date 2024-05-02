@@ -53,7 +53,8 @@ public class Transaction_Deposit_WithdrawalDAL extends Manager{
                     new Pair<>("transaction_type", transaction_Deposit_Withdrawal.getTransaction_type()),
                     new Pair<>("money_amount", transaction_Deposit_Withdrawal.getMoney_amount()),
                     new Pair<>("description", transaction_Deposit_Withdrawal.getDescription()),
-                    new Pair<>("staff_id", transaction_Deposit_Withdrawal.getStaff_id())
+                    new Pair<>("staff_id", transaction_Deposit_Withdrawal.getStaff_id()),
+                    new Pair<>("datetime", transaction_Deposit_Withdrawal.getTransaction_date())
                     ).get(0).get(0));
             return result;
         } catch (SQLException | IOException e) {

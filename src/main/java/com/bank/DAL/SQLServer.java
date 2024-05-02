@@ -128,10 +128,10 @@ public class SQLServer {
                 else if (condition.getValue() instanceof java.util.Date) {
                     strings[strings.length - 1] = "@" + condition.getKey() + " = '" + condition.getValue() + "'";
                 }
-//                else if (condition.getValue() instanceof LocalDateTime) {
-//                    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
-//                    strings[strings.length - 1] =  "@" + condition.getKey() + " = '" + (LocalDateTime.parse(condition.getValue().toString())).format(myFormatObj) + "'";
-//                }
+                else if (condition.getValue() instanceof LocalDateTime) {
+                    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+                    strings[strings.length - 1] =  "@" + condition.getKey() + " = '" + (LocalDateTime.parse(condition.getValue().toString())).format(myFormatObj) + "'";
+                }
             }
             query += " " + String.join(", ", strings);
         }

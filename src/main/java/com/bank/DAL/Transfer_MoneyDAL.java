@@ -52,7 +52,8 @@ public class Transfer_MoneyDAL extends Manager{
                     new Pair<>("receiver_bank_account_number", transfer_Money.getReceiver_bank_account_number()),
                     new Pair<>("money_amount", transfer_Money.getMoney_amount()),
                     new Pair<>("description", transfer_Money.getDescription()),
-                    new Pair<>("staff_id", transfer_Money.getStaff_id())
+                    new Pair<>("staff_id", transfer_Money.getStaff_id()),
+                    new Pair<>("datetime", transfer_Money.getSend_date())
             ).get(0).get(0));
             return result;
         } catch (SQLException | IOException e) {

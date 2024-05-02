@@ -14,10 +14,14 @@ import com.bank.GUI.TransferGUI;
 import com.bank.GUI.components.Card;
 import com.bank.GUI.components.MyTextFieldUnderLine;
 import com.bank.GUI.components.RoundedPanel;
+import com.bank.GUI.components.barchart.BarChart;
+import com.bank.GUI.components.barchart.ModelBarChart;
 import com.bank.GUI.components.line_chart.ModelData;
 import com.bank.GUI.components.line_chart.chart.CurveLineChart;
 import com.bank.GUI.components.line_chart.chart.ModelChart;
 import com.bank.GUI.components.line_chart.panel.PanelShadow;
+import com.bank.GUI.components.pie_chart.ModelPieChart;
+import com.bank.GUI.components.pie_chart.PieChart;
 import com.bank.main.Bank_Application;
 import com.bank.utils.VNString;
 import javafx.util.Pair;
@@ -42,7 +46,8 @@ public class DetailBank_AccountGUI extends DialogForm {
     private JButton buttonTransfer;
     private JButton buttonTransaction;
     private JButton buttonStatement;
-    private CurveLineChart chart;
+    private PieChart pieChart;
+    private BarChart barChart;
     private Bank_Account bankAccount;
     public DetailBank_AccountGUI(Bank_Account Bank_Account) {
         super();
@@ -62,7 +67,8 @@ public class DetailBank_AccountGUI extends DialogForm {
         buttonTransfer = new JButton("Chuyển tiền");
         buttonTransaction = new JButton("Giao dịch");
         buttonStatement = new JButton("Sao kê");
-        chart = new CurveLineChart();
+        pieChart = new PieChart();
+        barChart = new BarChart();
 
         titleName.setText("Thông Tin Tài khoản Ngân Hàng");
         titleName.setFont(new Font("Public Sans", Font.BOLD, 18));
@@ -73,36 +79,84 @@ public class DetailBank_AccountGUI extends DialogForm {
         content.setLayout(new MigLayout("", "5[]5[]5", "5[]5"));
         content.setPreferredSize(new Dimension(1000, 600));
 
-        JPanel panelShadow = new JPanel();
+        JPanel panelShadow = new JPanel(new MigLayout("", "0[]0"));
         panelShadow.setPreferredSize(new Dimension(500, 600));
         panelShadow.setBackground(new Color(255, 255, 255));
         panelShadow.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        GroupLayout panelShadowLayout = new GroupLayout(panelShadow);
-        panelShadow.setLayout(panelShadowLayout);
-        panelShadowLayout.setHorizontalGroup(
-                panelShadowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelShadowLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
-                                .addContainerGap())
-        );
-        panelShadowLayout.setVerticalGroup(
-                panelShadowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelShadowLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                                .addContainerGap())
-        );
+//        GroupLayout panelShadowLayout = new GroupLayout(panelShadow);
+//        panelShadow.setLayout(panelShadowLayout);
+//        panelShadowLayout.setHorizontalGroup(
+//                panelShadowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelShadowLayout.createSequentialGroup()
+//                                .addContainerGap()
+//                                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
+//                                .addContainerGap())
+//        );
+//        panelShadowLayout.setVerticalGroup(
+//                panelShadowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//                        .addGroup(panelShadowLayout.createSequentialGroup()
+//                                .addContainerGap()
+//                                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+//                                .addContainerGap())
+//        );
 
         content.add(panelShadow);
 
-        chart.setTitle("Thống Kê Giao Dịch");
-        chart.addLegend("Gửi Tiền", Color.decode("#7b4397"), Color.decode("#dc2430"));
-        chart.addLegend("Rút Tiền", Color.decode("#e65c00"), Color.decode("#F9D423"));
-        chart.addLegend("Chuyển Tiền", Color.decode("#0099F7"), Color.decode("#F11712"));
-        chart.setForeground(new Color(0, 0, 0));
-        chart.setFillColor(true);
+        JLabel jLabelTile1 = new JLabel("Thống kê loại giao dịch 3 tháng gần nhất");
+        jLabelTile1.setFont(new Font("Inter", Font.BOLD, 15));
+        panelShadow.add(jLabelTile1, "center, span, wrap");
 
+        JPanel jPanelNotice = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jPanelNotice.setBackground(new Color(255, 255, 255));
+
+        JLabel jLabelAvailable = new JLabel("Gửi tiền");
+        JPanel jPanelAvailable = new JPanel();
+        jPanelAvailable.setPreferredSize(new Dimension(10, 10));
+        jPanelAvailable.setBackground(new Color(189, 135, 245));
+
+        jPanelNotice.add(jPanelAvailable);
+        jPanelNotice.add(jLabelAvailable);
+
+        JLabel jLabelDone = new JLabel("Rút tiền");
+        JPanel jPanelDone = new JPanel();
+        jPanelDone.setPreferredSize(new Dimension(10, 10));
+        jPanelDone.setBackground(new Color(135, 189, 245));
+
+        jPanelNotice.add(jPanelDone);
+        jPanelNotice.add(jLabelDone);
+
+        JLabel jLabelAbsent = new JLabel("Chuyển tiền");
+        JPanel jPanelAbsent = new JPanel();
+        jPanelAbsent.setPreferredSize(new Dimension(10, 10));
+        jPanelAbsent.setBackground(new Color(139, 229, 184));
+
+        jPanelNotice.add(jPanelAbsent);
+        jPanelNotice.add(jLabelAbsent);
+
+        panelShadow.add(jPanelNotice, "center, wrap, span");
+
+        pieChart.setPreferredSize(new Dimension(1000, 350));
+        pieChart.setFont(new java.awt.Font("Inter", Font.BOLD, 14));
+        pieChart.setChartType(PieChart.PeiChartType.DEFAULT);
+        panelShadow.add(pieChart, "wrap");
+
+        JLabel jLabelTile2 = new JLabel("Thống kê giá trị giao dịch trong 3 tháng gần nhất ");
+        jLabelTile2.setFont(new Font("Inter", Font.BOLD, 15));
+        panelShadow.add(jLabelTile2, "center, span, wrap");
+
+        barChart.setPreferredSize(new Dimension(1000, 350));
+        barChart.addLegend("Tiền gửi", new Color(189, 135, 245));
+        barChart.addLegend("Tiền rút", new Color(135, 189, 245));
+        barChart.addLegend("Tiền chuyển", new Color(139, 229, 222));
+        panelShadow.add(barChart, "wrap");
+
+//        chart.setTitle("Thống Kê Giao Dịch");
+//        chart.addLegend("Gửi Tiền", Color.decode("#7b4397"), Color.decode("#dc2430"));
+//        chart.addLegend("Rút Tiền", Color.decode("#e65c00"), Color.decode("#F9D423"));
+//        chart.addLegend("Chuyển Tiền", Color.decode("#0099F7"), Color.decode("#F11712"));
+//        chart.setForeground(new Color(0, 0, 0));
+//        chart.setFillColor(true);
+//
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -253,9 +307,8 @@ public class DetailBank_AccountGUI extends DialogForm {
     }
 
     private void setData() {
-        chart.clear();
-
-        List<ModelData> lists = new ArrayList<>();
+        pieChart.clearData();
+        barChart.clear();
 
         List<List<String>> totalTransaction = new Transaction_Deposit_WithdrawalBLL().getTotalTransaction_By_Month_In_Year(bankAccount.getNumber());
         List<List<String>> totalTransfer = new Transfer_MoneyBLL().getTotalTransfer_By_Month_In_Year(bankAccount.getNumber());
@@ -265,6 +318,9 @@ public class DetailBank_AccountGUI extends DialogForm {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
 
+        double totalDepositMoney = 0;
+        double totalWithdrawalMoney = 0;
+        double totalTransferMoney = 0;
         for (int i = 0; i < 3; i++) {
             String formattedDate = dateFormat.format(cal.getTime());
 
@@ -276,6 +332,9 @@ public class DetailBank_AccountGUI extends DialogForm {
                 if (strings.get(0).equals(formattedDate)) {
                     deposit = Double.parseDouble(strings.get(1));
                     withdrawal = Double.parseDouble(strings.get(2));
+
+                    totalDepositMoney += deposit;
+                    totalWithdrawalMoney += withdrawal;
                     break;
                 }
             }
@@ -283,19 +342,25 @@ public class DetailBank_AccountGUI extends DialogForm {
             for (List<String> strings : totalTransfer) {
                 if (strings.get(0).equals(formattedDate)) {
                     transfer = Double.parseDouble(strings.get(1));
+                    totalTransferMoney += transfer;
                     break;
                 }
             }
-            lists.add(new ModelData(month, deposit, withdrawal, transfer));
+
+            barChart.addData(new ModelBarChart(month, new double[]{deposit, withdrawal, transfer}));
+
 
             cal.add(Calendar.MONTH, 1);
         }
 
-        for (ModelData d : lists) {
-            chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
-        }
+        pieChart.addData(new ModelPieChart("Gửi Tiền",totalDepositMoney, new Color(189, 135, 245)));
+        pieChart.addData(new ModelPieChart("Rút tiền", totalWithdrawalMoney, new Color(135, 189, 245)));
+        pieChart.addData(new ModelPieChart("Chuyển Tiền", totalTransferMoney, new Color(139, 229, 222)));
 
-        chart.start();
+        barChart.start();
+
+        content.repaint();
+        content.revalidate();
     }
 }
 
