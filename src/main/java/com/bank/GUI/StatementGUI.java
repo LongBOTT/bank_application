@@ -200,7 +200,7 @@ public class StatementGUI extends JDialog {
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            setData(9);
+                            setData(12);
                         }
                     });
                     thread.start();
