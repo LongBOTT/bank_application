@@ -89,7 +89,7 @@ public class EditStaffGUI extends DialogForm {
             if (string.trim().equals("Ngày Sinh")) {
                 textField.setText(new SimpleDateFormat("dd-MM-yyyy").format(staff.getBirthdate()));
                 textField.setEditable(false);
-                content.add(textField, "wrap");
+                content.add(textField);
             } else {
                 if (string.trim().equals("Mã Nhân Viên")) {
                     String staffId = Integer.toString(staff.getId());
