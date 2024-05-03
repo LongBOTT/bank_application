@@ -484,57 +484,105 @@ public class StatementGUI extends JDialog {
                 return;
             }
 
-            DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
             List<List<String>> statement = sqlServer.getStatement_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
-
+            DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
             for (List<String> strings : statement) {
                 strings.set(0, LocalDateTime.parse(strings.get(0), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(myFormat));
             }
 
-            totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
+            if (startDate.getMonth() != endDate.getMonth()) {
 
-            totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
+                totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
+                totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Date(bankAccount.getNumber(), startDate.toString(), endDate.toString());
 
-            Calendar cal1 = Calendar.getInstance();
-            cal1.setTime(startDate);
-            String formattedDate = dateFormat.format(cal1.getTime());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
 
-            Calendar cal2 = Calendar.getInstance();
-            cal2.setTime(endDate);
-            cal2.add(Calendar.MONTH, 1);
-            String end = dateFormat.format(cal2.getTime());
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTime(startDate);
+                String formattedDate = dateFormat.format(cal1.getTime());
 
-            while (!formattedDate.equals(end)) {
-                String month = formattedDate;
-                double deposit = 0;
-                double withdrawal = 0;
-                double transfer = 0;
-                for (List<String> strings : totalTransaction) {
-                    if (strings.get(0).equals(formattedDate)) {
-                        deposit = Double.parseDouble(strings.get(1));
-                        withdrawal = Double.parseDouble(strings.get(2));
-                        break;
+                Calendar cal2 = Calendar.getInstance();
+                cal2.setTime(endDate);
+                cal2.add(Calendar.MONTH, 1);
+                String end = dateFormat.format(cal2.getTime());
+
+                while (!formattedDate.equals(end)) {
+                    String month = formattedDate;
+                    double deposit = 0;
+                    double withdrawal = 0;
+                    double transfer = 0;
+                    for (List<String> strings : totalTransaction) {
+                        if (strings.get(0).equals(formattedDate)) {
+                            deposit = Double.parseDouble(strings.get(1));
+                            withdrawal = Double.parseDouble(strings.get(2));
+                            break;
+                        }
                     }
+
+                    for (List<String> strings : totalTransfer) {
+                        if (strings.get(0).equals(formattedDate)) {
+                            transfer = Double.parseDouble(strings.get(1));
+                            break;
+                        }
+                    }
+                    lists.add(new ModelData(month, deposit, withdrawal, transfer));
+
+                    cal1.add(Calendar.MONTH, 1);
+                    formattedDate = dateFormat.format(cal1.getTime());
                 }
 
-                for (List<String> strings : totalTransfer) {
-                    if (strings.get(0).equals(formattedDate)) {
-                        transfer = Double.parseDouble(strings.get(1));
-                        break;
-                    }
+                for (ModelData d : lists) {
+                    chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
                 }
-                lists.add(new ModelData(month, deposit, withdrawal, transfer));
+                chart.start();
+            } else {
 
-                cal1.add(Calendar.MONTH, 1);
-                formattedDate = dateFormat.format(cal1.getTime());
-            }
+                totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_In_Month(bankAccount.getNumber(), startDate.toString(), endDate.toString());
 
-            for (ModelData d : lists) {
-                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
+                totalTransfer = transfer_MoneyBLL.getTotalTransfer_In_Month(bankAccount.getNumber(), startDate.toString(), endDate.toString());
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTime(startDate);
+                String formattedDate = dateFormat.format(cal1.getTime());
+
+                Calendar cal2 = Calendar.getInstance();
+                cal2.setTime(endDate);
+                cal2.add(Calendar.DATE, 1);
+                String end = dateFormat.format(cal2.getTime());
+
+                while (!formattedDate.equals(end)) {
+                    String month = formattedDate;
+                    double deposit = 0;
+                    double withdrawal = 0;
+                    double transfer = 0;
+                    for (List<String> strings : totalTransaction) {
+                        if (strings.get(0).equals(formattedDate)) {
+                            deposit = Double.parseDouble(strings.get(1));
+                            withdrawal = Double.parseDouble(strings.get(2));
+                            break;
+                        }
+                    }
+
+                    for (List<String> strings : totalTransfer) {
+                        if (strings.get(0).equals(formattedDate)) {
+                            transfer = Double.parseDouble(strings.get(1));
+                            break;
+                        }
+                    }
+                    lists.add(new ModelData(month, deposit, withdrawal, transfer));
+
+                    cal1.add(Calendar.DATE, 1);
+                    formattedDate = dateFormat.format(cal1.getTime());
+                }
+
+                for (ModelData d : lists) {
+                    chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
+                }
+                chart.start();
             }
-            chart.start();
 
             loadDataTable(statement);
         }

@@ -47,6 +47,10 @@ public class Transaction_Deposit_WithdrawalBLL extends Manager<Transaction_Depos
         return transaction_deposit_withdrawalDAL.getTotalTransaction_By_Date(bank_account_number, start_date, end_date);
     }
 
+    public List<List<String>> getTotalTransaction_In_Month(String bank_account_number, String start_date, String end_date) {
+        return transaction_deposit_withdrawalDAL.getTotalTransaction_In_Month(bank_account_number, start_date, end_date);
+    }
+
     public List<List<String>> getStatisticTotalTransaction() {
         return transaction_deposit_withdrawalDAL.getStatisticTotalTransaction();
     }

@@ -102,6 +102,11 @@ public class Transfer_MoneyBLL extends Manager<Transfer_Money>{
         return transfer_MoneyDAL.getTotalTransfer_By_Date(bank_account_number, start_date, end_date);
     }
 
+    public List<List<String>> getTotalTransfer_In_Month(String bank_account_number, String start_date, String end_date) {
+        return transfer_MoneyDAL.getTotalTransfer_In_Month(bank_account_number, start_date, end_date);
+    }
+
+
     public List<List<String>> getStatisticTotalTransfer(){
         return transfer_MoneyDAL.getStatisticTotalTransfer();
     }
