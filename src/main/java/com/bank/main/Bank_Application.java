@@ -49,7 +49,7 @@ public class Bank_Application {
         UIManager.put("TitlePane.iconMargins", new Insets(3, 5, 0, 20));
         UIManager.put("TabbedPane.selectedBackground", Color.white);
         UIManager.put("TabbedPane.tabAreaInsets", new Insets(0, 0, 0, 0));
-        UIManager.put("TabbedPane.tabInsets", new Insets(20, 20, 20, 20));
+//        UIManager.put("TabbedPane.tabInsets", new Insets(20, 20, 20, 20));
         UIManager.put("TabbedPane.selected", Color.RED);
         UIManager.put("TabbedPane.contentAreaColor", Color.GRAY);
 
@@ -65,7 +65,7 @@ public class Bank_Application {
 
     private static void taoDuLieuMau() {
         LocalDateTime start = LocalDateTime.of(2023, 1, 1, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 5, 10, 0, 0);
+        LocalDateTime end = LocalDateTime.of(2024, 5, 7, 0, 0);
 
         List<Bank_Account> bankAccountList = new Bank_AccountBLL().getBank_accountListAll();
         Transfer_MoneyBLL transferMoneyBLL = new Transfer_MoneyBLL();
@@ -73,33 +73,37 @@ public class Bank_Application {
         int id1 = 1;
         int id2 = 1;
         while (!start.equals(end)) {
-
             Random random = new Random();
             for (Bank_Account bankAccount : bankAccountList) {
+                start = start.plusHours(1);
                 int type =  random.nextInt(2);
-                int amount_money = random.nextInt(10000) * 10 + 1000000;
+                int amount_money = random.nextInt(100) * 1000 + 1000000;
                 Transaction_Deposit_Withdrawal transaction_deposit_withdrawal = new Transaction_Deposit_Withdrawal(id1, bankAccount.getNumber(), type == 1, start, new BigDecimal(amount_money), type == 1 ? "Gui Tien" : "Rut Tien", 24);
                 transactionDepositWithdrawalBLL.addTransaction_Deposit_Withdrawal(transaction_deposit_withdrawal);
                 id1 += 1;
             }
             int i = 0;
             for (Bank_Account bankAccount : bankAccountList) {
+                start = start.plusHours(1);
                 int index;
                 do {
                     index = random.nextInt(bankAccountList.size());
                 } while (index == i);
                 Bank_Account bank_accountReceipt = bankAccountList.get(index);
-                int amount_money = random.nextInt(10000) * 10 + 1000000;
+                int amount_money = random.nextInt(100) * 1000 + 1000000;
                 Customer customer = new CustomerBLL().searchCustomers("[no] = '" + bankAccount.getCustomer_no() + "'").get(0);
                 String normalized = Normalizer.normalize(customer.getName(), Normalizer.Form.NFD);
                 Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
                 String customerName = pattern.matcher(normalized).replaceAll("");
-                Transfer_Money transferMoney = new Transfer_Money(id2, bankAccount.getNumber(), bank_accountReceipt.getNumber(), start, new BigDecimal(amount_money), customerName + " chuyen khoan ngan hang", 24);
+                Transfer_Money transferMoney = new Transfer_Money(id2, bankAccount.getNumber(), bank_accountReceipt.getNumber(), start, new BigDecimal(amount_money), customerName.toUpperCase() + " chuyen khoan ngan hang", 24);
                 transferMoneyBLL.addTransfer_Money(transferMoney);
                 i++;
                 id2 += 1;
             }
             start = start.plusDays(1);
+            start = start.withHour(0);
+            start = start.withMinute(0);
+            start = start.withSecond(0);
         }
     }
 

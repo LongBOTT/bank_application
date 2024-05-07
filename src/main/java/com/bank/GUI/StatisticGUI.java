@@ -4,6 +4,8 @@ package com.bank.GUI;
 import com.bank.BLL.*;
 import com.bank.DTO.Branch;
 import com.bank.GUI.components.*;
+import com.bank.GUI.components.barchart.BarChart;
+import com.bank.GUI.components.barchart.ModelBarChart;
 import com.bank.GUI.components.line_chart.ModelData;
 import com.bank.GUI.components.line_chart.chart.CurveLineChart;
 import com.bank.GUI.components.line_chart.chart.ModelChart;
@@ -51,8 +53,8 @@ public class StatisticGUI extends RoundedPanel {
     private MyTextField txtSearchStaff;
     private BranchBLL branchBLL = new BranchBLL();
     private Bank_AccountBLL bankAccountBLL = new Bank_AccountBLL();
-    private List<Integer> branch_idListCustomer = new ArrayList<>();
-    private List<Integer> branch_idListStaff = new ArrayList<>();
+    private List<Branch> branchListCustomer = new ArrayList<>();
+    private List<Branch> branchListStaff = new ArrayList<>();
     private RoundedPanel filterBranchCustomerPanel;
     private RoundedPanel dashboardCustomerPanel;
     private RoundedPanel filterBranchBank_AccountPanel;
@@ -64,10 +66,10 @@ public class StatisticGUI extends RoundedPanel {
     private final Color series3Color = new Color(0xC98A8A);
     private List<List<String>> statisticCustomerLists = new CustomerBLL().getStatisticCustomer();
     private List<List<String>> statisticStaffLists = new StaffBLL().getStatisticStaff();
-    private DefaultCategoryDataset datasetCustomer;
-    private DefaultCategoryDataset datasetStaff;
-    private DefaultCategoryDataset datasetBank_Account;
-    private  DefaultCategoryDataset datasetLineBank_Account;
+    private BarChart barChartCustomer;
+    private BarChart barChartStaff;
+    private BarChart barChartBank_Account;
+    private BarChart barChartLineBank_Account;
     public StatisticGUI() {
         setBackground(new Color(255, 255, 255));
         setLayout(new BorderLayout());
@@ -225,52 +227,15 @@ public class StatisticGUI extends RoundedPanel {
         filterBranchCustomerPanel.setBackground(new Color(0xFFFFFF));
         filterPanel.add(filterBranchCustomerPanel, "span, wrap");
 
-        int total = 0, male = 0, female = 0;
-        for (List<String> strings : statisticCustomerLists) {
-            male += Integer.parseInt(strings.get(1));
-            female += Integer.parseInt(strings.get(2));
-            total += Integer.parseInt(strings.get(3));
-        }
+        barChartCustomer = new BarChart();
+        barChartCustomer.setPreferredSize(new Dimension(1170, 600));
 
-        datasetCustomer = new DefaultCategoryDataset();
-        datasetCustomer.addValue(total, "Tổng", "Tất Cả");
-        datasetCustomer.addValue(male, "Nam", "Tất Cả");
-        datasetCustomer.addValue(female, "Nữ", "Tất Cả");
+        barChartCustomer.addLegend("Tổng số lượng khách hàng", new Color(189, 135, 245));
+        barChartCustomer.addLegend("Khách hàng nam", new Color(135, 189, 245));
+        barChartCustomer.addLegend("Khách hàng nữ", new Color(139, 229, 222));
 
-
-        JFreeChart barChart = ChartFactory.createBarChart(
-                "Thống Kê Khách Hàng",
-                "",
-                "Số Lượng",
-                datasetCustomer,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-        CategoryPlot plot = barChart.getCategoryPlot();
-
-        plot.setBackgroundPaint(new Color(191, 198, 208));
-
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setSeriesPaint(0, series1Color);
-        renderer.setSeriesPaint(1, series2Color);
-        renderer.setSeriesPaint(2, series3Color);
-
-        Font labelFont = new Font("Inter", Font.BOLD, 13);
-        plot.getDomainAxis().setLabelFont(labelFont);
-        plot.getRangeAxis().setLabelFont(labelFont);
-        plot.getDomainAxis().setTickLabelFont(labelFont);
-        plot.getRangeAxis().setTickLabelFont(labelFont);
-        plot.getDomainAxis().setLabelPaint(Color.BLACK);
-        plot.getRangeAxis().setLabelPaint(Color.BLACK);
-        plot.getDomainAxis().setTickLabelPaint(Color.BLACK);
-        plot.getRangeAxis().setTickLabelPaint(Color.BLACK);
-
-        JPanel chartPanel = new ChartPanel(barChart);
-        chartPanel.setPreferredSize(new Dimension(1170, 600));
-        dashboardCustomerPanel.add(chartPanel);
+        dashboardCustomerPanel.add(barChartCustomer);
+        loadBarChartCustomer();
     }
 
     private void initBank_AccountPanel() {
@@ -312,33 +277,34 @@ public class StatisticGUI extends RoundedPanel {
         filterBranchBank_AccountPanel.setBackground(new Color(0xFFFFFF));
         filterPanel.add(filterBranchBank_AccountPanel, "span, wrap");
 
-        datasetLineBank_Account = new DefaultCategoryDataset();
-        JFreeChart lineChart = ChartFactory.createLineChart(
-                "Tỉ Lệ Mở Tài Khoản",
-                "Tháng",
-                "Phần Trăm %",
-                datasetLineBank_Account,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-        CategoryPlot plot1 = lineChart.getCategoryPlot();
-        plot1.setBackgroundPaint(new Color(191, 198, 208));
-        Font labelFont1 = new Font("Inter", Font.BOLD, 13);
-        plot1.getDomainAxis().setLabelFont(labelFont1);
-        plot1.getRangeAxis().setLabelFont(labelFont1);
-        plot1.getDomainAxis().setTickLabelFont(labelFont1);
-        plot1.getRangeAxis().setTickLabelFont(labelFont1);
-        plot1.getDomainAxis().setLabelPaint(Color.BLACK);
-        plot1.getRangeAxis().setLabelPaint(Color.BLACK);
-        plot1.getDomainAxis().setTickLabelPaint(Color.BLACK);
-        plot1.getRangeAxis().setTickLabelPaint(Color.BLACK);
-        lineChart.setBackgroundPaint(Color.white);
-        lineChart.getTitle().setPaint(Color.black);
-        lineChart.getTitle().setFont(new Font("Arial", Font.BOLD, 18));
-
-        ChartPanel lineChartPanel = new ChartPanel(lineChart);
+//        datasetLineBank_Account = new DefaultCategoryDataset();
+//        JFreeChart lineChart = ChartFactory.createLineChart(
+//                "Tỉ Lệ Mở Tài Khoản",
+//                "Tháng",
+//                "Phần Trăm %",
+//                datasetLineBank_Account,
+//                PlotOrientation.VERTICAL,
+//                true,
+//                true,
+//                false
+//        );
+//        CategoryPlot plot1 = lineChart.getCategoryPlot();
+//        plot1.setBackgroundPaint(new Color(191, 198, 208));
+//        Font labelFont1 = new Font("Inter", Font.BOLD, 13);
+//        plot1.getDomainAxis().setLabelFont(labelFont1);
+//        plot1.getRangeAxis().setLabelFont(labelFont1);
+//        plot1.getDomainAxis().setTickLabelFont(labelFont1);
+//        plot1.getRangeAxis().setTickLabelFont(labelFont1);
+//        plot1.getDomainAxis().setLabelPaint(Color.BLACK);
+//        plot1.getRangeAxis().setLabelPaint(Color.BLACK);
+//        plot1.getDomainAxis().setTickLabelPaint(Color.BLACK);
+//        plot1.getRangeAxis().setTickLabelPaint(Color.BLACK);
+//        lineChart.setBackgroundPaint(Color.white);
+//        lineChart.getTitle().setPaint(Color.black);
+//        lineChart.getTitle().setFont(new Font("Arial", Font.BOLD, 18));
+//
+//        ChartPanel lineChartPanel = new ChartPanel(lineChart);
+        JPanel lineChartPanel = new JPanel();
         lineChartPanel.setPreferredSize(new Dimension(1170, 300));
 
         dashboardBank_AccountPanel.add(lineChartPanel, "wrap");
@@ -346,35 +312,12 @@ public class StatisticGUI extends RoundedPanel {
 
         // -----------------------------------------------------------------//
 
-        datasetBank_Account = new DefaultCategoryDataset();
-        JFreeChart barChart = ChartFactory.createBarChart(
-                "Thống Kê Tài Khoản",
-                "",
-                "Số Lượng",
-                datasetBank_Account,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-        CategoryPlot plot2 = barChart.getCategoryPlot();
-        plot2.setBackgroundPaint(new Color(191, 198, 208));
-        BarRenderer renderer = (BarRenderer) plot2.getRenderer();
-        renderer.setSeriesPaint(0, series2Color);
-        Font labelFont2 = new Font("Inter", Font.BOLD, 13);
-        plot2.getDomainAxis().setLabelFont(labelFont2);
-        plot2.getRangeAxis().setLabelFont(labelFont2);
-        plot2.getDomainAxis().setTickLabelFont(labelFont2);
-        plot2.getRangeAxis().setTickLabelFont(labelFont2);
-        plot2.getDomainAxis().setLabelPaint(Color.BLACK);
-        plot2.getRangeAxis().setLabelPaint(Color.BLACK);
-        plot2.getDomainAxis().setTickLabelPaint(Color.BLACK);
-        plot2.getRangeAxis().setTickLabelPaint(Color.BLACK);
+        barChartBank_Account = new BarChart();
+        barChartBank_Account.setPreferredSize(new Dimension(1170, 600));
 
-        JPanel chartPanel = new ChartPanel(barChart);
-        chartPanel.setPreferredSize(new Dimension(1170, 300));
+        barChartBank_Account.addLegend("Tổng số tài khoản mở", new Color(135, 189, 245));
 
-        dashboardBank_AccountPanel.add(chartPanel);
+        dashboardBank_AccountPanel.add(barChartBank_Account);
     }
 
     private void initStaffPanel() {
@@ -416,52 +359,15 @@ public class StatisticGUI extends RoundedPanel {
         filterBranchStaffPanel.setBackground(new Color(0xFFFFFF));
         filterPanel.add(filterBranchStaffPanel, "span, wrap");
 
-        int total = 0, male = 0, female = 0;
-        for (List<String> strings : statisticStaffLists) {
-            male += Integer.parseInt(strings.get(1));
-            female += Integer.parseInt(strings.get(2));
-            total += Integer.parseInt(strings.get(3));
-        }
+        barChartStaff = new BarChart();
+        barChartStaff.setPreferredSize(new Dimension(1170, 600));
 
-        datasetStaff = new DefaultCategoryDataset();
-        datasetStaff.addValue(total, "Tổng", "Tất Cả");
-        datasetStaff.addValue(male, "Nam", "Tất Cả");
-        datasetStaff.addValue(female, "Nữ", "Tất Cả");
+        barChartStaff.addLegend("Tổng số lượng nhân viên", new Color(189, 135, 245));
+        barChartStaff.addLegend("Nhân viên nam", new Color(135, 189, 245));
+        barChartStaff.addLegend("Nhân viên nữ", new Color(139, 229, 222));
 
-
-        JFreeChart barChart = ChartFactory.createBarChart(
-                "Thống Kê Nhân Viên",
-                "",
-                "Số Lượng",
-                datasetStaff,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-        CategoryPlot plot = barChart.getCategoryPlot();
-
-        plot.setBackgroundPaint(new Color(191, 198, 208));
-
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setSeriesPaint(0, series1Color);
-        renderer.setSeriesPaint(1, series2Color);
-        renderer.setSeriesPaint(2, series3Color);
-
-        Font labelFont = new Font("Inter", Font.BOLD, 13);
-        plot.getDomainAxis().setLabelFont(labelFont);
-        plot.getRangeAxis().setLabelFont(labelFont);
-        plot.getDomainAxis().setTickLabelFont(labelFont);
-        plot.getRangeAxis().setTickLabelFont(labelFont);
-        plot.getDomainAxis().setLabelPaint(Color.BLACK);
-        plot.getRangeAxis().setLabelPaint(Color.BLACK);
-        plot.getDomainAxis().setTickLabelPaint(Color.BLACK);
-        plot.getRangeAxis().setTickLabelPaint(Color.BLACK);
-
-        JPanel chartPanel = new ChartPanel(barChart);
-        chartPanel.setPreferredSize(new Dimension(1170, 600));
-        dashboardStaffPanel.add(chartPanel);
+        dashboardStaffPanel.add(barChartStaff);
+        loadBarChartStaff();
     }
 
     private void initTransactionPanel() {
@@ -609,12 +515,12 @@ public class StatisticGUI extends RoundedPanel {
 
 
     private void addBranchCustomer(Branch branch) {
-        if (branch_idListCustomer.size() == 4) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn tối đa 4 chi nhánh!",
+        if (branchListCustomer.size() == 6) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn tối đa 6 chi nhánh!",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        branch_idListCustomer.add(branch.getId());
+        branchListCustomer.add(branch);
 
         RoundedPanel jPanel = new RoundedPanel();
         jPanel.setBackground(new Color(228,231,235));
@@ -636,29 +542,43 @@ public class StatisticGUI extends RoundedPanel {
                 filterBranchCustomerPanel.remove(jPanel);
                 filterBranchCustomerPanel.repaint();
                 filterBranchCustomerPanel.revalidate();
-                branch_idListCustomer.remove((Object) branch.getId());
-                datasetCustomer.removeColumn(branch.getName());
+                branchListCustomer.removeIf(branch1 -> branch1.getId() == branch.getId());
+                loadBarChartCustomer();
             }
         });
         jPanel.add(icon);
 
-        int total = 0, male = 0, female = 0;
-        for (List<String> strings : statisticCustomerLists) {
-            if (Integer.parseInt(strings.get(0)) == branch.getId()) {
-                male += Integer.parseInt(strings.get(1));
-                female += Integer.parseInt(strings.get(2));
-                total += Integer.parseInt(strings.get(3));
-            }
-        }
+        loadBarChartCustomer();
+    }
 
-        datasetCustomer.addValue(total, "Tổng", branch.getName());
-        datasetCustomer.addValue(male, "Nam", branch.getName());
-        datasetCustomer.addValue(female, "Nữ", branch.getName());
+    private void loadBarChartCustomer() {
+        barChartCustomer.clear();
+        double total = 0, male = 0, female = 0;
+        for (List<String> strings : statisticCustomerLists) {
+            male += Integer.parseInt(strings.get(1));
+            female += Integer.parseInt(strings.get(2));
+            total += Integer.parseInt(strings.get(3));
+        }
+        barChartCustomer.addData(new ModelBarChart("Tất cả chi nhánh", new double[]{total, male, female}));
+
+        for (Branch branch : branchListCustomer) {
+            total = 0;
+            male = 0;
+            female = 0;
+            for (List<String> strings : statisticCustomerLists) {
+                if (Integer.parseInt(strings.get(0)) == branch.getId()) {
+                    male += Integer.parseInt(strings.get(1));
+                    female += Integer.parseInt(strings.get(2));
+                    total += Integer.parseInt(strings.get(3));
+                }
+            }
+            barChartCustomer.addData(new ModelBarChart(branch.getName(), new double[] {total, male, female}));
+        }
+        barChartCustomer.start();
     }
 
     private void addBranchBank_Account(Branch branch) {
-        datasetBank_Account.clear();
-        datasetLineBank_Account.clear();
+        barChartBank_Account.clear();
 
         List<List<String>> statisticBank_AccountList = bankAccountBLL.getStatisticBank_Account(branch.getId());
         double previousGrowthPercentage = 0;
@@ -668,19 +588,20 @@ public class StatisticGUI extends RoundedPanel {
             double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100) + previousGrowthPercentage;
             previousMonthOpenings = Integer.parseInt(strings.get(1));
             previousGrowthPercentage = growthPercentage;
-            datasetLineBank_Account.addValue(growthPercentage, "Phần Trăm %", strings.get(0));
+//            datasetLineBank_Account.addValue(growthPercentage, "Phần Trăm %", strings.get(0));
 
-            datasetBank_Account.addValue(Integer.parseInt(strings.get(1)), "Tổng", strings.get(0));
+            barChartBank_Account.addData(new ModelBarChart(strings.get(0), new double[] {Double.parseDouble(strings.get(1))}));
         }
+        barChartBank_Account.start();
     }
 
     private void addBranchStaff(Branch branch) {
-        if (branch_idListStaff.size() == 4) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn tối đa 4 chi nhánh!",
+        if (branchListCustomer.size() == 6) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn tối đa 6 chi nhánh!",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        branch_idListStaff.add(branch.getId());
+        branchListStaff.add(branch);
 
         RoundedPanel jPanel = new RoundedPanel();
         jPanel.setBackground(new Color(228,231,235));
@@ -702,24 +623,39 @@ public class StatisticGUI extends RoundedPanel {
                 filterBranchStaffPanel.remove(jPanel);
                 filterBranchStaffPanel.repaint();
                 filterBranchStaffPanel.revalidate();
-                branch_idListStaff.remove((Object) branch.getId());
-                datasetStaff.removeColumn(branch.getName());
+                branchListStaff.removeIf(branch1 -> branch1.getId() == branch.getId());
+                loadBarChartStaff();
             }
         });
         jPanel.add(icon);
 
-        int total = 0, male = 0, female = 0;
-        for (List<String> strings : statisticStaffLists) {
-            if (Integer.parseInt(strings.get(0)) == branch.getId()) {
-                male += Integer.parseInt(strings.get(1));
-                female += Integer.parseInt(strings.get(2));
-                total += Integer.parseInt(strings.get(3));
-            }
-        }
+        loadBarChartStaff();
+    }
 
-        datasetStaff.addValue(total, "Tổng", branch.getName());
-        datasetStaff.addValue(male, "Nam", branch.getName());
-        datasetStaff.addValue(female, "Nữ", branch.getName());
+    private void loadBarChartStaff() {
+        barChartStaff.clear();
+        double total = 0, male = 0, female = 0;
+        for (List<String> strings : statisticStaffLists) {
+            male += Integer.parseInt(strings.get(1));
+            female += Integer.parseInt(strings.get(2));
+            total += Integer.parseInt(strings.get(3));
+        }
+        barChartStaff.addData(new ModelBarChart("Tất cả chi nhánh", new double[]{total, male, female}));
+
+        for (Branch branch : branchListStaff) {
+            total = 0;
+            male = 0;
+            female = 0;
+            for (List<String> strings : statisticStaffLists) {
+                if (Integer.parseInt(strings.get(0)) == branch.getId()) {
+                    male += Integer.parseInt(strings.get(1));
+                    female += Integer.parseInt(strings.get(2));
+                    total += Integer.parseInt(strings.get(3));
+                }
+            }
+            barChartStaff.addData(new ModelBarChart(branch.getName(), new double[] {total, male, female}));
+        }
+        barChartStaff.start();
     }
 
     private void txtSearchMouseClicked(MouseEvent evt) {
@@ -732,6 +668,9 @@ public class StatisticGUI extends RoundedPanel {
     private List<DataSearch> search(String text) {
         List<DataSearch> list = new ArrayList<>();
         List<Branch> branches = branchBLL.findAllBranchs("name", text) ;
+        List<Integer> branch_idListCustomer = new ArrayList<>();
+        for (Branch branch : branchListCustomer)
+            branch_idListCustomer.add(branch.getId());
         branches.removeIf(branch -> branch_idListCustomer.contains(branch.getId()));
 
         for (Branch m : branches) {
@@ -822,6 +761,9 @@ public class StatisticGUI extends RoundedPanel {
     private List<DataSearch> search2(String text) {
         List<DataSearch> list = new ArrayList<>();
         List<Branch> branches = branchBLL.findAllBranchs("name", text) ;
+        List<Integer> branch_idListStaff = new ArrayList<>();
+        for (Branch branch : branchListStaff)
+            branch_idListStaff.add(branch.getId());
         branches.removeIf(branch -> branch_idListStaff.contains(branch.getId()));
 
         for (Branch m : branches) {

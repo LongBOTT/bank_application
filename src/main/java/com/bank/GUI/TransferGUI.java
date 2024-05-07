@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,8 @@ public class TransferGUI extends JDialog {
     private BranchBLL branchBLL = new BranchBLL();
     private CustomerBLL customerBLL = new CustomerBLL();
     private String defaultContent;
+    private JComboBox<String> jComboBox;
+    private boolean selected = false;
     public TransferGUI(Bank_Account bank_account, Card card) {
         super((Frame) null, "", true);
         this.bankAccount = bank_account;
@@ -307,10 +310,24 @@ public class TransferGUI extends JDialog {
         myTextFieldUnderLine2.setEditable(false);
         jPanel.add(myTextFieldUnderLine2);
 
-        myTextFieldUnderLine3.setPreferredSize(new Dimension(290, 40));
-        myTextFieldUnderLine3.setFont((new Font("Inter", Font.PLAIN, 14)));
-        myTextFieldUnderLine3.setEditable(false);
-        jPanel.add(myTextFieldUnderLine3, "left, wrap");
+        jComboBox = new JComboBox<>(new String[]{" ", "Hồ Chí Minh", "Hà Nội", "Hải Phòng", "Đà Nẵng", "Khác"});
+        jComboBox.setPreferredSize(new Dimension(290, 40));
+        jComboBox.setFont((new Font("Inter", Font.PLAIN, 14)));
+        jComboBox.setEditable(false);
+        jComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!selected) {
+                    txtSearch.setText("");
+                    receiver_bank_account_number = "";
+                    myTextFieldUnderLine1.setText("");
+                    myTextFieldUnderLine2.setText("");
+                    myTextFieldUnderLine.setText("");
+                    jTextArea.setText(defaultContent);
+                }
+            }
+        });
+        jPanel.add(jComboBox, "left, wrap");
 
         JLabel jLabel5 = new JLabel("Số Tiền");
         jLabel5.setPreferredSize(new Dimension(310, 20));
@@ -443,6 +460,7 @@ public class TransferGUI extends JDialog {
 
             List<Transfer_Money> transfer_MoneysList = new ArrayList<>(transfer_MoneyBLL.getTransfer_moneyListAll());
             transfer_MoneysList.removeIf(Transfer_Money -> !Transfer_Money.getSender_bank_account_number().equals(bankAccount.getNumber()));
+            transfer_MoneysList.removeIf(transferMoney -> !transferMoney.getSend_date().toLocalDate().equals(LocalDate.now()));
             BigDecimal total = new BigDecimal(0);
             for (Transfer_Money transferMoney : transfer_MoneysList)
                 total = total.add(transferMoney.getMoney_amount());
@@ -474,7 +492,7 @@ public class TransferGUI extends JDialog {
                 receiver_bank_account_number = "";
                 myTextFieldUnderLine1.setText("");
                 myTextFieldUnderLine2.setText("");
-                myTextFieldUnderLine3.setText("");
+                jComboBox.setSelectedIndex(0);
                 myTextFieldUnderLine.setText("");
                 jTextArea.setText(defaultContent);
 
@@ -526,21 +544,19 @@ public class TransferGUI extends JDialog {
             Branch branch = branchBLL.findAllBranchs("id", String.valueOf(receiver_bank_account.getBranch_id())).get(0);
             myTextFieldUnderLine1.setText(customer.getName());
             myTextFieldUnderLine2.setText(branch.getName());
-            if (branch.getHeadquarter_id() == 1)
-                myTextFieldUnderLine3.setText("Hồ Chí Minh");
+            if (jComboBox.getSelectedIndex() == 0) {
+                if (branch.getHeadquarter_id() > 4) {
+                    selected = true;
+                    jComboBox.setSelectedIndex(5);
+                    selected = false;
+                }
+                else {
+                    selected = true;
+                    jComboBox.setSelectedIndex(branch.getHeadquarter_id());
+                    selected = false;
+                }
+            }
 
-            else if (branch.getHeadquarter_id() == 2)
-                myTextFieldUnderLine3.setText("Hà Nội");
-
-
-            else if (branch.getHeadquarter_id() == 3)
-                myTextFieldUnderLine3.setText("Hải Phòng");
-
-
-            else if (branch.getHeadquarter_id() == 4)
-                myTextFieldUnderLine3.setText("Đà Nẵng");
-
-            else myTextFieldUnderLine3.setText("Khác");
         }
     }
 
@@ -553,9 +569,16 @@ public class TransferGUI extends JDialog {
 
     private List<DataSearch> search(String text) {
         receiver_bank_account_number = "";
+        selected = false;
         List<DataSearch> list = new ArrayList<>();
 
         List<Bank_Account> bankAccounts = bankAccountBLL.findAllBank_Accounts("number", text);
+        if (jComboBox.getSelectedIndex() == 1 || jComboBox.getSelectedIndex() == 2 || jComboBox.getSelectedIndex() == 3 || jComboBox.getSelectedIndex() == 4) {
+            bankAccounts.removeIf(bank_account -> branchBLL.findAllBranchs("id", String.valueOf(bank_account.getBranch_id())).get(0).getHeadquarter_id() != jComboBox.getSelectedIndex());
+        }
+        if (jComboBox.getSelectedIndex() == 5) {
+            bankAccounts.removeIf(bank_account -> branchBLL.findAllBranchs("id", String.valueOf(bank_account.getBranch_id())).get(0).getHeadquarter_id() <= 4);
+        }
         bankAccounts.removeIf(bank_account -> Objects.equals(bank_account.getNumber(), bankAccount.getNumber()));
         bankAccounts.removeIf(bank_account -> !bank_account.isStatus());
         for (Bank_Account m : bankAccounts) {

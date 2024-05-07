@@ -472,13 +472,17 @@ public class StatementGUI extends JDialog {
 
             chart.clear();
 
+            DefaultTableModel model = (DefaultTableModel) dataTable.getModel();
+            model.setRowCount(0);
+            firstBalance.setText("");
+
             List<ModelData> lists = new ArrayList<>();
             List<List<String>> totalTransaction;
             List<List<String>> totalTransfer;
 
             Date startDate = datePicker.getDateSQL_Between()[0];
             Date endDate = datePicker.getDateSQL_Between()[1];
-            if (startDate.after(endDate)) {
+            if (startDate.after(endDate) || startDate.equals(endDate)) {
                 JOptionPane.showMessageDialog(null, "Ngày bắt đầu phải trước ngày kết thúc.",
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
