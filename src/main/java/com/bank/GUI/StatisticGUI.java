@@ -15,17 +15,15 @@ import com.bank.GUI.components.swing.MyTextField;
 import com.bank.GUI.components.swing.PanelSearch;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.layout.Background;
 import net.miginfocom.swing.MigLayout;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,7 +67,8 @@ public class StatisticGUI extends RoundedPanel {
     private BarChart barChartCustomer;
     private BarChart barChartStaff;
     private BarChart barChartBank_Account;
-    private BarChart barChartLineBank_Account;
+    private JFXPanel fxPanelBank_Account;
+    private JFXPanel fxPanelTransaction;
     public StatisticGUI() {
         setBackground(new Color(255, 255, 255));
         setLayout(new BorderLayout());
@@ -229,10 +228,11 @@ public class StatisticGUI extends RoundedPanel {
 
         barChartCustomer = new BarChart();
         barChartCustomer.setPreferredSize(new Dimension(1170, 600));
+        barChartCustomer.setBackground(new Color(191, 198, 208));
 
-        barChartCustomer.addLegend("Tổng số lượng khách hàng", new Color(189, 135, 245));
-        barChartCustomer.addLegend("Khách hàng nam", new Color(135, 189, 245));
-        barChartCustomer.addLegend("Khách hàng nữ", new Color(139, 229, 222));
+        barChartCustomer.addLegend("Tổng số lượng khách hàng", series1Color);
+        barChartCustomer.addLegend("Khách hàng nam", series2Color);
+        barChartCustomer.addLegend("Khách hàng nữ", series3Color);
 
         dashboardCustomerPanel.add(barChartCustomer);
         loadBarChartCustomer();
@@ -277,47 +277,67 @@ public class StatisticGUI extends RoundedPanel {
         filterBranchBank_AccountPanel.setBackground(new Color(0xFFFFFF));
         filterPanel.add(filterBranchBank_AccountPanel, "span, wrap");
 
-//        datasetLineBank_Account = new DefaultCategoryDataset();
-//        JFreeChart lineChart = ChartFactory.createLineChart(
-//                "Tỉ Lệ Mở Tài Khoản",
-//                "Tháng",
-//                "Phần Trăm %",
-//                datasetLineBank_Account,
-//                PlotOrientation.VERTICAL,
-//                true,
-//                true,
-//                false
-//        );
-//        CategoryPlot plot1 = lineChart.getCategoryPlot();
-//        plot1.setBackgroundPaint(new Color(191, 198, 208));
-//        Font labelFont1 = new Font("Inter", Font.BOLD, 13);
-//        plot1.getDomainAxis().setLabelFont(labelFont1);
-//        plot1.getRangeAxis().setLabelFont(labelFont1);
-//        plot1.getDomainAxis().setTickLabelFont(labelFont1);
-//        plot1.getRangeAxis().setTickLabelFont(labelFont1);
-//        plot1.getDomainAxis().setLabelPaint(Color.BLACK);
-//        plot1.getRangeAxis().setLabelPaint(Color.BLACK);
-//        plot1.getDomainAxis().setTickLabelPaint(Color.BLACK);
-//        plot1.getRangeAxis().setTickLabelPaint(Color.BLACK);
-//        lineChart.setBackgroundPaint(Color.white);
-//        lineChart.getTitle().setPaint(Color.black);
-//        lineChart.getTitle().setFont(new Font("Arial", Font.BOLD, 18));
-//
-//        ChartPanel lineChartPanel = new ChartPanel(lineChart);
-        JPanel lineChartPanel = new JPanel();
-        lineChartPanel.setPreferredSize(new Dimension(1170, 300));
+        fxPanelBank_Account = new JFXPanel();
+        fxPanelBank_Account.setPreferredSize(new Dimension(1170, 300));
 
-        dashboardBank_AccountPanel.add(lineChartPanel, "wrap");
+        dashboardBank_AccountPanel.add(fxPanelBank_Account, "wrap");
 
 
         // -----------------------------------------------------------------//
 
         barChartBank_Account = new BarChart();
-        barChartBank_Account.setPreferredSize(new Dimension(1170, 600));
+        barChartBank_Account.setPreferredSize(new Dimension(1170, 300));
+        barChartBank_Account.setBackground(new Color(191, 198, 208));
 
-        barChartBank_Account.addLegend("Tổng số tài khoản mở", new Color(135, 189, 245));
+        barChartBank_Account.addLegend("Tổng số tài khoản mở", series2Color);
 
         dashboardBank_AccountPanel.add(barChartBank_Account);
+    }
+
+    private void initFX(JFXPanel fxPanelBank_Account, Branch branch) {
+        fxPanelBank_Account.removeAll();
+        // Tạo một Scene JavaFX
+        Scene scene = createScene(branch);
+        fxPanelBank_Account.setScene(scene);
+        fxPanelBank_Account.repaint();
+        fxPanelBank_Account.revalidate();
+    }
+
+    private Scene createScene(Branch branch) {
+        // Tạo một Line Chart
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Tháng");
+        yAxis.setLabel("Phần trăm %");
+        final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+
+        List<List<String>> statisticBank_AccountList = bankAccountBLL.getStatisticBank_Account(branch.getId());
+
+        lineChart.setTitle("Tỉ lệ mở tài khoản");
+        String backgroundColor = String.format(
+                "-fx-background-color: rgba(%d, %d, %d, %f);",
+                191, 198, 208, 1.0); // 1.0 là độ mờ (opacity)
+        lineChart.setStyle(backgroundColor);
+        xAxis.setAutoRanging(false); // Tắt tự động định vị trục x
+        xAxis.setLowerBound(1); // Giá trị bắt đầu của trục x
+        xAxis.setUpperBound(Integer.parseInt(statisticBank_AccountList.get(statisticBank_AccountList.size() - 1).get(0).split("/")[0])); // Giá trị kết thúc của trục x
+        xAxis.setTickUnit(1); // Đơn vị của các nhãn trục x
+
+        // Thêm dữ liệu vào Line Chart
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName(branch.getName());
+        int previousMonthOpenings = Integer.parseInt(statisticBank_AccountList.get(0).get(1));
+        for (List<String> strings : statisticBank_AccountList) {
+            int currentMonthOpenings = Integer.parseInt(strings.get(1));
+            double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100);
+            previousMonthOpenings = Integer.parseInt(strings.get(1));
+            series.getData().add(new XYChart.Data<>(Integer.parseInt(strings.get(0).split("/")[0]), growthPercentage));
+
+        }
+        lineChart.getData().add(series);
+
+        // Tạo một Scene chứa Line Chart
+        return new Scene(lineChart, 600, 400);
     }
 
     private void initStaffPanel() {
@@ -361,10 +381,11 @@ public class StatisticGUI extends RoundedPanel {
 
         barChartStaff = new BarChart();
         barChartStaff.setPreferredSize(new Dimension(1170, 600));
+        barChartStaff.setBackground(new Color(191, 198, 208));
 
-        barChartStaff.addLegend("Tổng số lượng nhân viên", new Color(189, 135, 245));
-        barChartStaff.addLegend("Nhân viên nam", new Color(135, 189, 245));
-        barChartStaff.addLegend("Nhân viên nữ", new Color(139, 229, 222));
+        barChartStaff.addLegend("Tổng số lượng nhân viên", series1Color);
+        barChartStaff.addLegend("Nhân viên nam", series2Color);
+        barChartStaff.addLegend("Nhân viên nữ", series3Color);
 
         dashboardStaffPanel.add(barChartStaff);
         loadBarChartStaff();
@@ -374,37 +395,10 @@ public class StatisticGUI extends RoundedPanel {
         List<List<String>> statisticTransactionList = new Transaction_Deposit_WithdrawalBLL().getStatisticTotalTransaction();
         List<List<String>> statisticTransferList = new Transfer_MoneyBLL().getStatisticTotalTransfer();
 
-        DefaultCategoryDataset datasetLineTransaction = new DefaultCategoryDataset();
-        JFreeChart lineChart = ChartFactory.createLineChart(
-                "Tỉ Lệ Giao Dịch",
-                "Tháng",
-                "Phần Trăm %",
-                datasetLineTransaction,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-        CategoryPlot plot1 = lineChart.getCategoryPlot();
-        plot1.setBackgroundPaint(new Color(191, 198, 208));
-        Font labelFont1 = new Font("Inter", Font.BOLD, 13);
-        plot1.getDomainAxis().setLabelFont(labelFont1);
-        plot1.getRangeAxis().setLabelFont(labelFont1);
-        plot1.getDomainAxis().setTickLabelFont(labelFont1);
-        plot1.getRangeAxis().setTickLabelFont(labelFont1);
-        plot1.getDomainAxis().setLabelPaint(Color.BLACK);
-        plot1.getRangeAxis().setLabelPaint(Color.BLACK);
-        plot1.getDomainAxis().setTickLabelPaint(Color.BLACK);
-        plot1.getRangeAxis().setTickLabelPaint(Color.BLACK);
-        lineChart.setBackgroundPaint(Color.white);
-        lineChart.getTitle().setPaint(Color.black);
-        lineChart.getTitle().setFont(new Font("Arial", Font.BOLD, 18));
+        fxPanelTransaction = new JFXPanel();
+        fxPanelTransaction.setPreferredSize(new Dimension(1170, 300));
 
-        ChartPanel lineChartPanel = new ChartPanel(lineChart);
-        lineChartPanel.setPreferredSize(new Dimension(1170, 300));
-
-        transactionPanel.add(lineChartPanel, "wrap");
-
+        transactionPanel.add(fxPanelTransaction, "wrap");
 
         CurveLineChart chart = new CurveLineChart();
         JPanel panelShadow = new JPanel();
@@ -480,35 +474,57 @@ public class StatisticGUI extends RoundedPanel {
         chart.start();
 
         //-----------------------------//
-        double previousGrowthPercentage = 0;
-        double previousMonthOpenings = Double.parseDouble(statisticTransactionList.get(0).get(1));
-        for (List<String> strings : statisticTransactionList) {
-            double currentMonthOpenings = Double.parseDouble(strings.get(1));
-            double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100) + previousGrowthPercentage;
-            previousMonthOpenings = currentMonthOpenings;
-            previousGrowthPercentage = growthPercentage;
-            datasetLineTransaction.addValue(growthPercentage, "Gửi Tiền %", strings.get(0));
-        }
+        Platform.runLater(() -> {
+            final NumberAxis xAxis = new NumberAxis();
+            final NumberAxis yAxis = new NumberAxis();
+            xAxis.setLabel("Tháng");
+            yAxis.setLabel("Phần trăm %");
+            final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
 
-        previousGrowthPercentage = 0;
-        previousMonthOpenings = Double.parseDouble(statisticTransactionList.get(0).get(2));
-        for (List<String> strings : statisticTransactionList) {
-            double currentMonthOpenings = Double.parseDouble(strings.get(2));
-            double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100) + previousGrowthPercentage;
-            previousMonthOpenings = currentMonthOpenings;
-            previousGrowthPercentage = growthPercentage;
-            datasetLineTransaction.addValue(growthPercentage, "Rút Tiền %", strings.get(0));
-        }
+            lineChart.setTitle("Tỉ lệ giao dịch");
+            String backgroundColor = String.format(
+                    "-fx-background-color: rgba(%d, %d, %d, %f);",
+                    191, 198, 208, 1.0); // 1.0 là độ mờ (opacity)
+            lineChart.setStyle(backgroundColor);
+            xAxis.setAutoRanging(false); // Tắt tự động định vị trục x
+            xAxis.setLowerBound(1); // Giá trị bắt đầu của trục x
+            xAxis.setUpperBound(Integer.parseInt(statisticTransactionList.get(statisticTransactionList.size() - 1).get(0).split("/")[0])); // Giá trị kết thúc của trục x
+            xAxis.setTickUnit(1); // Đơn vị của các nhãn trục x
 
-        previousGrowthPercentage = 0;
-        previousMonthOpenings = Double.parseDouble(statisticTransferList.get(0).get(1));
-        for (List<String> strings : statisticTransferList) {
-            double currentMonthOpenings = Double.parseDouble(strings.get(1));
-            double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100) + previousGrowthPercentage;
-            previousMonthOpenings = currentMonthOpenings;
-            previousGrowthPercentage = growthPercentage;
-            datasetLineTransaction.addValue(growthPercentage, "Chuyển Tiền %", strings.get(0));
-        }
+            // Thêm dữ liệu vào Line Chart
+            XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
+            series1.setName("Tỉ lệ gửi tiền");
+            double previousMonthOpenings = Double.parseDouble(statisticTransactionList.get(0).get(1));
+            for (List<String> strings : statisticTransactionList) {
+                double currentMonthOpenings = Double.parseDouble(strings.get(1));
+                double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100);
+                previousMonthOpenings = currentMonthOpenings;
+                series1.getData().add(new XYChart.Data<>(Integer.parseInt(strings.get(0).split("/")[0]), growthPercentage));
+            }
+
+            XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
+            series2.setName("Tỉ lệ rút tiền");
+            previousMonthOpenings = Double.parseDouble(statisticTransactionList.get(0).get(2));
+            for (List<String> strings : statisticTransactionList) {
+                double currentMonthOpenings = Double.parseDouble(strings.get(2));
+                double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100);
+                previousMonthOpenings = currentMonthOpenings;
+                series2.getData().add(new XYChart.Data<>(Integer.parseInt(strings.get(0).split("/")[0]), growthPercentage));
+            }
+
+            XYChart.Series<Number, Number> series3 = new XYChart.Series<>();
+            series3.setName("Tỉ lệ chuyển tiền");
+            previousMonthOpenings = Double.parseDouble(statisticTransferList.get(0).get(1));
+            for (List<String> strings : statisticTransferList) {
+                double currentMonthOpenings = Double.parseDouble(strings.get(1));
+                double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100);
+                previousMonthOpenings = currentMonthOpenings;
+                series3.getData().add(new XYChart.Data<>(Integer.parseInt(strings.get(0).split("/")[0]), growthPercentage));
+            }
+
+            lineChart.getData().addAll(series1, series2, series3);
+            fxPanelTransaction.setScene(new Scene(lineChart, 600, 400));
+        });
 
         //-----------------------------//
     }
@@ -581,22 +597,15 @@ public class StatisticGUI extends RoundedPanel {
         barChartBank_Account.clear();
 
         List<List<String>> statisticBank_AccountList = bankAccountBLL.getStatisticBank_Account(branch.getId());
-        double previousGrowthPercentage = 0;
-        int previousMonthOpenings = Integer.parseInt(statisticBank_AccountList.get(0).get(1));
         for (List<String> strings : statisticBank_AccountList) {
-            int currentMonthOpenings = Integer.parseInt(strings.get(1));
-            double growthPercentage = (((double) (currentMonthOpenings - previousMonthOpenings) / previousMonthOpenings) * 100) + previousGrowthPercentage;
-            previousMonthOpenings = Integer.parseInt(strings.get(1));
-            previousGrowthPercentage = growthPercentage;
-//            datasetLineBank_Account.addValue(growthPercentage, "Phần Trăm %", strings.get(0));
-
             barChartBank_Account.addData(new ModelBarChart(strings.get(0), new double[] {Double.parseDouble(strings.get(1))}));
         }
+        Platform.runLater(() -> initFX(fxPanelBank_Account, branch));
         barChartBank_Account.start();
     }
 
     private void addBranchStaff(Branch branch) {
-        if (branchListCustomer.size() == 6) {
+        if (branchListStaff.size() == 6) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn tối đa 6 chi nhánh!",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
