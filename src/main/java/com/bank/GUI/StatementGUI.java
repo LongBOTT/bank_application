@@ -15,6 +15,7 @@ import com.bank.GUI.components.swing.EventClick;
 import com.bank.GUI.components.swing.MyTextField;
 import com.bank.GUI.components.swing.PanelSearch;
 import com.bank.main.Bank_Application;
+import com.bank.utils.PDF;
 import com.bank.utils.VNString;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javafx.util.Pair;
@@ -119,6 +120,10 @@ public class StatementGUI extends JDialog {
         filterPanel.add(jLabelTitle, "wrap");
 
         RoundedPanel last3Month = new RoundedPanel();
+        RoundedPanel last9Month = new RoundedPanel();
+        RoundedPanel last6Month = new RoundedPanel();
+        RoundedPanel lastYear = new RoundedPanel();
+
         last3Month.setLayout(new BorderLayout());
         last3Month.setPreferredSize(new Dimension(200, 100));
         last3Month.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -127,11 +132,15 @@ public class StatementGUI extends JDialog {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (currentPanel != last3Month) {
-                    Active(last3Month);
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             setData(3);
+                            last3Month.setBackground(new Color(237,242,247));
+                            last6Month.setBackground(new Color(237,242,247));
+                            last9Month.setBackground(new Color(237,242,247));
+                            lastYear.setBackground(new Color(237,242,247));
+                            Active(last3Month);
                         }
                     });
                     thread.start();
@@ -141,7 +150,6 @@ public class StatementGUI extends JDialog {
         });
         filterPanel.add(last3Month);
 
-        RoundedPanel last6Month = new RoundedPanel();
         last6Month.setLayout(new BorderLayout());
         last6Month.setCursor(new Cursor(Cursor.HAND_CURSOR));
         last6Month.setPreferredSize(new Dimension(200, 100));
@@ -150,11 +158,16 @@ public class StatementGUI extends JDialog {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (currentPanel != last6Month) {
-                    Active(last6Month);
+
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             setData(6);
+                            last3Month.setBackground(new Color(237,242,247));
+                            last6Month.setBackground(new Color(237,242,247));
+                            last9Month.setBackground(new Color(237,242,247));
+                            lastYear.setBackground(new Color(237,242,247));
+                            Active(last6Month);
                         }
                     });
                     thread.start();
@@ -164,7 +177,6 @@ public class StatementGUI extends JDialog {
         });
         filterPanel.add(last6Month);
 
-        RoundedPanel last9Month = new RoundedPanel();
         last9Month.setLayout(new BorderLayout());
         last9Month.setCursor(new Cursor(Cursor.HAND_CURSOR));
         last9Month.setPreferredSize(new Dimension(200, 100));
@@ -173,11 +185,15 @@ public class StatementGUI extends JDialog {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (currentPanel != last9Month) {
-                    Active(last9Month);
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             setData(9);
+                            last3Month.setBackground(new Color(237,242,247));
+                            last6Month.setBackground(new Color(237,242,247));
+                            last9Month.setBackground(new Color(237,242,247));
+                            lastYear.setBackground(new Color(237,242,247));
+                            Active(last9Month);
                         }
                     });
                     thread.start();
@@ -187,7 +203,6 @@ public class StatementGUI extends JDialog {
         });
         filterPanel.add(last9Month);
 
-        RoundedPanel lastYear = new RoundedPanel();
         lastYear.setLayout(new BorderLayout());
         lastYear.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lastYear.setPreferredSize(new Dimension(200, 100));
@@ -196,11 +211,15 @@ public class StatementGUI extends JDialog {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (currentPanel != lastYear) {
-                    Active(lastYear);
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             setData(12);
+                            last3Month.setBackground(new Color(237,242,247));
+                            last6Month.setBackground(new Color(237,242,247));
+                            last9Month.setBackground(new Color(237,242,247));
+                            lastYear.setBackground(new Color(237,242,247));
+                            Active(lastYear);
                         }
                     });
                     thread.start();
@@ -278,6 +297,12 @@ public class StatementGUI extends JDialog {
         buttonPrint.setPreferredSize(new Dimension(150,60));
         buttonPrint.setFont(new Font("Inter", Font.BOLD, 13));
         buttonPrint.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonPrint.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PDF.exportPDFStatement(bankAccount, datePicker.getDateSQL_Between()[0].toString(), datePicker.getDateSQL_Between()[1].toString());
+            }
+        });
         filterDate.add(buttonPrint);
 
         chart.setTitle("Thống Kê Giao Dịch");
@@ -324,15 +349,17 @@ public class StatementGUI extends JDialog {
         List<Transfer_Money> transfer_Moneys = new ArrayList<>(transfer_MoneyBLL.getTransfer_moneyListAll());
         transfer_Moneys.removeIf(Transfer_Money -> !Transfer_Money.getSender_bank_account_number().equals(bankAccount.getNumber()));
 
-        Active(last3Month);
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 setData(3);
+                Active(last3Month);
             }
         });
         thread.start();
         currentPanel = last3Month;
+
 
     }
 
@@ -390,8 +417,8 @@ public class StatementGUI extends JDialog {
     }
 
     private void setData(int numberOfMonth) {
-        datePicker.clearSelectedDate();
-        chart.clear();
+//        datePicker.clearSelectedDate();
+//        chart.clear();
 
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         List<List<String>> objects = new ArrayList<>();
@@ -401,10 +428,10 @@ public class StatementGUI extends JDialog {
             strings.set(0, LocalDateTime.parse(strings.get(0), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).format(myFormatObj));
         }
 
-        List<ModelData> lists = new ArrayList<>();
-
-        List<List<String>> totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Month_In_Year(bankAccount.getNumber());
-        List<List<String>> totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Month_In_Year(bankAccount.getNumber());
+//        List<ModelData> lists = new ArrayList<>();
+//
+//        List<List<String>> totalTransaction = transactionDepositWithdrawalBLL.getTotalTransaction_By_Month_In_Year(bankAccount.getNumber());
+//        List<List<String>> totalTransfer = transfer_MoneyBLL.getTotalTransfer_By_Month_In_Year(bankAccount.getNumber());
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, - numberOfMonth + 1);
@@ -414,25 +441,25 @@ public class StatementGUI extends JDialog {
         for (int i = 0; i < numberOfMonth; i++) {
             String formattedDate = dateFormat.format(cal.getTime());
 
-            String month = formattedDate;
-            double deposit = 0;
-            double withdrawal = 0;
-            double transfer = 0;
-            for (List<String> strings : totalTransaction) {
-                if (strings.get(0).equals(formattedDate)) {
-                    deposit = Double.parseDouble(strings.get(1));
-                    withdrawal = Double.parseDouble(strings.get(2));
-                    break;
-                }
-            }
-
-            for (List<String> strings : totalTransfer) {
-                if (strings.get(0).equals(formattedDate)) {
-                    transfer = Double.parseDouble(strings.get(1));
-                    break;
-                }
-            }
-            lists.add(new ModelData(month, deposit, withdrawal, transfer));
+//            String month = formattedDate;
+//            double deposit = 0;
+//            double withdrawal = 0;
+//            double transfer = 0;
+//            for (List<String> strings : totalTransaction) {
+//                if (strings.get(0).equals(formattedDate)) {
+//                    deposit = Double.parseDouble(strings.get(1));
+//                    withdrawal = Double.parseDouble(strings.get(2));
+//                    break;
+//                }
+//            }
+//
+//            for (List<String> strings : totalTransfer) {
+//                if (strings.get(0).equals(formattedDate)) {
+//                    transfer = Double.parseDouble(strings.get(1));
+//                    break;
+//                }
+//            }
+//            lists.add(new ModelData(month, deposit, withdrawal, transfer));
 
             cal.add(Calendar.MONTH, 1);
 
@@ -440,14 +467,15 @@ public class StatementGUI extends JDialog {
             list.removeIf(strings -> !strings.get(0).contains(formattedDate));
             objects.addAll(list);
         }
+//
+//        for (ModelData d : lists) {
+//            chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
+//        }
+//
+//        chart.start();
 
-        for (ModelData d : lists) {
-            chart.addData(new ModelChart(d.getMonth(), new double[]{d.getDeposit(), d.getWithdrawal(), d.getTransfer()}));
-        }
-
-        chart.start();
-
-        loadDataTable(objects);
+//        loadDataTable(objects);
+        datePicker.setSelectedDateRange(LocalDate.parse(objects.get(0).get(0), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")), LocalDate.parse(objects.get(objects.size() - 1).get(0), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 
     }
 
