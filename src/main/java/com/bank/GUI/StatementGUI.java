@@ -301,6 +301,8 @@ public class StatementGUI extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PDF.exportPDFStatement(bankAccount, datePicker.getDateSQL_Between()[0].toString(), datePicker.getDateSQL_Between()[1].toString());
+                JOptionPane.showMessageDialog(null, "Xuất sao kê thành công.",
+                        "Lỗi", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         filterDate.add(buttonPrint);
@@ -455,6 +457,7 @@ public class StatementGUI extends JDialog {
 //
 //            for (List<String> strings : totalTransfer) {
 //                if (strings.get(0).equals(formattedDate)) {
+
 //                    transfer = Double.parseDouble(strings.get(1));
 //                    break;
 //                }

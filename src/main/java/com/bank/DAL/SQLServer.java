@@ -48,7 +48,7 @@ public class SQLServer {
         try (Statement statement = connection.createStatement()) {
             String formattedQuery = formatQuery(query, values);
             numOfRows = statement.executeUpdate(formattedQuery);
-//            System.out.println(formattedQuery + "\n");
+            System.out.println(formattedQuery + "\n");
         }
         Database.closeConnection(connection);
         return numOfRows;

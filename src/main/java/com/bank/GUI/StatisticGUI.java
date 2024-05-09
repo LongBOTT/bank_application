@@ -26,6 +26,8 @@ import net.miginfocom.swing.MigLayout;
 
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
@@ -162,6 +164,14 @@ public class StatisticGUI extends RoundedPanel {
         JTabbedPane jTabbedPane = new JTabbedPane();
         jTabbedPane.setBackground(new Color(255,255,255));
         jTabbedPane.setPreferredSize(new Dimension(1165, 733));
+        jTabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (jTabbedPane.getSelectedIndex() == 2) {
+                    initTransactionPanel();
+                }
+            }
+        });
         add(jTabbedPane, BorderLayout.CENTER);
 
         jTabbedPane.addTab("Khách Hàng", customerPanel);
@@ -289,7 +299,7 @@ public class StatisticGUI extends RoundedPanel {
         barChartBank_Account.setPreferredSize(new Dimension(1170, 300));
         barChartBank_Account.setBackground(new Color(191, 198, 208));
 
-        barChartBank_Account.addLegend("Tổng số tài khoản mở", series2Color);
+        barChartBank_Account.addLegend("Tổng số tài khoản mở", new Color(0xFF7C24));
 
         dashboardBank_AccountPanel.add(barChartBank_Account);
     }
@@ -392,6 +402,8 @@ public class StatisticGUI extends RoundedPanel {
     }
 
     private void initTransactionPanel() {
+        transactionPanel.removeAll();
+
         List<List<String>> statisticTransactionList = new Transaction_Deposit_WithdrawalBLL().getStatisticTotalTransaction();
         List<List<String>> statisticTransferList = new Transfer_MoneyBLL().getStatisticTotalTransfer();
 
@@ -526,7 +538,8 @@ public class StatisticGUI extends RoundedPanel {
             fxPanelTransaction.setScene(new Scene(lineChart, 600, 400));
         });
 
-        //-----------------------------//
+        transactionPanel.repaint();
+        transactionPanel.revalidate();
     }
 
 
